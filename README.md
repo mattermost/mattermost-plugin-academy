@@ -104,12 +104,35 @@ make
 
 - Run `make help` for a list of all make commands
 - Run `make check-style` to verify code style
-- Run `make test` to run the test suite
+- Run `make test` to run the unit test suite
+- Run `make e2e` to run Cypress against a running Mattermost
 - Run `make watch` to rebuild the webapp on change (then `make deploy-from-watch` to install)
+
+### End-to-end tests (Cypress)
+
+Cypress lives in `e2e-tests/cypress`, following the Playbooks layout: API login against a real Mattermost, specs under `tests/integration/**/*_spec.ts`.
+
+1. Deploy the plugin to a running Mattermost (`make deploy`), using the same `MM_*` env vars as local deploy.
+2. Run headless: `make e2e`
+3. Or open the Cypress UI: `make e2e-open`
+
+To start a disposable server instead of your dev instance:
+
+```bash
+docker compose -f e2e-tests/docker-compose.yml up -d
+export MM_SERVICESETTINGS_SITEURL=http://localhost:8065
+export MM_ADMIN_USERNAME=sysadmin
+export MM_ADMIN_PASSWORD=Sys@dmin-sample1
+bash e2e-tests/scripts/bootstrap-server.sh
+make deploy
+make e2e
+```
+
+Pull requests also run this suite in GitHub Actions (`.github/workflows/e2e.yml`).
 
 ### Continuous Integration
 
-Pushes to `master`/`main` and pull requests run lint, tests, and a plugin build on GitHub Actions, using the same [plugin-ci](https://github.com/mattermost/actions-workflows/blob/main/.github/workflows/plugin-ci.yml) workflow as the [Mattermost plugin starter template](https://github.com/mattermost/mattermost-plugin-starter-template).
+Pushes to `master`/`main` and pull requests run lint, unit tests, and a plugin build on GitHub Actions, using the same [plugin-ci](https://github.com/mattermost/actions-workflows/blob/main/.github/workflows/plugin-ci.yml) workflow as the [Mattermost plugin starter template](https://github.com/mattermost/mattermost-plugin-starter-template). A second workflow runs the Cypress smoke suite against a Docker Mattermost.
 
 ### Project Layout
 
@@ -120,6 +143,7 @@ Pushes to `master`/`main` and pull requests run lint, tests, and a plugin build 
 | `public/guides/assets/` | Lesson images and UI mock SVGs |
 | `server/command/` | `/learn` slash command |
 | `server/progress/` | Progress / completion API |
+| `e2e-tests/cypress/` | Cypress smoke tests (catalog, badges, admin CSV) |
 | `plugin.json` | Plugin id, name, and bundle paths |
 
 Plugin id: `com.mattermost.academy`

@@ -1,0 +1,62 @@
+name: e2e
+
+on:
+  push:
+    branches:
+      - master
+      - main
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  e2e-cypress-tests:
+    runs-on: ubuntu-22.04
+    env:
+      MM_SERVICESETTINGS_SITEURL: http://localhost:8065
+      MM_ADMIN_USERNAME: sysadmin
+      MM_ADMIN_PASSWORD: Sys@dmin-sample1
+      MM_ADMIN_EMAIL: sysadmin@sample.mattermost.com
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+          cache-dependency-path: |
+            webapp/package-lock.json
+            e2e-tests/cypress/package-lock.json
+
+      - name: Start Mattermost
+        run: |
+          docker compose -f e2e-tests/docker-compose.yml pull
+          docker compose -f e2e-tests/docker-compose.yml up -d --wait
+
+      - name: Wait for Mattermost and create admin
+        run: bash e2e-tests/scripts/bootstrap-server.sh
+
+      - name: Build and deploy plugin
+        run: make deploy
+
+      - name: Install Cypress
+        working-directory: e2e-tests/cypress
+        run: npm ci
+
+      - name: Run Cypress
+        working-directory: e2e-tests/cypress
+        run: npm test
+
+      - name: Upload Cypress screenshots
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cypress-screenshots
+          path: e2e-tests/cypress/tests/screenshots
+          if-no-files-found: ignore
+          retention-days: 14

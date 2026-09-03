@@ -1,0 +1,13 @@
+{
+  "name": "mattermost-academy-e2e",
+  "private": true,
+  "scripts": {
+    "cypress:open": "cypress open",
+    "cypress:run": "cypress run",
+    "test": "cypress run"
+  },
+  "devDependencies": {
+    "cypress": "15.12.0",
+    "typescript": "4.9.5"
+  }
+}

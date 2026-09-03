@@ -2,6 +2,11 @@ bin/
 dist/
 webapp/src/manifest.ts
 server/manifest.go
+e2e-tests/cypress/node_modules
+e2e-tests/cypress/tests/screenshots
+e2e-tests/cypress/tests/videos
+e2e-tests/cypress/tests/downloads
+e2e-tests/cypress/results
 
 # Mac
 .DS_Store

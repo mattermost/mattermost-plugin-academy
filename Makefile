@@ -341,6 +341,20 @@ detach: setup-attach
 		kill -9 $$DELVE_PID ; \
 	fi
 
+## Runs Cypress against a running Mattermost (same env vars as make deploy).
+.PHONY: e2e
+e2e: e2e-tests/cypress/node_modules
+	cd e2e-tests/cypress && $(NPM) test
+
+## Opens the Cypress UI against a running Mattermost.
+.PHONY: e2e-open
+e2e-open: e2e-tests/cypress/node_modules
+	cd e2e-tests/cypress && $(NPM) run cypress:open
+
+e2e-tests/cypress/node_modules: e2e-tests/cypress/package.json e2e-tests/cypress/package-lock.json
+	cd e2e-tests/cypress && $(NPM) install
+	touch $@
+
 ## Runs any lints and unit tests defined for the server and webapp, if they exist.
 .PHONY: test
 test: apply webapp/node_modules install-go-tools
