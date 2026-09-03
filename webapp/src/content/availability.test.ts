@@ -15,6 +15,7 @@ function makeModule(id: string, requiresPlugins?: string[]): Module {
         title: id,
         summary: '',
         steps: [],
+        minutes: 1,
         requiresPlugins,
     };
 }

@@ -107,6 +107,10 @@ make
 - Run `make test` to run the test suite
 - Run `make watch` to rebuild the webapp on change (then `make deploy-from-watch` to install)
 
+### Continuous Integration
+
+Pushes to `master`/`main` and pull requests run lint, tests, and a plugin build on GitHub Actions, using the same [plugin-ci](https://github.com/mattermost/actions-workflows/blob/main/.github/workflows/plugin-ci.yml) workflow as the [Mattermost plugin starter template](https://github.com/mattermost/mattermost-plugin-starter-template).
+
 ### Project Layout
 
 | Path | Purpose |

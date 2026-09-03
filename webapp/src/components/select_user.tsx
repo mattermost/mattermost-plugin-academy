@@ -1,12 +1,6 @@
 // Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
 
-import React, {useCallback, useEffect, useState} from 'react';
-import AsyncSelect from 'react-select/async';
-import type {MultiValue, StylesConfig} from 'react-select';
-
-import type {UserProfile} from '@mattermost/types/users';
-
 import {
     getAutocompleteAllUsers,
     getProfilesByIds,
@@ -15,6 +9,11 @@ import {
     getTeamsByIds,
     searchTeams,
 } from 'client/mm_client';
+import React, {useCallback, useEffect, useState} from 'react';
+import type {MultiValue, StylesConfig} from 'react-select';
+import AsyncSelect from 'react-select/async';
+
+import type {UserProfile} from '@mattermost/types/users';
 
 import './select_user.scss';
 

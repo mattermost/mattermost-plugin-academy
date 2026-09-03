@@ -4,9 +4,10 @@
 import {existsSync} from 'fs';
 import path from 'path';
 
-import {ICON_NAMES} from 'components/icons';
 import {GUIDE_LIST, guideMinutes} from 'content';
 import type {Guide, Module} from 'content/types';
+
+import {ICON_NAMES} from 'components/icons';
 
 const ASSET_ROOT = path.resolve(__dirname, '../../../public/guides/assets');
 

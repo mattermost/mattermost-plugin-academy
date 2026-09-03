@@ -1,7 +1,15 @@
 // Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
 
-import React, {useEffect, useMemo, useRef, useState} from 'react';
+import {
+    appendRangeQuery,
+    boundsForPreset,
+    DATE_RANGE_PRESETS,
+    formatPresetSublabel,
+    labelForPreset,
+    localDayWindowForPreset,
+    type DateRangePresetId,
+} from 'admin/date_range';
 import {
     CategoryScale,
     Chart,
@@ -13,19 +21,9 @@ import {
     PointElement,
     Tooltip,
 } from 'chart.js';
-
 import {GUIDES} from 'guides';
 import manifest from 'manifest';
-
-import {
-    appendRangeQuery,
-    boundsForPreset,
-    DATE_RANGE_PRESETS,
-    formatPresetSublabel,
-    labelForPreset,
-    localDayWindowForPreset,
-    type DateRangePresetId,
-} from 'admin/date_range';
+import React, {useEffect, useMemo, useRef, useState} from 'react';
 
 import OutlinedFilterMenu from './outlined_filter_menu';
 
@@ -126,7 +124,7 @@ async function downloadCompletionsCSV(guideIds: string[], preset: DateRangePrese
 
     const blob = await res.blob();
     const disposition = res.headers.get('Content-Disposition') || '';
-    const match = /filename="?([^";]+)"?/i.exec(disposition);
+    const match = (/filename="?([^";]+)"?/i).exec(disposition);
     const filename = match?.[1] || `academy-completions-${new Date().toISOString().slice(0, 10)}.csv`;
 
     const url = URL.createObjectURL(blob);

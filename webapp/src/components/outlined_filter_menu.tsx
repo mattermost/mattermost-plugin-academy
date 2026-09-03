@@ -10,8 +10,10 @@ export type OutlinedFilterMenuItem = {
     label: React.ReactNode;
     sublabel?: React.ReactNode;
     disabled?: boolean;
+
     /** Checkbox leading icon state (Columns-style). */
     checked?: boolean;
+
     /** Trailing checkmark (Duration-style selected item). */
     selected?: boolean;
     onClick?: () => void;
@@ -26,6 +28,7 @@ type Props = {
     menuWidth?: number;
     wide?: boolean;
     items: OutlinedFilterMenuItem[];
+
     /** Optional footer note under a separator (Duration-style). */
     footer?: React.ReactNode;
 };
@@ -148,6 +151,7 @@ export default function OutlinedFilterMenu(props: Props) {
                                         return;
                                     }
                                     item.onClick?.();
+
                                     // Keep multi-select menus open; close single-select after pick.
                                     if (typeof item.checked !== 'boolean') {
                                         setOpen(false);

@@ -2,6 +2,8 @@
 // See LICENSE.txt for license information.
 
 import {ACADEMY_BASE_PATH, getGuide, routes} from 'content';
+import {useAcademyAccess} from 'hooks/use_academy_access';
+import {useAvailableGuides} from 'hooks/use_available_guides';
 import React from 'react';
 import {BrowserRouter, Redirect, Route, Switch} from 'react-router-dom';
 
@@ -12,8 +14,6 @@ import GuideRedirect from 'components/academy/guide_redirect';
 import ModulePage from 'components/academy/module_page';
 import AcademyAccessDenied from 'components/academy_access_denied';
 import {LOADING_TEXTURE_URL} from 'components/icons';
-import {useAcademyAccess} from 'hooks/use_academy_access';
-import {useAvailableGuides} from 'hooks/use_available_guides';
 
 import './app.scss';
 

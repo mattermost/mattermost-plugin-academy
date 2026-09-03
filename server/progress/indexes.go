@@ -5,6 +5,7 @@ package progress
 
 import (
 	"encoding/json"
+	"slices"
 	"sort"
 	"strings"
 )
@@ -46,10 +47,8 @@ func appendUniqueID(oldValue []byte, id string) ([]string, error) {
 			return nil, err
 		}
 	}
-	for _, existing := range ids {
-		if existing == id {
-			return ids, nil
-		}
+	if slices.Contains(ids, id) {
+		return ids, nil
 	}
 	ids = append(ids, id)
 	sort.Strings(ids)

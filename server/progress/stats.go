@@ -130,11 +130,12 @@ func AggregateCompletionsOverTime(completions []CompletionEvent, q CompletionsOv
 	}
 
 	var seriesStart time.Time
-	if q.From != nil {
+	switch {
+	case q.From != nil:
 		seriesStart = bucketStart(time.Unix(*q.From, 0), bucket)
-	} else if hasMin {
+	case hasMin:
 		seriesStart = time.Unix(minStart, 0).UTC()
-	} else {
+	default:
 		return result
 	}
 

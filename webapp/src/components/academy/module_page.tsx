@@ -5,8 +5,8 @@ import {routes} from 'content';
 import React, {useCallback, useMemo, useState} from 'react';
 import {Link, Redirect, useHistory, useParams} from 'react-router-dom';
 
-import {GuideFooter} from 'components/academy/guide_footer';
 import {useGuideContext} from 'components/academy/guide_context';
+import {GuideFooter} from 'components/academy/guide_footer';
 import {Checklist, CommandGroups, StepList, TierList, VariantTabs} from 'components/academy/module_blocks';
 import RichText from 'components/academy/rich_text';
 import {AcademyIcon} from 'components/icons';
@@ -25,16 +25,15 @@ export default function ModulePage() {
     const [saving, setSaving] = useState(false);
 
     const index = guide.modules.findIndex((m) => m.id === moduleId);
-    if (index < 0) {
-        return <Redirect to={routes.guide(guide.id)}/>;
-    }
-
-    const mod = guide.modules[index];
+    const mod = index >= 0 ? guide.modules[index] : undefined;
     const prev = index > 0 ? guide.modules[index - 1] : null;
-    const next = index < guide.modules.length - 1 ? guide.modules[index + 1] : null;
-    const isLast = !next;
+    const next = index >= 0 && index < guide.modules.length - 1 ? guide.modules[index + 1] : null;
+    const isLast = Boolean(mod) && !next;
 
     const onComplete = useCallback(async () => {
+        if (!mod) {
+            return;
+        }
         setSaving(true);
         try {
             await completeModule(mod.id);
@@ -46,44 +45,52 @@ export default function ModulePage() {
         } finally {
             setSaving(false);
         }
-    }, [completeModule, guide.id, history, isLast, mod.id, next]);
+    }, [completeModule, guide.id, history, isLast, mod, next]);
 
-    const footer = useMemo(() => (
-        <div className='academy-module__footer'>
-            {prev ? (
-                <Link
-                    className='academy-btn academy-btn--tertiary'
-                    to={routes.module(guide.id, prev.id)}
+    const footer = useMemo(() => {
+        if (!mod) {
+            return null;
+        }
+        return (
+            <div className='academy-module__footer'>
+                {prev ? (
+                    <Link
+                        className='academy-btn academy-btn--tertiary'
+                        to={routes.module(guide.id, prev.id)}
+                    >
+                        <AcademyIcon
+                            name='arrow-left'
+                            size={16}
+                        />
+                        {'Back'}
+                    </Link>
+                ) : (
+                    <Link
+                        className='academy-btn academy-btn--tertiary'
+                        to={routes.catalog}
+                    >
+                        <AcademyIcon
+                            name='arrow-left'
+                            size={16}
+                        />
+                        {'All guides'}
+                    </Link>
+                )}
+                <button
+                    type='button'
+                    className='academy-btn academy-btn--primary'
+                    onClick={onComplete}
+                    disabled={saving}
                 >
-                    <AcademyIcon
-                        name='arrow-left'
-                        size={16}
-                    />
-                    {'Back'}
-                </Link>
-            ) : (
-                <Link
-                    className='academy-btn academy-btn--tertiary'
-                    to={routes.catalog}
-                >
-                    <AcademyIcon
-                        name='arrow-left'
-                        size={16}
-                    />
-                    {'All guides'}
-                </Link>
-            )}
-            <button
-                type='button'
-                className='academy-btn academy-btn--primary'
-                onClick={onComplete}
-                disabled={saving}
-            >
-                {completeLabel(completed.has(mod.id), isLast)}
-            </button>
-        </div>
-    ), [completed, guide.id, isLast, mod.id, onComplete, prev, saving]);
+                    {completeLabel(completed.has(mod.id), isLast)}
+                </button>
+            </div>
+        );
+    }, [completed, guide.id, isLast, mod, onComplete, prev, saving]);
 
+    if (!mod) {
+        return <Redirect to={routes.guide(guide.id)}/>;
+    }
 
     return (
         <div className='academy-module'>

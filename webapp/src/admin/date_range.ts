@@ -11,8 +11,10 @@
  */
 
 export type DateRangeBounds = {
+
     /** Inclusive lower bound (unix seconds). Omit for all-time start. */
     from?: number;
+
     /** Exclusive upper bound (unix seconds). Omit to mean "now" on the server. */
     to?: number;
 };
@@ -40,6 +42,7 @@ export const DATE_RANGE_PRESETS: DateRangePreset[] = [
 export type DayWindow = {
     start: Date;
     end: Date;
+
     /** When true, format start as month/year only (Users page Last 6 months style). */
     startMonthYearOnly?: boolean;
 };

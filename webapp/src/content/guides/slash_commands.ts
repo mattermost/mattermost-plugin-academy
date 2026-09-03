@@ -4,6 +4,7 @@
 import type {Guide} from 'content/types';
 
 const slashCommands: Guide = {
+
     // Renaming this would orphan saved progress and the asset folder, so the
     // id still mentions workflow automation after that content moved out.
     id: 'slash-command-workflow-automation-quick-start',

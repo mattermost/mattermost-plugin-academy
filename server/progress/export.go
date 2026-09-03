@@ -22,7 +22,7 @@ func parseCompletionsQuery(r *http.Request) (CompletionsOverTimeQuery, error) {
 	}
 
 	if guides := strings.TrimSpace(r.URL.Query().Get("guides")); guides != "" {
-		for _, id := range strings.Split(guides, ",") {
+		for id := range strings.SplitSeq(guides, ",") {
 			id = strings.TrimSpace(id)
 			if id == "" {
 				continue
@@ -108,13 +108,10 @@ func (h *Handler) serveCompletionsExport(w http.ResponseWriter, r *http.Request)
 		}
 		const chunk = 200
 		for i := 0; i < len(ids); i += chunk {
-			end := i + chunk
-			if end > len(ids) {
-				end = len(ids)
-			}
-			users, getErr := h.store.client.User.ListByUserIDs(ids[i:end])
+			end := min(i+chunk, len(ids))
+			users, getErr := h.platform.ListByUserIDs(ids[i:end])
 			if getErr != nil {
-				h.store.client.Log.Warn("Failed to load users for completions export", "error", getErr.Error())
+				h.logWarn("Failed to load users for completions export", "error", getErr.Error())
 				break
 			}
 			for _, u := range users {

@@ -2,9 +2,8 @@
 // See LICENSE.txt for license information.
 
 import {Client4 as Client4Class} from '@mattermost/client';
-
-import type {UserProfile} from '@mattermost/types/users';
 import type {NotPagedTeamSearchOpts, Team} from '@mattermost/types/teams';
+import type {UserProfile} from '@mattermost/types/users';
 
 const Client4 = new Client4Class();
 

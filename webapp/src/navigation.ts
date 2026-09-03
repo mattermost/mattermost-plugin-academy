@@ -9,13 +9,7 @@ type BrowserHistory = {
 };
 
 type ProductStore = {
-    getState: () => {
-        plugins?: {
-            components?: {
-                Product?: Array<{pluginId?: string}>;
-            };
-        };
-    };
+    getState: () => unknown;
     subscribe: (listener: () => void) => () => void;
 };
 
@@ -71,7 +65,14 @@ export function isAcademyLocation(pathname = window.location.pathname) {
 }
 
 function academyProductRegistered(store: ProductStore, pluginId: string) {
-    const products = store.getState().plugins?.components?.Product;
+    const state = store.getState() as {
+        plugins?: {
+            components?: {
+                Product?: Array<{pluginId?: string}>;
+            };
+        };
+    };
+    const products = state.plugins?.components?.Product;
     return Boolean(products?.some((product) => product.pluginId === pluginId));
 }
 

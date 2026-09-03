@@ -1,11 +1,11 @@
 // Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
 
+import {fetchPluginSettings} from 'client/settings';
 import type {Store} from 'redux';
 
 import type {GlobalState} from '@mattermost/types/store';
 
-import {fetchPluginSettings} from 'client/settings';
 import type {PluginRegistry} from 'types/mattermost-webapp';
 
 import Plugin from './index';

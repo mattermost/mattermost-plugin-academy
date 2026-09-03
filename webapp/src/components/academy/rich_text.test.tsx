@@ -17,6 +17,7 @@ describe('safeHref', () => {
     });
 
     it('rejects anything that could execute or leave the origin implicitly', () => {
+        // eslint-disable-next-line no-script-url -- asserting that javascript: hrefs are rejected
         expect(safeHref('javascript:alert(1)')).toBeNull();
         expect(safeHref('data:text/html,hi')).toBeNull();
         expect(safeHref('http://example.com')).toBeNull();

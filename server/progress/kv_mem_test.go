@@ -82,10 +82,7 @@ func (m *memKV) ListKeys(page, count int) ([]string, error) {
 	if start >= len(keys) {
 		return []string{}, nil
 	}
-	end := start + count
-	if end > len(keys) {
-		end = len(keys)
-	}
+	end := min(start+count, len(keys))
 	return keys[start:end], nil
 }
 

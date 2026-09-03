@@ -1,12 +1,6 @@
 // Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
 
-import React, {useMemo} from 'react';
-
-import EyeOffOutlineIcon from '@mattermost/compass-icons/components/eye-off-outline';
-
-import type {PluginCustomSettingsComponentProps} from 'types/mattermost-webapp';
-
 import {
     DEFAULT_USER_ACCESS_CONFIG,
     normalizeUserAccessConfig,
@@ -17,6 +11,11 @@ import {GUIDE_LIST} from 'content';
 import {pluginLabel} from 'content/plugins';
 import type {Guide} from 'content/types';
 import {useActivePluginIDs} from 'hooks/use_active_plugins';
+import React, {useMemo} from 'react';
+
+import EyeOffOutlineIcon from '@mattermost/compass-icons/components/eye-off-outline';
+
+import type {PluginCustomSettingsComponentProps} from 'types/mattermost-webapp';
 
 import SelectUser from './select_user';
 

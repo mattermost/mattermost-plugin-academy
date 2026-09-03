@@ -35,7 +35,7 @@ function GuideShell({children}: {children: React.ReactNode}) {
             return;
         }
 
-        const isDone = /\/done\/?$/.test(location.pathname);
+        const isDone = (/\/done\/?$/).test(location.pathname);
         if (isDone || !condensedRef.current) {
             root.scrollTop = 0;
             return;
@@ -133,7 +133,8 @@ function GuideShell({children}: {children: React.ReactNode}) {
                         <header
                             ref={headerRef}
                             className='academy-header academy-header--in-scroll'
-                        >                            <div
+                        >
+                            <div
                                 className='academy-header__texture'
                                 aria-hidden={true}
                             />

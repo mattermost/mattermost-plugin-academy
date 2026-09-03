@@ -3,15 +3,15 @@
 
 import {fetchAllProgress} from 'client/progress';
 import type {ProgressRecord} from 'client/progress';
+import {useAcademyAccess} from 'hooks/use_academy_access';
+import {useAvailableGuides} from 'hooks/use_available_guides';
+import {navigateToAcademy, navigateToGuide} from 'navigation';
 import React, {useEffect, useState} from 'react';
 
 import GuideCard, {guideCardCta} from 'components/academy/guide_card';
 import HeaderProgress from 'components/academy/header_progress';
 import AcademyAccessDenied from 'components/academy_access_denied';
 import {LOADING_TEXTURE_URL} from 'components/icons';
-import {useAcademyAccess} from 'hooks/use_academy_access';
-import {useAvailableGuides} from 'hooks/use_available_guides';
-import {navigateToAcademy, navigateToGuide} from 'navigation';
 
 import './app.scss';
 import './academy_rhs.scss';

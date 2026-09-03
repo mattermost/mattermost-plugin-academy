@@ -1,11 +1,10 @@
 // Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
 
+import {selectActivePluginIDs} from 'client/active_plugins';
 import {useSelector} from 'react-redux';
 
 import type {GlobalState} from '@mattermost/types/store';
-
-import {selectActivePluginIDs} from 'client/active_plugins';
 
 /**
  * Plugin IDs currently running, or null when the client cannot tell.

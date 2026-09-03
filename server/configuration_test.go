@@ -13,9 +13,9 @@ import (
 
 func TestTruthyUnmarshal(t *testing.T) {
 	cases := []struct {
-		raw      string
-		want     Truthy
-		wantErr  bool
+		raw     string
+		want    Truthy
+		wantErr bool
 	}{
 		{`true`, true, false},
 		{`false`, false, false},

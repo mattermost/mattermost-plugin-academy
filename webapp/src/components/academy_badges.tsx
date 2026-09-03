@@ -2,6 +2,7 @@
 // See LICENSE.txt for license information.
 
 /* eslint-disable no-restricted-imports -- plugins cannot import host OverlayTrigger */
+import {fetchPluginSettings} from 'client/settings';
 import {badgeSealURL} from 'content';
 import {GUIDES} from 'guides';
 import manifest from 'manifest';
@@ -11,8 +12,6 @@ import {OverlayTrigger} from 'react-bootstrap';
 /* eslint-enable no-restricted-imports */
 
 import type {UserProfile} from '@mattermost/types/users';
-
-import {fetchPluginSettings} from 'client/settings';
 
 import {AcademyBadgeTooltip, formatBadgeEarnedAt} from 'components/academy_badge_tooltip';
 import {AcademyIcon} from 'components/icons';

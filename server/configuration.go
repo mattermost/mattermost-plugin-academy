@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"reflect"
+	"slices"
 	"strings"
 
 	"github.com/pkg/errors"
@@ -159,12 +160,7 @@ func (c *configuration) disabledGuideIDs() []string {
 }
 
 func (c *configuration) guideEnabled(guideID string) bool {
-	for _, id := range c.disabledGuideIDs() {
-		if id == guideID {
-			return false
-		}
-	}
-	return true
+	return !slices.Contains(c.disabledGuideIDs(), guideID)
 }
 
 // getConfiguration retrieves the active configuration under lock, making it safe to use

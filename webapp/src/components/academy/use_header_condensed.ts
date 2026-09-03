@@ -32,6 +32,7 @@ export function useHeaderCondensed(
             {
                 root,
                 threshold: 0,
+
                 // Trip slightly before the sentinel fully leaves, so the compact
                 // bar appears as the hero clears the top of the scrollport.
                 rootMargin: '0px 0px 0px 0px',

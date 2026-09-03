@@ -4,14 +4,14 @@
 import {fetchAllProgress} from 'client/progress';
 import type {ProgressRecord} from 'client/progress';
 import type {Audience} from 'content/types';
+import {useAvailableGuides} from 'hooks/use_available_guides';
+import {navigateToChannels} from 'navigation';
 import React, {useEffect, useMemo, useRef, useState} from 'react';
 
 import GuideCard, {guideCardCta} from 'components/academy/guide_card';
 import HeaderProgress from 'components/academy/header_progress';
 import {useHeaderCondensed} from 'components/academy/use_header_condensed';
 import {AcademyIcon, AcademyProductIcon} from 'components/icons';
-import {useAvailableGuides} from 'hooks/use_available_guides';
-import {navigateToChannels} from 'navigation';
 
 type Filter = 'all' | Audience;
 

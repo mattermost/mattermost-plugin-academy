@@ -1,6 +1,8 @@
 // Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
 
+import {setClientSiteURL} from 'client/mm_client';
+import {fetchPluginSettings} from 'client/settings';
 import manifest from 'manifest';
 import {discardAcademyRestore, isAcademyLocation, leaveAcademyForReload, navigateToAcademy, navigateToChannels, restoreAcademyAfterReload, watchAcademyReload} from 'navigation';
 import React from 'react';
@@ -8,8 +10,6 @@ import type {Store} from 'redux';
 
 import type {GlobalState} from '@mattermost/types/store';
 
-import {setClientSiteURL} from 'client/mm_client';
-import {fetchPluginSettings} from 'client/settings';
 import AcademyBadges from 'components/academy_badges';
 import AcademyHelpMenuItem from 'components/academy_help_menu_item';
 import AcademyRHS from 'components/academy_rhs';
