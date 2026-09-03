@@ -61,4 +61,4 @@ formatters:
           replacement: any
     goimports:
       local-prefixes:
-        - github.com/esethna/mm-academy
+        - github.com/mattermost/mattermost-plugin-academy

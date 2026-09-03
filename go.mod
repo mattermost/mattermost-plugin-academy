@@ -1,4 +1,4 @@
-module github.com/esethna/mm-academy
+module github.com/mattermost/mattermost-plugin-academy
 
 go 1.25
 

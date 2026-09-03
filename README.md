@@ -1,4 +1,4 @@
-# Mattermost Academy [![Download Latest Release](https://img.shields.io/badge/Download-Latest%20Release-blue)](https://github.com/esethna/mattermost-plugin-academy/releases)
+# Mattermost Academy [![Download Latest Release](https://img.shields.io/badge/Download-Latest%20Release-blue)](https://github.com/mattermost/mattermost-plugin-academy/releases)
 
 Short, interactive walk-through guides that help end-users and admins get more done in [Mattermost](https://github.com/mattermost/mattermost) — delivered as a full-screen product experience.
 
@@ -38,7 +38,7 @@ Short, interactive walk-through guides that help end-users and admins get more d
 
 ## Installation
 
-1. [Download a release bundle](https://github.com/esethna/mattermost-plugin-academy/releases). 
+1. [Download a release bundle](https://github.com/mattermost/mattermost-plugin-academy/releases). 
 2. Upload and enable the plugin in **System Console → Plugins**
 3. Optionally configure profile badges, user access, and review guide completions under **System Console → Plugins → Mattermost Academy**
 
@@ -76,7 +76,7 @@ After installation:
 
 3. Clone the repository:
 ```bash
-git clone https://github.com/esethna/mattermost-plugin-academy.git
+git clone https://github.com/mattermost/mattermost-plugin-academy.git
 cd mattermost-plugin-academy
 ```
 

@@ -2,8 +2,8 @@
     "id": "com.mattermost.academy",
     "name": "Mattermost Academy",
     "description": "Interactive learning guides for Mattermost end-users and admins.",
-    "homepage_url": "https://github.com/esethna/mm-academy",
-    "support_url": "https://github.com/esethna/mm-academy/issues",
+    "homepage_url": "https://github.com/mattermost/mattermost-plugin-academy",
+    "support_url": "https://github.com/mattermost/mattermost-plugin-academy/issues",
     "icon_path": "assets/plugin-icon.png",
     "min_server_version": "10.3.0",
     "server": {

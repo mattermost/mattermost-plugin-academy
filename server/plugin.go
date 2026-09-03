@@ -14,8 +14,8 @@ import (
 	"github.com/mattermost/mattermost/server/public/plugin"
 	"github.com/mattermost/mattermost/server/public/pluginapi"
 
-	"github.com/esethna/mm-academy/server/command"
-	"github.com/esethna/mm-academy/server/progress"
+	"github.com/mattermost/mattermost-plugin-academy/server/command"
+	"github.com/mattermost/mattermost-plugin-academy/server/progress"
 )
 
 // Plugin implements the interface expected by the Mattermost server.
