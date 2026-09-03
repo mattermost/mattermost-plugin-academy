@@ -17,7 +17,7 @@ func (h *Handler) ServeAdminHTTP(w http.ResponseWriter, r *http.Request) {
 		writeError(w, http.StatusUnauthorized, "unauthorized")
 		return
 	}
-	if !h.store.client.User.HasPermissionTo(userID, model.PermissionManageSystem) {
+	if h.platform == nil || !h.platform.HasPermissionTo(userID, model.PermissionManageSystem) {
 		writeError(w, http.StatusForbidden, "forbidden")
 		return
 	}

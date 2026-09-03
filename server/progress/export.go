@@ -96,7 +96,7 @@ func (h *Handler) serveCompletionsExport(w http.ResponseWriter, r *http.Request)
 	})
 
 	usersByID := map[string]*model.User{}
-	if len(filtered) > 0 {
+	if h.platform != nil && len(filtered) > 0 {
 		ids := make([]string, 0, len(filtered))
 		seen := map[string]struct{}{}
 		for _, e := range filtered {
@@ -126,7 +126,7 @@ func (h *Handler) serveCompletionsExport(w http.ResponseWriter, r *http.Request)
 	w.WriteHeader(http.StatusOK)
 
 	if err := writeCompletionsCSV(w, filtered, usersByID); err != nil {
-		h.store.client.Log.Warn("Failed writing completions CSV", "error", err.Error())
+		h.logWarn("Failed writing completions CSV", "error", err.Error())
 	}
 }
 

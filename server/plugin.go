@@ -38,7 +38,7 @@ func (p *Plugin) OnActivate() error {
 	if err := store.EnsureIndexes(); err != nil {
 		return fmt.Errorf("failed to migrate progress indexes: %w", err)
 	}
-	p.progressHandler = progress.NewHandler(store, p)
+	p.progressHandler = progress.NewHandler(store, p, p.client)
 	return nil
 }
 

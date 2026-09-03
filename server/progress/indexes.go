@@ -255,3 +255,34 @@ func (s *Store) rebuildIndexes() error {
 	}
 	return nil
 }
+
+// ListAllCompletions returns every ever-completed guide across all users.
+func (s *Store) ListAllCompletions() ([]CompletionEvent, error) {
+	userIDs, err := s.listCompleters()
+	if err != nil {
+		return nil, err
+	}
+
+	out := make([]CompletionEvent, 0)
+	for _, userID := range userIDs {
+		if !validUserID(userID) {
+			continue
+		}
+		completions, err := s.ListCompletionsForUser(userID)
+		if err != nil {
+			return nil, err
+		}
+		for _, c := range completions {
+			if c.CompletedAt <= 0 {
+				continue
+			}
+			out = append(out, CompletionEvent{
+				UserID:      userID,
+				GuideID:     c.GuideID,
+				CompletedAt: c.CompletedAt,
+			})
+		}
+	}
+
+	return out, nil
+}

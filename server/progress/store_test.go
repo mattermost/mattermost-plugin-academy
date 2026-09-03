@@ -10,6 +10,36 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
+func TestNormalizeIDs(t *testing.T) {
+	assert.Equal(t, []string{"a", "b"}, normalizeIDs([]string{" b ", "a", "b", "", "a"}))
+}
+
+func TestContainsAll(t *testing.T) {
+	assert.False(t, containsAll([]string{"a"}, nil))
+	assert.False(t, containsAll([]string{"a"}, []string{}))
+	assert.True(t, containsAll([]string{"a", "b", "c"}, []string{"c", "a"}))
+	assert.False(t, containsAll([]string{"a", "b"}, []string{"a", "c"}))
+}
+
+func TestPutRequestCompleteness(t *testing.T) {
+	have := normalizeIDs([]string{"ai-chat", "summarize-threads"})
+	need := normalizeIDs([]string{"summarize-threads", "ai-chat", "ai-search"})
+	require.False(t, containsAll(have, need))
+
+	have = normalizeIDs(append(have, "ai-search"))
+	require.True(t, containsAll(have, need))
+}
+
+func TestGetEmptyRecord(t *testing.T) {
+	s := newTestStore(newMemKV())
+	rec, err := s.Get("user1", "boards")
+	require.NoError(t, err)
+	assert.Equal(t, 1, rec.V)
+	assert.Equal(t, "boards", rec.GuideID)
+	assert.Empty(t, rec.CompletedModuleIDs)
+	assert.False(t, rec.EverCompleted)
+}
+
 func newTestStore(kv *memKV) *Store {
 	return &Store{kv: kv}
 }
