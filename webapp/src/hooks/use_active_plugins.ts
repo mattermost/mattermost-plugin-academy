@@ -1,33 +1,16 @@
 // Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
 
-import {fetchPluginSettings} from 'client/settings';
-import {useEffect, useState} from 'react';
+import {useSelector} from 'react-redux';
+
+import type {GlobalState} from '@mattermost/types/store';
+
+import {selectActivePluginIDs} from 'client/active_plugins';
 
 /**
- * Plugin IDs currently running, or null while loading or when the server
- * could not tell us.
+ * Plugin IDs currently running, or null when the client cannot tell.
  */
 export function useActivePluginIDs(): {activePluginIDs: string[] | null} {
-    const [activePluginIDs, setActivePluginIDs] = useState<string[] | null>(null);
-
-    useEffect(() => {
-        let cancelled = false;
-        fetchPluginSettings().
-            then((settings) => {
-                if (!cancelled) {
-                    setActivePluginIDs(settings.activePluginIDs);
-                }
-            }).
-            catch(() => {
-                if (!cancelled) {
-                    setActivePluginIDs(null);
-                }
-            });
-        return () => {
-            cancelled = true;
-        };
-    }, []);
-
+    const activePluginIDs = useSelector((state: GlobalState) => selectActivePluginIDs(state));
     return {activePluginIDs};
 }

@@ -191,47 +191,29 @@ func FilterCompletionEvents(completions []CompletionEvent, q CompletionsOverTime
 
 // ListAllCompletions returns every ever-completed guide across all users.
 func (s *Store) ListAllCompletions() ([]CompletionEvent, error) {
-	out := make([]CompletionEvent, 0)
+	userIDs, err := s.listCompleters()
+	if err != nil {
+		return nil, err
+	}
 
-	for page := 0; ; page++ {
-		keys, err := s.client.KV.ListKeys(page, 100)
+	out := make([]CompletionEvent, 0)
+	for _, userID := range userIDs {
+		if !validUserID(userID) {
+			continue
+		}
+		completions, err := s.ListCompletionsForUser(userID)
 		if err != nil {
 			return nil, err
 		}
-		if len(keys) == 0 {
-			break
-		}
-		for _, key := range keys {
-			if !strings.HasPrefix(key, keyPrefix) {
-				continue
-			}
-			rest := strings.TrimPrefix(key, keyPrefix)
-			// progress:{userID}:{guideID}
-			parts := strings.SplitN(rest, ":", 2)
-			if len(parts) != 2 || parts[0] == "" || parts[1] == "" {
-				continue
-			}
-			userID := parts[0]
-			guideID := parts[1]
-			if !validUserID(userID) || !validGuideID(guideID) {
-				continue
-			}
-
-			var rec Record
-			if err := s.client.KV.Get(key, &rec); err != nil {
-				return nil, err
-			}
-			if !rec.EverCompleted || rec.CompletedAt <= 0 {
+		for _, c := range completions {
+			if c.CompletedAt <= 0 {
 				continue
 			}
 			out = append(out, CompletionEvent{
 				UserID:      userID,
-				GuideID:     guideID,
-				CompletedAt: rec.CompletedAt,
+				GuideID:     c.GuideID,
+				CompletedAt: c.CompletedAt,
 			})
-		}
-		if len(keys) < 100 {
-			break
 		}
 	}
 

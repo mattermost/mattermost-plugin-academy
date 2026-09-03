@@ -107,6 +107,31 @@ func TestWriteCompletionsCSV(t *testing.T) {
 	assert.Contains(t, out, "uid1,alice,a@example.com,Alice,A,ai-quick-start,")
 }
 
+func TestWriteCompletionsCSVSanitizesFormulas(t *testing.T) {
+	var buf bytes.Buffer
+	err := writeCompletionsCSV(&buf, []CompletionEvent{
+		{UserID: "uid1", GuideID: "ai-quick-start", CompletedAt: 1720000000},
+	}, map[string]*model.User{
+		"uid1": {Id: "uid1", Username: "=cmd", Email: "+evil@example.com", FirstName: "@Alice", LastName: "-1+1"},
+	})
+	require.NoError(t, err)
+
+	out := buf.String()
+	assert.Contains(t, out, "'=cmd")
+	assert.Contains(t, out, "'+evil@example.com")
+	assert.Contains(t, out, "'@Alice")
+	assert.Contains(t, out, "'-1+1")
+	assert.NotContains(t, out, ",=cmd,")
+}
+
+func TestSanitizeCSVCell(t *testing.T) {
+	assert.Equal(t, "alice", sanitizeCSVCell("alice"))
+	assert.Equal(t, "'=cmd|' /C calc'!A0", sanitizeCSVCell("=cmd|' /C calc'!A0"))
+	assert.Equal(t, "'+1+1", sanitizeCSVCell("+1+1"))
+	assert.Equal(t, "'\tformula", sanitizeCSVCell("\tformula"))
+	assert.Equal(t, "", sanitizeCSVCell(""))
+}
+
 func TestFilterCompletionEvents(t *testing.T) {
 	now := time.Date(2026, 7, 20, 12, 0, 0, 0, time.UTC)
 	from := time.Date(2026, 7, 18, 0, 0, 0, 0, time.UTC).Unix()

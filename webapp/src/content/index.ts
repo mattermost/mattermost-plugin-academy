@@ -40,7 +40,7 @@ export function guideMinutes(guide: Guide): number {
 }
 
 /**
- * A null `activePluginIDs` means the server could not determine what is
+ * A null `activePluginIDs` means the client could not determine what is
  * running, so nothing is filtered. An empty array means nothing is active.
  */
 export function meetsPluginRequirements(

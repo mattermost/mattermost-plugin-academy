@@ -22,6 +22,9 @@ const (
 // Completed modules are stored by stable string IDs (not indexes) so guides
 // can add, remove, or reorder modules without invalidating saved progress.
 type Record struct {
+	// V is the schema version of this saved record (always 1 today).
+	// Get treats V == 0 with no other fields as an empty KV slot. Bump V if
+	// the JSON shape changes so readers can migrate older records in place.
 	V                  int      `json:"v"`
 	GuideID            string   `json:"guideId"`
 	CompletedModuleIDs []string `json:"completedModuleIds"`
@@ -43,18 +46,18 @@ type PutRequest struct {
 // Store reads/writes progress in the plugin KV store.
 type Store struct {
 	client *pluginapi.Client
+	kv     kvAPI
 }
 
 func NewStore(client *pluginapi.Client) *Store {
-	return &Store{client: client}
+	return &Store{
+		client: client,
+		kv:     pluginKV{kv: &client.KV},
+	}
 }
 
 func progressKey(userID, guideID string) string {
 	return keyPrefix + userID + ":" + guideID
-}
-
-func statsKey(guideID string) string {
-	return statsKeyPrefix + guideID
 }
 
 func normalizeIDs(ids []string) []string {
@@ -94,9 +97,11 @@ func containsAll(have []string, need []string) bool {
 // Get returns progress for a user/guide, or an empty record if none exists.
 func (s *Store) Get(userID, guideID string) (Record, error) {
 	var rec Record
-	if err := s.client.KV.Get(progressKey(userID, guideID), &rec); err != nil {
+	if err := s.kv.Get(progressKey(userID, guideID), &rec); err != nil {
 		return Record{}, err
 	}
+	// Unset JSON unmarshals to the zero value (V == 0). That empty record
+	// means this user has no saved progress for the guide yet.
 	if rec.V == 0 && rec.GuideID == "" && len(rec.CompletedModuleIDs) == 0 {
 		return Record{
 			V:                  1,
@@ -123,68 +128,7 @@ type CompletionEvent struct {
 	CompletedAt int64  `json:"completedAt"`
 }
 
-// ListForUser returns progress for all guides for a user (prefix scan).
-func (s *Store) ListForUser(userID string) (map[string]Record, error) {
-	prefix := keyPrefix + userID + ":"
-	out := map[string]Record{}
-
-	// ListKeys' WithPrefix filters within each page of all keys, so we page the
-	// full keyspace and match the prefix ourselves to avoid stopping early.
-	for page := 0; ; page++ {
-		keys, err := s.client.KV.ListKeys(page, 100)
-		if err != nil {
-			return nil, err
-		}
-		if len(keys) == 0 {
-			break
-		}
-		for _, key := range keys {
-			if !strings.HasPrefix(key, prefix) {
-				continue
-			}
-			guideID := strings.TrimPrefix(key, prefix)
-			if guideID == "" || strings.Contains(guideID, ":") {
-				continue
-			}
-			rec, err := s.Get(userID, guideID)
-			if err != nil {
-				return nil, err
-			}
-			out[guideID] = rec
-		}
-		if len(keys) < 100 {
-			break
-		}
-	}
-	return out, nil
-}
-
-// ListCompletionsForUser returns only guides the user has ever completed.
-func (s *Store) ListCompletionsForUser(userID string) ([]Completion, error) {
-	records, err := s.ListForUser(userID)
-	if err != nil {
-		return nil, err
-	}
-	out := make([]Completion, 0)
-	for guideID, rec := range records {
-		if !rec.EverCompleted {
-			continue
-		}
-		out = append(out, Completion{
-			GuideID:     guideID,
-			CompletedAt: rec.CompletedAt,
-		})
-	}
-	sort.Slice(out, func(i, j int) bool {
-		if out[i].CompletedAt == out[j].CompletedAt {
-			return out[i].GuideID < out[j].GuideID
-		}
-		return out[i].CompletedAt < out[j].CompletedAt
-	})
-	return out, nil
-}
-
-// Put merges completed module IDs and updates ever-completed / stats when appropriate.
+// Put merges completed module IDs and updates ever-completed / indexes when appropriate.
 func (s *Store) Put(userID, guideID string, req PutRequest) (Record, error) {
 	key := progressKey(userID, guideID)
 	now := time.Now().Unix()
@@ -195,7 +139,7 @@ func (s *Store) Put(userID, guideID string, req PutRequest) (Record, error) {
 	var next Record
 	becameComplete := false
 
-	err := s.client.KV.SetAtomicWithRetries(key, func(oldValue []byte) (any, error) {
+	err := s.kv.SetAtomicWithRetries(key, func(oldValue []byte) (any, error) {
 		var prev Record
 		if len(oldValue) > 0 {
 			if err := json.Unmarshal(oldValue, &prev); err != nil {
@@ -225,35 +169,19 @@ func (s *Store) Put(userID, guideID string, req PutRequest) (Record, error) {
 		return Record{}, err
 	}
 
+	if err := s.addGuideID(userID, guideID); err != nil {
+		return Record{}, err
+	}
 	if becameComplete {
-		if err := s.incrementEverCompleted(guideID); err != nil {
-			s.client.Log.Warn("Failed to increment guide completion stats", "guide_id", guideID, "error", err.Error())
+		if err := s.addCompletion(userID, Completion{GuideID: guideID, CompletedAt: next.CompletedAt}); err != nil {
+			return Record{}, err
+		}
+		if err := s.addCompleter(userID); err != nil {
+			return Record{}, err
 		}
 	}
 
 	return next, nil
-}
-
-func (s *Store) incrementEverCompleted(guideID string) error {
-	key := statsKey(guideID)
-	return s.client.KV.SetAtomicWithRetries(key, func(oldValue []byte) (any, error) {
-		var n int64
-		if len(oldValue) > 0 {
-			if err := json.Unmarshal(oldValue, &n); err != nil {
-				return nil, err
-			}
-		}
-		return n + 1, nil
-	})
-}
-
-// EverCompletedCount returns how many users have ever completed the guide.
-func (s *Store) EverCompletedCount(guideID string) (int64, error) {
-	var n int64
-	if err := s.client.KV.Get(statsKey(guideID), &n); err != nil {
-		return 0, err
-	}
-	return n, nil
 }
 
 // Policy exposes the plugin configuration decisions the handler must honour,

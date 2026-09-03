@@ -9,14 +9,22 @@ export type PluginSettings = {
     disabledGuideIDs: string[];
     isAdmin: boolean;
 
-    /** Null means the server could not determine it; treat as "no filtering". */
-    activePluginIDs: string[] | null;
-
     /** When true, show plugin-gated content and admin-audience guides to everyone. */
     testMode: boolean;
 };
 
-export async function fetchPluginSettings(): Promise<PluginSettings> {
+const SETTINGS_TTL_MS = 15000;
+
+let inFlight: Promise<PluginSettings> | null = null;
+let cached: {value: PluginSettings; at: number} | null = null;
+
+/** Test helper: drop the in-memory settings cache. */
+export function resetPluginSettingsCache() {
+    inFlight = null;
+    cached = null;
+}
+
+async function loadPluginSettings(): Promise<PluginSettings> {
     const res = await fetch(`/plugins/${manifest.id}/api/v1/settings`, {
         credentials: 'same-origin',
         headers: {'X-Requested-With': 'XMLHttpRequest'},
@@ -30,7 +38,25 @@ export async function fetchPluginSettings(): Promise<PluginSettings> {
         userAllowed: data.userAllowed !== false,
         disabledGuideIDs: Array.isArray(data.disabledGuideIDs) ? data.disabledGuideIDs : [],
         isAdmin: data.isAdmin === true,
-        activePluginIDs: Array.isArray(data.activePluginIDs) ? data.activePluginIDs : null,
         testMode: data.testMode === true,
     };
+}
+
+export async function fetchPluginSettings(): Promise<PluginSettings> {
+    const now = Date.now();
+    if (cached && now - cached.at < SETTINGS_TTL_MS) {
+        return cached.value;
+    }
+    if (inFlight) {
+        return inFlight;
+    }
+    inFlight = loadPluginSettings().
+        then((value) => {
+            cached = {value, at: Date.now()};
+            return value;
+        }).
+        finally(() => {
+            inFlight = null;
+        });
+    return inFlight;
 }

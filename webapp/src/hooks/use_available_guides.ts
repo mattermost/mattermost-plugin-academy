@@ -1,10 +1,14 @@
 // Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
 
+import {selectActivePluginIDs} from 'client/active_plugins';
 import {fetchPluginSettings} from 'client/settings';
 import {GUIDE_LIST, getGuide, resolveGuide} from 'content';
 import type {Guide, GuideAvailability} from 'content';
 import {useEffect, useMemo, useState} from 'react';
+import {useSelector} from 'react-redux';
+
+import type {GlobalState} from '@mattermost/types/store';
 
 type GuidesState = {
     guides: Guide[];
@@ -27,6 +31,7 @@ const UNKNOWN: Availability = {
 };
 
 function useAvailability(): Availability {
+    const activePluginIDs = useSelector((state: GlobalState) => selectActivePluginIDs(state));
     const [availability, setAvailability] = useState<Availability>(UNKNOWN);
 
     useEffect(() => {
@@ -36,7 +41,7 @@ function useAvailability(): Availability {
                 if (!cancelled) {
                     setAvailability({
                         disabledGuideIDs: settings.disabledGuideIDs,
-                        activePluginIDs: settings.activePluginIDs,
+                        activePluginIDs: null,
                         canSeeAdminGuides: settings.isAdmin || settings.testMode,
                         ignorePluginRequirements: settings.testMode,
                         loading: false,
@@ -53,7 +58,10 @@ function useAvailability(): Availability {
         };
     }, []);
 
-    return availability;
+    return {
+        ...availability,
+        activePluginIDs: availability.ignorePluginRequirements ? null : activePluginIDs,
+    };
 }
 
 /**

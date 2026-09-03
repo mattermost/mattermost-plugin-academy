@@ -58,6 +58,19 @@ func parseCompletionsQuery(r *http.Request) (CompletionsOverTimeQuery, error) {
 	return q, nil
 }
 
+// sanitizeCSVCell prefixes formula-like values so Excel will not execute them.
+func sanitizeCSVCell(s string) string {
+	if s == "" {
+		return s
+	}
+	switch s[0] {
+	case '=', '+', '-', '@', '\t', '\r':
+		return "'" + s
+	default:
+		return s
+	}
+}
+
 func (h *Handler) serveCompletionsExport(w http.ResponseWriter, r *http.Request) {
 	q, err := parseCompletionsQuery(r)
 	if err != nil {
@@ -144,13 +157,13 @@ func writeCompletionsCSV(w io.Writer, events []CompletionEvent, usersByID map[st
 		}
 		completedAt := time.Unix(e.CompletedAt, 0).UTC().Format(time.RFC3339)
 		if err := cw.Write([]string{
-			e.UserID,
-			username,
-			email,
-			first,
-			last,
-			e.GuideID,
-			completedAt,
+			sanitizeCSVCell(e.UserID),
+			sanitizeCSVCell(username),
+			sanitizeCSVCell(email),
+			sanitizeCSVCell(first),
+			sanitizeCSVCell(last),
+			sanitizeCSVCell(e.GuideID),
+			sanitizeCSVCell(completedAt),
 		}); err != nil {
 			return err
 		}

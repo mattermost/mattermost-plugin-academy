@@ -12,6 +12,8 @@ import {OverlayTrigger} from 'react-bootstrap';
 
 import type {UserProfile} from '@mattermost/types/users';
 
+import {fetchPluginSettings} from 'client/settings';
+
 import {AcademyBadgeTooltip, formatBadgeEarnedAt} from 'components/academy_badge_tooltip';
 import {AcademyIcon} from 'components/icons';
 
@@ -43,19 +45,9 @@ export default function AcademyBadges(props: Props) {
 
         (async () => {
             try {
-                const res = await fetch(
-                    `/plugins/${manifest.id}/api/v1/settings`,
-                    {
-                        credentials: 'same-origin',
-                        headers: {'X-Requested-With': 'XMLHttpRequest'},
-                    },
-                );
-                if (!res.ok) {
-                    throw new Error('failed to load settings');
-                }
-                const data = await res.json();
+                const settings = await fetchPluginSettings();
                 if (!cancelled) {
-                    setBadgesEnabled(data.enableProfileBadges !== false);
+                    setBadgesEnabled(settings.enableProfileBadges);
                 }
             } catch {
                 if (!cancelled) {
