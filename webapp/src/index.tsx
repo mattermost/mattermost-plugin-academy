@@ -2,7 +2,7 @@
 // See LICENSE.txt for license information.
 
 import manifest from 'manifest';
-import {discardAcademyRestore, leaveAcademyForReload, navigateToAcademy, restoreAcademyAfterReload, watchAcademyReload} from 'navigation';
+import {discardAcademyRestore, isAcademyLocation, leaveAcademyForReload, navigateToAcademy, navigateToChannels, restoreAcademyAfterReload, watchAcademyReload} from 'navigation';
 import React from 'react';
 import type {Store} from 'redux';
 
@@ -41,6 +41,20 @@ export default class Plugin {
         registry.registerAdminConsoleCustomSetting('UserAccessConfig', AdminUserAccessSetting, {showTitle: false});
         registry.registerAdminConsoleCustomSection('GuideCompletions', AdminGuideCompletionsSection);
 
+        // Mattermost mounts routes as soon as plugin scripts load and does not
+        // wait for initialize() to finish. Register the product before any
+        // await so a refresh of /academy is not treated as a missing team.
+        const productId = registry.registerProduct(
+            '/academy',
+            <AcademyProductIcon/>,
+            'Academy',
+            '/academy',
+            App,
+            () => null,
+            () => null,
+            false,
+        );
+
         let userAllowed = true;
         try {
             const settings = await fetchPluginSettings();
@@ -51,20 +65,13 @@ export default class Plugin {
         }
 
         if (!userAllowed) {
+            registry.unregisterComponent(productId);
             discardAcademyRestore();
+            if (isAcademyLocation()) {
+                navigateToChannels();
+            }
             return;
         }
-
-        registry.registerProduct(
-            '/academy',
-            <AcademyProductIcon/>,
-            'Academy',
-            '/academy',
-            App,
-            () => null,
-            () => null,
-            false,
-        );
 
         restoreAcademyAfterReload();
         this.stopWatchingReload = watchAcademyReload(store, manifest.id);
@@ -118,4 +125,6 @@ declare global {
     }
 }
 
-window.registerPlugin(manifest.id, new Plugin());
+if (typeof window !== 'undefined') {
+    window.registerPlugin(manifest.id, new Plugin());
+}
