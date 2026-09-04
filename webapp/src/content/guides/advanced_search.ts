@@ -269,7 +269,7 @@ const advancedSearch: Guide = {
                 },
                 {
                     title: 'Go further with Agents',
-                    description: 'Semantic search is one part of what Agents can do. The <a href="/academy/guides/ai-quick-start">AI Assistance with Agents</a> guide covers thread and channel summaries, call summaries, message rewrites, and custom agents.',
+                    description: 'Semantic search is one part of what Agents can do. The <a href="/academy/guides/ai-quick-start">AI Acceleration with Agents</a> guide covers thread and channel summaries, call summaries, message rewrites, and custom agents.',
                 },
             ],
         },

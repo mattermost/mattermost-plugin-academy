@@ -66,7 +66,7 @@ flowchart LR
 
 **Shipped guides on master**
 
-- End-user: Collaboration Basics, Productivity Tips, AI Assistance with Agents, Advanced Search Techniques, Project Tracking with Boards, Workflow Automation with Playbooks.
+- End-user: Collaboration Basics, Productivity Tips, AI Acceleration with Agents, Advanced Search Techniques, Project Tracking with Boards, Workflow Automation with Playbooks.
 - Admin: Upgrading Mattermost.
 
 **In-product routes** (SPA under `/academy`, not plugin APIs): catalog; `/guides/:id` (resume); `/guides/:id/modules/:moduleId` (lesson); `/guides/:id/done` (badge).

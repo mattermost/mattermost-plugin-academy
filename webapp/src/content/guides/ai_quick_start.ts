@@ -7,8 +7,8 @@ import type {Guide} from 'content/types';
 const aiQuickStart: Guide = {
     id: 'ai-quick-start',
     requiresPlugins: [PLUGIN_IDS.agents],
-    title: 'AI Assistance with Agents',
-    heroTitle: 'AI Assistance with Agents',
+    title: 'AI Acceleration with Agents',
+    heroTitle: 'AI Acceleration with Agents',
     subtitle: 'Chat, summaries, calls, search, rewrites, and custom agents to accelerate work with full operational context.',
     description: 'Chat, summaries, calls, search, rewrites, and custom agents to accelerate work with full operational context.',
     icon: 'creation-outline',
