@@ -137,7 +137,7 @@ export default function CatalogPage() {
                         <HeaderProgress
                             done={completedGuides}
                             total={availableGuides.length}
-                            label={`${completedGuides} / ${availableGuides.length} guides complete`}
+                            label={`${completedGuides} / ${availableGuides.length} Guides Complete`}
                         />
                     </div>
                 </header>
@@ -176,6 +176,7 @@ export default function CatalogPage() {
                                         key={guide.id}
                                         guide={guide}
                                         done={done}
+                                        everCompleted={progress[guide.id]?.everCompleted}
                                         cta={guideCardCta(done, progress[guide.id]?.everCompleted)}
                                     />
                                 );

@@ -19,6 +19,6 @@ describe('Academy catalog and progress', () => {
         cy.visitAcademy();
         cy.contains('.academy-card', 'Collaboration Basics').
             should('contain', 'Continue').
-            and('contain', '1 / 8 modules');
+            and('contain', '1 / 8 Modules');
     });
 });

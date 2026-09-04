@@ -527,7 +527,7 @@
 
     &__cert-external {
         flex: 0 0 auto;
-        color: rgba(var(--center-channel-color-rgb), 0.64);
+        color: var(--button-bg);
     }
 }
 
@@ -652,6 +652,11 @@
         margin: 0;
         color: rgba(var(--center-channel-color-rgb), 0.72);
         font-size: 13px;
+        line-height: 1.4;
+        display: -webkit-box;
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 3;
+        overflow: hidden;
     }
 
     &__footer {
@@ -663,6 +668,12 @@
         font-size: 12px;
         font-weight: 600;
         color: rgba(var(--center-channel-color-rgb), 0.64);
+    }
+
+    &__status {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
     }
 
     &__cta {

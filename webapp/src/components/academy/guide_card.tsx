@@ -12,12 +12,13 @@ type GuideCardProps = {
     guide: Guide;
     done: number;
     cta: string;
+    everCompleted?: boolean;
     onClick?: () => void;
     compact?: boolean;
 };
 
-function GuideCardBody({guide, done, cta, compact}: GuideCardProps) {
-    const pct = guide.modules.length ? Math.round((done / guide.modules.length) * 100) : 0;
+function GuideCardBody({guide, done, cta, everCompleted, compact}: GuideCardProps) {
+    const pct = everCompleted ? 100 : (guide.modules.length ? Math.round((done / guide.modules.length) * 100) : 0);
     const iconSize = compact ? 22 : 32;
     const minutes = guideMinutes(guide);
 
@@ -43,7 +44,17 @@ function GuideCardBody({guide, done, cta, compact}: GuideCardProps) {
             </div>
             <p className='academy-card__desc'>{guide.description}</p>
             <div className='academy-card__footer'>
-                <span>{`${done} / ${guide.modules.length} modules`}</span>
+                {everCompleted ? (
+                    <span className='academy-card__status'>
+                        <AcademyIcon
+                            name='check'
+                            size={12}
+                        />
+                        {'Completed'}
+                    </span>
+                ) : (
+                    <span>{`${done} / ${guide.modules.length} Modules`}</span>
+                )}
                 <span className='academy-card__cta'>
                     {cta}
                     <AcademyIcon
@@ -66,13 +77,14 @@ function GuideCardBody({guide, done, cta, compact}: GuideCardProps) {
 }
 
 /** Catalog / RHS guide card — Link in-product, button when navigating from host RHS. */
-export default function GuideCard({guide, done, cta, onClick, compact}: GuideCardProps) {
+export default function GuideCard({guide, done, cta, everCompleted, onClick, compact}: GuideCardProps) {
     const className = compact ? 'academy-card academy-card--compact' : 'academy-card';
     const body = (
         <GuideCardBody
             guide={guide}
             done={done}
             cta={cta}
+            everCompleted={everCompleted}
             compact={compact}
         />
     );

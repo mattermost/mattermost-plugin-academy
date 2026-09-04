@@ -154,7 +154,7 @@ function GuideShell({children}: {children: React.ReactNode}) {
                                 <HeaderProgress
                                     done={doneCount}
                                     total={guide.modules.length}
-                                    label={`${doneCount} / ${guide.modules.length} modules complete`}
+                                    label={`${doneCount} / ${guide.modules.length} Modules Complete`}
                                 />
                             </div>
                         </header>

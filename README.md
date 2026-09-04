@@ -22,7 +22,7 @@ Short, interactive walk-through guides that help end-users and admins get more d
 
 - **[Collaboration Basics](webapp/src/content/guides/mattermost_basics.ts)**: Channels, threads, notifications, composing, formatting, slash commands, and shortcuts
 - **[AI Assistance with Agents](webapp/src/content/guides/ai_quick_start.ts)**: Chat, summaries, calls, search, rewrites, and custom agents
-- **[Finding Messages with Search](webapp/src/content/guides/advanced_search.ts)**: Modifiers, date filters, file search, and AI semantic search
+- **[Advanced Search Techniques](webapp/src/content/guides/advanced_search.ts)**: Modifiers, date filters, file search, and AI semantic search
 - **[Project Tracking with Boards](webapp/src/content/guides/boards.ts)**: Boards, cards, properties, views, and channel links
 - **[Workflow Automation with Playbooks](webapp/src/content/guides/playbooks.ts)**: Checklists, status updates, playbook setup, and retrospectives
 

@@ -6,10 +6,10 @@ import type {Guide} from 'content/types';
 
 const advancedSearch: Guide = {
     id: 'advanced-search',
-    title: 'Finding Messages with Search',
-    heroTitle: 'Finding Messages with Search',
-    subtitle: 'Search modifiers, date filters, precision syntax, file search, and AI semantic search — everything you need to find the right message in seconds.',
-    description: 'Search modifiers, date filters, precision syntax, file search, and AI semantic search — find any message fast.',
+    title: 'Advanced Search Techniques',
+    heroTitle: 'Advanced Search Techniques',
+    subtitle: 'Modifiers, date filters, file search, and AI semantic search to find the right message in seconds.',
+    description: 'Modifiers, date filters, file search, and AI semantic search to find the right message in seconds.',
     icon: 'search-list',
     audiences: ['end-user'],
     doneTitle: 'You can find anything in Mattermost',
