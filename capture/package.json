@@ -1,0 +1,14 @@
+{
+  "name": "academy-capture",
+  "private": true,
+  "type": "module",
+  "description": "Dev-only: drives a local Mattermost server with Playwright to capture guide screenshots.",
+  "scripts": {
+    "capture": "node capture.js",
+    "postinstall": "playwright install chromium"
+  },
+  "dependencies": {
+    "playwright": "1.49.1",
+    "sharp": "0.33.5"
+  }
+}

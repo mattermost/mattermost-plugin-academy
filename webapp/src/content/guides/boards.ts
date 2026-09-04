@@ -43,6 +43,11 @@ const boards: Guide = {
                 {
                     title: 'Organize your sidebar',
                     description: 'Every board you can access is listed in the left-hand sidebar under the default <strong>Boards</strong> category. Use the menu next to a category to create, rename, or delete categories, then use <strong>Move To…</strong> on a board to file it. You can also drag boards and categories into the order you want.',
+                    media: {
+                        type: 'image',
+                        file: 'boards-sidebar.webp',
+                        alt: 'The Boards sidebar listing a board and its two views',
+                    },
                     tip: 'Categories are per-user. Rearranging or hiding a board in your sidebar doesn\'t change what anyone else sees.',
                 },
                 {
@@ -93,10 +98,20 @@ const boards: Guide = {
                 {
                     title: 'Add a card',
                     description: 'Select <strong>New</strong> at the top of the board and give the card a title. Open a card at any time to fill in the detail — everything you type saves as you go.',
+                    media: {
+                        type: 'image',
+                        file: 'boards-kanban.webp',
+                        alt: 'A board in the Kanban layout, with cards grouped into Backlog, In progress, In review, and Done columns',
+                    },
                 },
                 {
                     title: 'Write the description',
                     description: 'Open a card and select <strong>Add a description</strong> below the Comments section. Descriptions are built from content blocks: hover over the section and select <strong>Add content</strong> to insert a <strong>Text</strong>, <strong>Image</strong>, <strong>Divider</strong>, or <strong>Checkbox</strong> block. Text blocks support Markdown.',
+                    media: {
+                        type: 'image',
+                        file: 'boards-card-detail.webp',
+                        alt: 'A card opened to show its description, properties, and comment box',
+                    },
                 },
                 {
                     title: 'Add properties',
@@ -110,6 +125,11 @@ const boards: Guide = {
                 {
                     title: 'Show the properties that matter on the board',
                     description: 'Select <strong>Properties</strong> at the top of the board to choose which properties appear on the card preview. Enable <strong>Comments and Description</strong> to show badges telling you which cards have a description, how many comments they have, and how many checkboxes are ticked.',
+                    media: {
+                        type: 'image',
+                        file: 'boards-properties-menu.webp',
+                        alt: 'The Properties menu, choosing which card properties show on the board',
+                    },
                 },
                 {
                     title: 'Comment, mention, and follow',
@@ -137,14 +157,29 @@ const boards: Guide = {
                 {
                     title: 'Group cards',
                     description: 'Select <strong>Group by</strong> at the top of the board and choose a <strong>Select</strong> or <strong>Person</strong> property. Grouping works in board and table views. In board view each value becomes a column, so dragging a card to another column updates that property on the card.',
+                    media: {
+                        type: 'image',
+                        file: 'boards-group-by.webp',
+                        alt: 'The Group by menu, choosing which property splits cards into columns',
+                    },
                 },
                 {
                     title: 'Filter down to what you need',
                     description: 'Select <strong>Filter</strong> > <strong>+ Add filter</strong>, choose a property, then set the criteria: <strong>Includes</strong>, <strong>Doesn\'t include</strong>, <strong>Is empty</strong>, or <strong>Is not empty</strong>. Add more layers to narrow further — a card has to match every layer to appear.',
+                    media: {
+                        type: 'image',
+                        file: 'boards-filter.webp',
+                        alt: 'The Filter panel, narrowing a board to the cards you want',
+                    },
                 },
                 {
                     title: 'Sort',
                     description: 'Select <strong>Sort</strong> and pick the card name or any property. Selecting the same option again switches between ascending and descending. Select <strong>Manual</strong> to clear the sort and drag cards into whatever order you want.',
+                    media: {
+                        type: 'image',
+                        file: 'boards-sort.webp',
+                        alt: 'The Sort menu, ordering cards by a property',
+                    },
                 },
                 {
                     title: 'Search within a board',
@@ -163,6 +198,11 @@ const boards: Guide = {
                 {
                     title: 'Open the Share dialog',
                     description: 'Select <strong>Share</strong> in the top-right corner of the board. You manage all access from here, and you are an admin of any board you create.',
+                    media: {
+                        type: 'image',
+                        file: 'boards-share-dialog.webp',
+                        alt: 'The Share dialog for a board, with team access and role options',
+                    },
                 },
                 {
                     title: 'Set team access and individual roles',

@@ -1052,7 +1052,10 @@
     }
 
     &__media {
-        margin-top: 12px;
+        // `width: fit-content` shrinks the frame to the image, so the auto side margins are
+        // what centre it in the step's text column. Both are needed — with a full-width frame
+        // there would be nothing to centre.
+        margin: 12px auto 0;
         width: fit-content;
         max-width: 100%;
         border: 1px solid rgba(var(--center-channel-color-rgb), 0.12);
@@ -1065,7 +1068,12 @@
             width: auto;
             height: auto;
             max-width: 100%;
-            max-height: 350px;
+
+            // Real product screenshots are taller than the hand-drawn art this cap was written
+            // for — a sidebar capture is portrait, and because width scales with the capped
+            // height, 350px rendered the channel names too small to read. 480 keeps the frame
+            // from dominating the column while leaving portrait shots legible.
+            max-height: 480px;
             object-fit: contain;
         }
     }

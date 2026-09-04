@@ -30,6 +30,11 @@ const updateGuide: Guide = {
                 {
                     title: 'Find the version you are running',
                     description: 'Select your profile picture, then <strong>About Mattermost</strong>. The dialog reports your <strong>Mattermost Version</strong> and your <strong>Database Schema Version</strong>. Record both. The schema version is the number you compare against if you ever need to roll a migration back. See the <a href="https://docs.mattermost.com/end-user-guide/collaborate/view-system-information.html">view system information</a> documentation for details.',
+                    media: {
+                        type: 'image',
+                        file: 'about-mattermost.webp',
+                        alt: 'The About Mattermost dialog, showing the server version and database schema version',
+                    },
                 },
                 {
                     title: 'The monthly track',
@@ -264,6 +269,11 @@ const updateGuide: Guide = {
                 {
                     title: 'Confirm the version and schema version',
                     description: 'Open <strong>About Mattermost</strong> and check that both <strong>Mattermost Version</strong> and <strong>Database Schema Version</strong> moved as expected. On Kubernetes, confirm every pod is running the intended image with <strong>kubectl get pods -n mattermost -o=jsonpath=\'{.items[*].spec.containers[*].image}\'</strong>.',
+                    media: {
+                        type: 'image',
+                        file: 'about-mattermost.webp',
+                        alt: 'The About Mattermost dialog, showing the server version and database schema version',
+                    },
                 },
                 {
                     title: 'Ping the health endpoint',

@@ -30,6 +30,11 @@ const advancedSearch: Guide = {
                 {
                     title: 'Choose Messages or Files',
                     description: 'Select the <strong>Search</strong> field, then select <strong>Messages</strong> to search message text or <strong>Files</strong> to search files attached to messages. The two tabs return separate result sets, so switch tabs if the first search comes up empty.',
+                    media: {
+                        type: 'image',
+                        file: 'search-results-tabs.webp',
+                        alt: 'Search results in the right-hand pane, with Messages and Files tabs showing counts',
+                    },
                 },
                 {
                     title: 'Set how many teams to search',
@@ -61,10 +66,20 @@ const advancedSearch: Guide = {
                 {
                     title: 'Find messages from a person',
                     description: 'Add <strong>from:</strong> followed by a username to return only content that person posted. For example, <strong>budget from:john.smith</strong> returns messages containing "budget" that John Smith wrote.',
+                    media: {
+                        type: 'image',
+                        file: 'search-from-autocomplete.webp',
+                        alt: 'Typing from: in the search box, narrowing the list of people as you type',
+                    },
                 },
                 {
                     title: 'Find messages in a channel',
                     description: 'Add <strong>in:</strong> followed by a channel to limit results to that conversation. For example, <strong>Mattermost in:town-square</strong> returns only results from Town Square. You can specify a channel by display name or by channel ID.',
+                    media: {
+                        type: 'image',
+                        file: 'search-in-autocomplete.webp',
+                        alt: 'Typing in: in the search box, with a list of channels to choose from',
+                    },
                 },
                 {
                     title: 'Search a DM or group message',
@@ -73,6 +88,11 @@ const advancedSearch: Guide = {
                 {
                     title: 'Combine both to cut results down fast',
                     description: 'Modifiers stack. <strong>deploy from:john.smith in:release-discussion</strong> returns only messages about "deploy" that John posted in that one channel.',
+                    media: {
+                        type: 'image',
+                        file: 'search-modifiers-combined.webp',
+                        alt: 'A search combining from: and in: to narrow results to one person in one channel',
+                    },
                 },
                 {
                     title: 'Type from: yourself for cross-team searches',
@@ -107,6 +127,11 @@ const advancedSearch: Guide = {
                 {
                     title: 'Use the date picker instead of typing',
                     description: 'When you select a date modifier from the search autocomplete, a date picker opens so you can choose the day visually. If you would rather type, use <strong>YYYY-MM-DD</strong> format.',
+                    media: {
+                        type: 'image',
+                        file: 'search-date-picker.webp',
+                        alt: 'The date picker that appears after typing before: in the search box',
+                    },
                 },
             ],
         },
@@ -121,6 +146,11 @@ const advancedSearch: Guide = {
                 {
                     title: 'Quote an exact phrase',
                     description: 'Wrap terms in quotation marks to match them together and in order. Searching <strong>"Mattermost website"</strong> returns messages containing that exact phrase, and skips messages that happen to mention "Mattermost" and "website" separately.',
+                    media: {
+                        type: 'image',
+                        file: 'search-exact-phrase.webp',
+                        alt: 'A quoted search phrase, matching only messages containing that exact wording',
+                    },
                 },
                 {
                     title: 'Exclude terms with a hyphen',
@@ -137,6 +167,11 @@ const advancedSearch: Guide = {
                 {
                     title: 'Search hashtags',
                     description: 'Hashtags are searchable labels anyone can add to a message with <strong>#</strong>. Select a hashtag in an existing post, or type it including the pound symbol, to find every message tagged with it.',
+                    media: {
+                        type: 'image',
+                        file: 'search-hashtag.webp',
+                        alt: 'Searching a hashtag, returning every message tagged with it',
+                    },
                     tip: 'Hashtags are not channel links. Selecting #marketing does not open the Marketing channel. To link a public channel, use the tilde symbol instead, as in ~marketing.',
                 },
             ],
@@ -191,10 +226,20 @@ const advancedSearch: Guide = {
                 {
                     title: 'Switch to the Files tab',
                     description: 'Select the <strong>Search</strong> field, then select <strong>Files</strong>. Each result shows the file name, extension, and size, plus when and where it was shared. As with messages, you can scope the search to the current team, a specific team, or all teams.',
+                    media: {
+                        type: 'image',
+                        file: 'search-files-tab.webp',
+                        alt: 'The Files tab of search results, listing matching attachments',
+                    },
                 },
                 {
                     title: 'Filter by file extension',
                     description: 'Use <strong>ext:</strong> followed by an extension to return only that file type, as in <strong>ext:pdf</strong>. The search autocomplete suggests extensions as you type, so you do not have to remember them.',
+                    media: {
+                        type: 'image',
+                        file: 'search-file-extension.webp',
+                        alt: 'Filtering a file search to one extension with ext:, leaving a single PDF',
+                    },
                 },
                 {
                     title: 'Filter by file category instead',
@@ -238,10 +283,20 @@ const advancedSearch: Guide = {
                 {
                     title: 'Review your recent mentions',
                     description: 'Select the <strong>@</strong> icon next to the search field, or press <strong>Ctrl+Shift+M</strong> on Windows or Linux, or <strong>Cmd+Shift+M</strong> on Mac. This lists recent messages that mention you or contain one of your keyword triggers. Select <strong>Jump</strong> to open any of them in context.',
+                    media: {
+                        type: 'image',
+                        file: 'search-recent-mentions.webp',
+                        alt: 'The Recent mentions pane collecting messages that mentioned you',
+                    },
                 },
                 {
                     title: 'Set messages aside and come back to them',
                     description: 'Select the <strong>Save</strong> icon next to any message to save it for yourself only — nobody else sees that you saved it. Select the <strong>Bookmark</strong> icon to the left of your profile picture to open your full list of saved messages in the right-hand pane.',
+                    media: {
+                        type: 'image',
+                        file: 'search-saved-messages.webp',
+                        alt: 'The Saved messages pane listing a message set aside for later',
+                    },
                     tip: 'Saving is private to you. Pinning is the shared equivalent — a pinned message is visible to every member of the channel from the Pinned posts icon in the channel header.',
                 },
             ],

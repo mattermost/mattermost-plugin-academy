@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 440 280" role="img" aria-label="Channel Actions: keyword trigger to run a playbook">
+<svg width="440" height="280" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 440 280" role="img" aria-label="Channel Actions: keyword trigger to run a playbook">
   <defs>
     <style>
       .ca-title { font: 700 15px system-ui, -apple-system, "Segoe UI", sans-serif; fill: #3F4350; }

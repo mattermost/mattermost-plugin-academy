@@ -32,10 +32,20 @@ const slashCommands: Guide = {
                 {
                     title: 'Open the command picker',
                     description: 'Type / to see available commands in the autocomplete list. This works in channels, DMs, and threads. The same / entry point gives you access to all built-in and Admin-configured commands in your instance.',
+                    media: {
+                        type: 'image',
+                        file: 'slash-command-picker.webp',
+                        alt: 'Typing a forward slash in the message box, showing the list of available commands',
+                    },
                 },
                 {
                     title: 'Filter and select',
                     description: 'Autocomplete filters matching commands in real time. Use the up and down arrow keys to navigate options, then press <strong>Tab</strong> or <strong>Enter</strong> to select one.',
+                    media: {
+                        type: 'image',
+                        file: 'slash-command-filtered.webp',
+                        alt: 'The command list filtered as you type, narrowing to matching commands',
+                    },
                 },
             ],
         },

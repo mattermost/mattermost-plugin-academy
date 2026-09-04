@@ -32,10 +32,20 @@ const playbooks: Guide = {
                 {
                     title: 'A playbook is the process, a run is the execution',
                     description: 'A <strong>playbook</strong> is a checklist of the tasks that make up a repeatable process — a release, an incident, a customer onboarding. A <strong>run</strong> is a single pass through that playbook. You write the playbook once and start a new run every time the process happens.',
+                    media: {
+                        type: 'image',
+                        file: 'pb-run-overview.webp',
+                        alt: 'A run in progress, with its summary and current status',
+                    },
                 },
                 {
                     title: 'Runs live in a channel',
                     description: 'When a run starts, it is anchored to a channel. Participants work the checklist in the run details pane beside the conversation, so discussion and progress stay together. A playbook can create a new channel for every run, or reuse the same channel each time.',
+                    media: {
+                        type: 'image',
+                        file: 'pb-run-channel.webp',
+                        alt: 'The channel created for a run, where the conversation happens alongside the checklist',
+                    },
                 },
                 {
                     title: 'When a checklist beats a channel',
@@ -44,6 +54,11 @@ const playbooks: Guide = {
                 {
                     title: 'Find playbooks and runs',
                     description: 'Open <strong>Product menu</strong> > <strong>Playbooks</strong> to see the playbooks you can access. Select a playbook name, then select <strong>Runs</strong> to see its runs. From a run, select <strong>Go to channel</strong> to open the run channel.',
+                    media: {
+                        type: 'image',
+                        file: 'pb-playbooks-list.webp',
+                        alt: 'The Playbooks list, showing available playbooks with their run counts',
+                    },
                     tip: 'Only public playbooks and private playbooks you\'re a member of appear in the list.',
                 },
             ],
@@ -67,6 +82,11 @@ const playbooks: Guide = {
                 {
                     title: 'Open the run details pane',
                     description: 'In a run channel, select the <strong>Toggle Run Details</strong> icon to open the checklist, participants, and current status alongside the conversation. This pane is where most of your work in a run happens.',
+                    media: {
+                        type: 'image',
+                        file: 'pb-run-info-pane.webp',
+                        alt: 'The run details pane, listing the playbook, owner, participants, followers, and channel',
+                    },
                 },
                 {
                     title: 'Know the difference between participating and following',
@@ -123,6 +143,11 @@ const playbooks: Guide = {
                 {
                     title: 'Check off tasks as you go',
                     description: 'Select a task\'s checkbox in the run details pane to mark it complete. Completion is recorded on the run timeline, so anyone reviewing the run later can see what happened and when.',
+                    media: {
+                        type: 'image',
+                        file: 'pb-checklist.webp',
+                        alt: 'A run checklist with tasks checked off, each showing an assignee and a due date',
+                    },
                 },
                 {
                     title: 'Assign each task to a person',
@@ -158,6 +183,11 @@ const playbooks: Guide = {
                 {
                     title: 'Post an update',
                     description: 'In the run details pane, select <strong>Post update</strong>. You can also type <strong>/playbook update</strong> in the run channel. The update posts to the run channel, shows as the current status in the run details, and is recorded on the run timeline.',
+                    media: {
+                        type: 'image',
+                        file: 'pb-post-update-dialog.webp',
+                        alt: 'The status update dialog, pre-filled from the playbook\'s update template',
+                    },
                 },
                 {
                     title: 'Work to a cadence',
@@ -178,6 +208,11 @@ const playbooks: Guide = {
                 {
                     title: 'Finish the run',
                     description: 'When the process is done, select <strong>Finish run</strong> below the checklist, or type <strong>/playbook finish</strong> in the run channel. Status updates are disabled once a run is finished, and the Playbooks bot asks whether you want to complete a retrospective.',
+                    media: {
+                        type: 'image',
+                        file: 'pb-finish-run.webp',
+                        alt: 'The end of a run, where finishing it closes out the checklist and notifies followers',
+                    },
                 },
             ],
         },
@@ -197,6 +232,11 @@ const playbooks: Guide = {
                 {
                     title: 'Build the checklist first',
                     description: 'Select the <strong>Outline</strong> tab and go to the tasks section. Add tasks, group them into sections, and drag to reorder. Task descriptions support a limited set of Markdown, including text styling and links.',
+                    media: {
+                        type: 'image',
+                        file: 'pb-playbook-editor.webp',
+                        alt: 'The Outline tab of the playbook editor, listing the checklists every run starts from',
+                    },
                 },
                 {
                     title: 'Attach actions to tasks',
@@ -252,10 +292,20 @@ const playbooks: Guide = {
                 {
                     title: 'Write the retrospective report',
                     description: 'When a run finishes, the Playbooks bot offers to start the retrospective. Write the report in the retrospective section of the run using Markdown, and save it as often as you like. Publishing shares it with stakeholders and makes the report and its metrics read-only.',
+                    media: {
+                        type: 'image',
+                        file: 'pb-retrospective.webp',
+                        alt: 'A completed retrospective report for a run',
+                    },
                 },
                 {
                     title: 'Use the timeline as your source of truth',
                     description: 'The run timeline records key events automatically, including owner changes, status updates, and task assignments. Filter it to what you need, and select an event to jump to that moment in the channel. In the run channel, <strong>/playbook timeline</strong> gives you the same history inline.',
+                    media: {
+                        type: 'image',
+                        file: 'pb-timeline.webp',
+                        alt: 'The run timeline, recording each event in order as the run progressed',
+                    },
                 },
                 {
                     title: 'Add the messages that mattered',
