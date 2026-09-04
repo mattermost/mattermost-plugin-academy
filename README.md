@@ -136,6 +136,7 @@ Pushes to `master`/`main` and pull requests run lint, unit tests, and a plugin b
 
 | Path | Purpose |
 |------|---------|
+| [`docs/architecture.md`](docs/architecture.md) | Technical architecture for stakeholders |
 | `webapp/` | Product UI, catalog/guides/lessons, badges, admin sections |
 | `webapp/src/content/` | Guide/module content (TypeScript) |
 | `public/guides/assets/` | Lesson images and UI mock SVGs |
