@@ -25,6 +25,7 @@ import ClockSendOutlineIcon from '@mattermost/compass-icons/components/clock-sen
 import CodeTagsIcon from '@mattermost/compass-icons/components/code-tags';
 import CogOutlineIcon from '@mattermost/compass-icons/components/cog-outline';
 import ConsoleIcon from '@mattermost/compass-icons/components/console';
+import CreationOutlineIcon from '@mattermost/compass-icons/components/creation-outline';
 import ContentCopyIcon from '@mattermost/compass-icons/components/content-copy';
 import DownloadOutlineIcon from '@mattermost/compass-icons/components/download-outline';
 import DrawIcon from '@mattermost/compass-icons/components/draw';
@@ -42,11 +43,14 @@ import MessageTextOutlineIcon from '@mattermost/compass-icons/components/message
 import OpenInNewIcon from '@mattermost/compass-icons/components/open-in-new';
 import PinOutlineIcon from '@mattermost/compass-icons/components/pin-outline';
 import PlaylistCheckIcon from '@mattermost/compass-icons/components/playlist-check';
+import ProductBoardsIcon from '@mattermost/compass-icons/components/product-boards';
+import ProductPlaybooksIcon from '@mattermost/compass-icons/components/product-playbooks';
 import RefreshIcon from '@mattermost/compass-icons/components/refresh';
 import RobotHappyIcon from '@mattermost/compass-icons/components/robot-happy';
 import SearchListIcon from '@mattermost/compass-icons/components/search-list';
 import ServerVariantIcon from '@mattermost/compass-icons/components/server-variant';
 import ShieldOutlineIcon from '@mattermost/compass-icons/components/shield-outline';
+import StarIcon from '@mattermost/compass-icons/components/star';
 import StarOutlineIcon from '@mattermost/compass-icons/components/star-outline';
 import SyncIcon from '@mattermost/compass-icons/components/sync';
 import TableLargeIcon from '@mattermost/compass-icons/components/table-large';
@@ -77,10 +81,13 @@ const ICONS: Record<string, IconComponent> = {
     draw: DrawIcon,
     tune: TuneIcon,
     console: ConsoleIcon,
+    'creation-outline': CreationOutlineIcon,
     'format-list-bulleted': FormatListBulletedIcon,
     'clock-outline': ClockOutlineIcon,
     'clock-send-outline': ClockSendOutlineIcon,
     'playlist-check': PlaylistCheckIcon,
+    'product-boards': ProductBoardsIcon,
+    'product-playbooks': ProductPlaybooksIcon,
     'lightning-bolt-outline': LightningBoltOutlineIcon,
     'arrow-left': ArrowLeftIcon,
     refresh: RefreshIcon,
@@ -114,6 +121,7 @@ const ICONS: Record<string, IconComponent> = {
     'pin-outline': PinOutlineIcon,
     'server-variant': ServerVariantIcon,
     'shield-outline': ShieldOutlineIcon,
+    star: StarIcon,
     'star-outline': StarOutlineIcon,
     sync: SyncIcon,
     'table-large': TableLargeIcon,

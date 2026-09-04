@@ -71,9 +71,9 @@ export default function AcademyRHS() {
                     aria-hidden={true}
                 />
                 <div className='academy-header__content'>
-                    <h1 className='academy-header__title'>{'Quick start guides'}</h1>
+                    <h1 className='academy-header__title'>{'Mattermost Academy'}</h1>
                     <p className='academy-header__subtitle'>
-                        {'Earn a badge for completing short walk-through guides that help you get more done in Mattermost.'}
+                        {'Earn a badge for completing quick start guides that help you get more done in Mattermost.'}
                     </p>
                     <HeaderProgress
                         done={completedGuides}

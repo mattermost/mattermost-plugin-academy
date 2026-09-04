@@ -6,9 +6,7 @@ import aiQuickStart from 'content/guides/ai_quick_start';
 import boards from 'content/guides/boards';
 import mattermostBasics from 'content/guides/mattermost_basics';
 import playbooks from 'content/guides/playbooks';
-import slashCommands from 'content/guides/slash_commands';
 import updateGuide from 'content/guides/update_guide';
-import zeroTrust from 'content/guides/zero_trust';
 import type {Guide, Module} from 'content/types';
 import manifest from 'manifest';
 
@@ -20,11 +18,9 @@ export const ACADEMY_BASE_PATH = '/academy';
 export const GUIDES: Record<string, Guide> = {
     [mattermostBasics.id]: mattermostBasics,
     [aiQuickStart.id]: aiQuickStart,
-    [slashCommands.id]: slashCommands,
     [advancedSearch.id]: advancedSearch,
     [boards.id]: boards,
     [playbooks.id]: playbooks,
-    [zeroTrust.id]: zeroTrust,
     [updateGuide.id]: updateGuide,
 };
 

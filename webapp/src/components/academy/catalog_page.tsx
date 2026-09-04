@@ -90,7 +90,7 @@ export default function CatalogPage() {
                         <span className='academy-header-compact__icon'>
                             <AcademyProductIcon size={14}/>
                         </span>
-                        <span className='academy-header-compact__title'>{'Quick start guides'}</span>
+                        <span className='academy-header-compact__title'>{'Mattermost Academy'}</span>
                     </div>
                     <div className='academy-header-compact__progress'>
                         <span className='academy-header-compact__progress-count'>
@@ -129,10 +129,10 @@ export default function CatalogPage() {
                             <span className='academy-header__icon'>
                                 <AcademyProductIcon size={32}/>
                             </span>
-                            <h1 className='academy-header__title'>{'Quick start guides'}</h1>
+                            <h1 className='academy-header__title'>{'Mattermost Academy'}</h1>
                         </div>
                         <p className='academy-header__subtitle'>
-                            {'Earn a badge for completing short walk-through guides that help you get more done in Mattermost.'}
+                            {'Earn a badge for completing quick start guides that help you get more done in Mattermost.'}
                         </p>
                         <HeaderProgress
                             done={completedGuides}
@@ -182,6 +182,35 @@ export default function CatalogPage() {
                             })}
                         </div>
                     )}
+
+                    {/* eslint-disable-next-line @mattermost/use-external-link -- plugins cannot import host ExternalLink */}
+                    <a
+                        className='academy-catalog__cert'
+                        href='https://certifications.mattermost.com/'
+                        target='_blank'
+                        rel='noopener noreferrer'
+                    >
+                        <span className='academy-catalog__cert-icon'>
+                            <AcademyIcon
+                                name='star'
+                                size={22}
+                            />
+                        </span>
+                        <span className='academy-catalog__cert-copy'>
+                            <span className='academy-catalog__cert-title'>
+                                {'Earn a recognized Mattermost technical certification'}
+                            </span>
+                            <span className='academy-catalog__cert-desc'>
+                                {'Build and validate the technical skills needed to deploy, configure, and administer Mattermost for mission-critical collaboration.'}
+                            </span>
+                        </span>
+                        <span className='academy-catalog__cert-external'>
+                            <AcademyIcon
+                                name='open-in-new'
+                                size={16}
+                            />
+                        </span>
+                    </a>
                 </div>
             </div>
         </div>

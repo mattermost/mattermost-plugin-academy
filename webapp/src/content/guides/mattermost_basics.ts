@@ -5,18 +5,19 @@ import type {Guide} from 'content/types';
 
 const mattermostBasics: Guide = {
     id: 'mattermost-basics',
-    title: 'Messaging Basics & Productivity Tips',
-    heroTitle: 'Learn the core of daily Mattermost',
-    subtitle: 'Seven modules covering channels and your sidebar, threads, notifications, composing, formatting, finding messages again, and the shortcuts that make all of it fast.',
-    description: 'Channels, threads, notifications, composing, formatting, and shortcuts — the skills you use every day.',
-    icon: 'book-outline',
+    title: 'Collaboration Basics',
+    heroTitle: 'Collaboration Basics',
+    subtitle: 'Eight modules covering channels and your sidebar, threads, notifications, composing, formatting, slash commands, finding messages again, and the shortcuts that make all of it fast.',
+    description: 'Channels, threads, notifications, composing, formatting, slash commands, and shortcuts — the skills you use every day.',
+    icon: 'message-text-outline',
     audiences: ['end-user'],
     doneTitle: 'You know your way around Mattermost',
-    doneSummary: 'You\'ve covered channels and the sidebar, threads, notifications, composing, formatting, saving messages, and shortcuts. Keep these references handy:',
+    doneSummary: 'You\'ve covered channels and the sidebar, threads, notifications, composing, formatting, slash commands, saving messages, and shortcuts. Keep these references handy:',
     doneLinks: [
         {label: 'Channels documentation', href: 'https://docs.mattermost.com/end-user-guide/collaborate/channel-types.html'},
         {label: 'Notification preferences', href: 'https://docs.mattermost.com/end-user-guide/preferences/manage-your-notifications.html'},
         {label: 'Keyboard shortcuts', href: 'https://docs.mattermost.com/end-user-guide/collaborate/keyboard-shortcuts.html'},
+        {label: 'Full slash command reference', href: 'https://docs.mattermost.com/integrations-guide/built-in-slash-commands.html'},
     ],
     modules: [
         {
@@ -129,6 +130,11 @@ const mattermostBasics: Guide = {
                 {
                     title: 'Schedule a message for later',
                     description: 'Write the message, then select the right side of the <strong>Send</strong> button. Pick a preset or a custom time — Mattermost shows both your local time and the recipient\'s. Scheduled messages wait in the <strong>Drafts</strong> view under the <strong>Scheduled</strong> tab, where you can edit, reschedule, send now, or delete them.',
+                    media: {
+                        type: 'image',
+                        file: 'scheduled-messages-step1-9259c4fcaa.svg',
+                        alt: 'Message composer with Schedule message menu open',
+                    },
                 },
                 {
                     title: 'Set message priority',
@@ -204,6 +210,75 @@ const mattermostBasics: Guide = {
                         {command: '[label](https://example.com)', description: 'A link with your own label instead of the raw URL'},
                         {command: '~channel-name', description: 'A link to a channel'},
                         {command: '| Column A | Column B |', description: 'A table row — put a row of dashes under the header row'},
+                    ],
+                },
+            ],
+        },
+        {
+            id: 'slash-commands',
+            navTitle: 'Slash Commands',
+            icon: 'console',
+            minutes: 3,
+            title: 'Slash commands',
+            summary: 'Slash commands are shortcuts you type in a message box to take action instantly — invite someone, change your status, start a call, and more. The commands below work out of the box. Click any command to copy it.',
+            steps: [
+                {
+                    title: 'Open the command picker',
+                    description: 'Type / to see available commands in the autocomplete list. This works in channels, DMs, and threads. The same / entry point gives you access to all built-in and Admin-configured commands in your instance.',
+                },
+                {
+                    title: 'Filter and select',
+                    description: 'Autocomplete filters matching commands in real time. Use the up and down arrow keys to navigate options, then press <strong>Tab</strong> or <strong>Enter</strong> to select one.',
+                },
+            ],
+            commandGroups: [
+                {
+                    label: 'People',
+                    items: [
+                        {command: '/invite @username', description: 'Invite someone to the current channel'},
+                        {command: '/remove @username', description: 'Remove someone from the current channel'},
+                    ],
+                },
+                {
+                    label: 'Channels',
+                    items: [
+                        {command: '/join channel-name', description: 'Join a channel'},
+                        {command: '/leave', description: 'Leave the current channel'},
+                        {command: '/mute', description: 'Silence notifications for the current channel'},
+                        {command: '/header', description: 'Edit the current channel header'},
+                    ],
+                },
+                {
+                    label: 'Conversations',
+                    items: [
+                        {command: '/msg @username', description: 'Send a direct message'},
+                        {command: '/search', description: 'Search message text'},
+                        {command: '/collapse', description: 'Collapse image previews by default'},
+                        {command: '/expand', description: 'Expand image previews by default'},
+                    ],
+                },
+                {
+                    label: 'Status',
+                    items: [
+                        {command: '/status', description: 'Set a custom status message and emoji'},
+                        {command: '/away', description: 'Set availability to Away'},
+                        {command: '/offline', description: 'Set availability to Offline'},
+                        {command: '/online', description: 'Set availability to Online'},
+                        {command: '/dnd', description: 'Set availability to Do Not Disturb'},
+                    ],
+                },
+                {
+                    label: 'Calls',
+                    items: [
+                        {command: '/call start', description: 'Start a call in this channel'},
+                        {command: '/call join', description: 'Join a call in this channel'},
+                    ],
+                },
+                {
+                    label: 'General',
+                    items: [
+                        {command: '/shortcuts', description: 'Show keyboard shortcuts'},
+                        {command: '/settings', description: 'Open Settings'},
                     ],
                 },
             ],

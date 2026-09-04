@@ -119,7 +119,7 @@ describe('AcademyBadges', () => {
         await waitFor(() => {
             expect(view.container.textContent).toContain('Academy Badges');
         });
-        expect(view.container.querySelector('[aria-label*="Messaging Basics"]')).not.toBeNull();
+        expect(view.container.querySelector('[aria-label*="Collaboration Basics"]')).not.toBeNull();
 
         await view.unmount();
     });

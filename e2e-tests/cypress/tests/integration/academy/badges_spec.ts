@@ -9,7 +9,7 @@ describe('Academy profile badges', () => {
             cy.apiCompleteGuide('mattermost-basics', BASICS_MODULES);
 
             cy.visitAcademy();
-            cy.contains('.academy-card', 'Messaging Basics & Productivity Tips').should('contain', 'Review');
+            cy.contains('.academy-card', 'Collaboration Basics').should('contain', 'Review');
 
             cy.apiEnsureTeam().then((team) => {
                 cy.request(`/api/v4/teams/${team.id}/channels/name/town-square`).then((ch) => {

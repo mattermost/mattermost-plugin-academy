@@ -52,7 +52,7 @@ describe('App access', () => {
         const view = await render(<App/>);
 
         expect(view.container.textContent).toContain('Academy is unavailable');
-        expect(view.container.textContent).not.toContain('Quick start guides');
+        expect(view.container.textContent).not.toContain('Mattermost Academy');
 
         await view.unmount();
     });
@@ -63,7 +63,7 @@ describe('App access', () => {
         const view = await render(<App/>);
 
         await waitFor(() => {
-            expect(view.container.textContent).toContain('Quick start guides');
+            expect(view.container.textContent).toContain('Mattermost Academy');
         });
         expect(view.container.textContent).toContain(GUIDE_LIST[0].title);
         expect(view.container.textContent).not.toContain('Academy is unavailable');

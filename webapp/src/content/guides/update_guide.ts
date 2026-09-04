@@ -6,7 +6,7 @@ import type {Guide} from 'content/types';
 const updateGuide: Guide = {
     id: 'update-guide',
     title: 'Upgrading Mattermost',
-    heroTitle: 'Upgrade your server without surprises',
+    heroTitle: 'Upgrading Mattermost',
     subtitle: 'Six modules covering release tracks, upgrade paths, pre-flight checks, the procedure for your deployment type, verification, and rollback.',
     description: 'Plan and run a Mattermost server upgrade — release tracks, upgrade paths, pre-flight checks, deployment procedures, verification, and rollback.',
     icon: 'update',
@@ -307,7 +307,7 @@ const updateGuide: Guide = {
                 },
                 {
                     title: 'Point people at the Academy guides',
-                    description: 'Announce the upgrade in a channel with links people can act on. Send them to <a href="/academy/guides/ai-quick-start">AI Quick Start</a> for agents, summaries, and rewrites, <a href="/academy/guides/mattermost-basics">Messaging Basics & Productivity Tips</a> for anyone still finding their way around, and <a href="/academy/guides/advanced-search">Advanced Search</a> for people who lose time hunting for old messages.',
+                    description: 'Announce the upgrade in a channel with links people can act on. Send them to <a href="/academy/guides/ai-quick-start">AI Assistance with Agents</a> for agents, summaries, and rewrites, <a href="/academy/guides/mattermost-basics">Collaboration Basics</a> for anyone still finding their way around, and <a href="/academy/guides/advanced-search">Finding Messages with Search</a> for people who lose time hunting for old messages.',
                 },
                 {
                     title: 'Fold the new release into your own admin routine',

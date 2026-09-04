@@ -6,8 +6,8 @@ describe('Academy catalog and progress', () => {
         cy.apiCreateUserAndLogin();
         cy.visitAcademy();
 
-        cy.contains('h1', 'Quick start guides').should('be.visible');
-        cy.contains('.academy-card__title', 'Messaging Basics & Productivity Tips').click();
+        cy.contains('h1', 'Mattermost Academy').should('be.visible');
+        cy.contains('.academy-card__title', 'Collaboration Basics').click();
 
         cy.contains('h2', 'Channels and your sidebar').should('be.visible');
         cy.contains('button', 'Complete & continue').click();
@@ -17,8 +17,8 @@ describe('Academy catalog and progress', () => {
         cy.contains('h2', 'Threads').should('be.visible');
 
         cy.visitAcademy();
-        cy.contains('.academy-card', 'Messaging Basics & Productivity Tips').
+        cy.contains('.academy-card', 'Collaboration Basics').
             should('contain', 'Continue').
-            and('contain', '1 / 7 modules');
+            and('contain', '1 / 8 modules');
     });
 });

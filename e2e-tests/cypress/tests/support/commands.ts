@@ -9,6 +9,7 @@ const BASICS_MODULES = [
     'notifications',
     'composing',
     'formatting',
+    'slash-commands',
     'finding-it-again',
     'speed',
 ];

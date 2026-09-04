@@ -6,8 +6,8 @@ import type {Guide} from 'content/types';
 
 const advancedSearch: Guide = {
     id: 'advanced-search',
-    title: 'Advanced Search',
-    heroTitle: 'Find anything in Mattermost',
+    title: 'Finding Messages with Search',
+    heroTitle: 'Finding Messages with Search',
     subtitle: 'Search modifiers, date filters, precision syntax, file search, and AI semantic search — everything you need to find the right message in seconds.',
     description: 'Search modifiers, date filters, precision syntax, file search, and AI semantic search — find any message fast.',
     icon: 'search-list',
@@ -269,7 +269,7 @@ const advancedSearch: Guide = {
                 },
                 {
                     title: 'Go further with Agents',
-                    description: 'Semantic search is one part of what Agents can do. The <a href="/academy/guides/ai-quick-start">AI Quick Start guide</a> covers thread and channel summaries, call summaries, message rewrites, and custom agents.',
+                    description: 'Semantic search is one part of what Agents can do. The <a href="/academy/guides/ai-quick-start">AI Assistance with Agents</a> guide covers thread and channel summaries, call summaries, message rewrites, and custom agents.',
                 },
             ],
         },

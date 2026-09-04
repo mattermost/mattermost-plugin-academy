@@ -20,16 +20,14 @@ Short, interactive walk-through guides that help end-users and admins get more d
 
 ### End-user
 
-- **[Messaging Basics & Productivity Tips](webapp/src/content/guides/mattermost_basics.ts)**: Channels, threads, notifications, composing, formatting, and shortcuts
-- **[AI Quick Start](webapp/src/content/guides/ai_quick_start.ts)**: Chat, summaries, calls, search, rewrites, and custom agents
-- **[Slash Commands & Scheduled Messages](webapp/src/content/guides/slash_commands.ts)**: Slash commands and scheduled messages
-- **[Advanced Search](webapp/src/content/guides/advanced_search.ts)**: Modifiers, date filters, file search, and AI semantic search
-- **[Boards](webapp/src/content/guides/boards.ts)**: Boards, cards, properties, views, and channel links
-- **[Playbooks](webapp/src/content/guides/playbooks.ts)**: Checklists, status updates, playbook setup, and retrospectives
+- **[Collaboration Basics](webapp/src/content/guides/mattermost_basics.ts)**: Channels, threads, notifications, composing, formatting, slash commands, and shortcuts
+- **[AI Assistance with Agents](webapp/src/content/guides/ai_quick_start.ts)**: Chat, summaries, calls, search, rewrites, and custom agents
+- **[Finding Messages with Search](webapp/src/content/guides/advanced_search.ts)**: Modifiers, date filters, file search, and AI semantic search
+- **[Project Tracking with Boards](webapp/src/content/guides/boards.ts)**: Boards, cards, properties, views, and channel links
+- **[Workflow Automation with Playbooks](webapp/src/content/guides/playbooks.ts)**: Checklists, status updates, playbook setup, and retrospectives
 
 ### Admin
 
-- **[Zero Trust](webapp/src/content/guides/zero_trust.ts)**: Mattermost security mapped to the five CISA Zero Trust pillars
 - **[Upgrading Mattermost](webapp/src/content/guides/update_guide.ts)**: Release tracks, upgrade paths, pre-flight checks, verification, and rollback
 
 ### System Requirements
