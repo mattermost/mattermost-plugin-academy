@@ -1,0 +1,178 @@
+{
+    "capturedAt": "2026-09-02T18:02:31.292Z",
+    "serverVersion": "11.11.0.dev.531480c2b1bc9f91b8a4832e2a2c6db8d7842ff6de4bad4cf223b2fe2a410695.false",
+    "activePlugins": [
+        "com.mattermost.academy",
+        "github"
+    ],
+    "browser": "chromium 131.0.6778.33",
+    "theme": "denim",
+    "viewport": {
+        "width": 1440,
+        "height": 900
+    },
+    "deviceScaleFactor": 2,
+    "shots": {
+        "sidebar-overview": {
+            "guide": "mattermost-basics",
+            "file": "sidebar-overview.webp",
+            "width": 528,
+            "height": 900,
+            "bytes": 30922
+        },
+        "browse-channels": {
+            "guide": "mattermost-basics",
+            "file": "browse-channels.webp",
+            "width": 1200,
+            "height": 1164,
+            "bytes": 45266
+        },
+        "unreads-filter": {
+            "guide": "mattermost-basics",
+            "file": "unreads-filter.webp",
+            "width": 528,
+            "height": 550,
+            "bytes": 19198
+        },
+        "category-menu": {
+            "guide": "mattermost-basics",
+            "file": "category-menu.webp",
+            "width": 894,
+            "height": 800,
+            "bytes": 48518
+        },
+        "channel-types": {
+            "guide": "mattermost-basics",
+            "file": "channel-types.webp",
+            "width": 528,
+            "height": 1240,
+            "bytes": 44562
+        },
+        "thread-reply": {
+            "guide": "mattermost-basics",
+            "file": "thread-reply.webp",
+            "width": 2252,
+            "height": 180,
+            "bytes": 12272
+        },
+        "threads-view": {
+            "guide": "mattermost-basics",
+            "file": "threads-view.webp",
+            "width": 2252,
+            "height": 1040,
+            "bytes": 27846
+        },
+        "thread-follow": {
+            "guide": "mattermost-basics",
+            "file": "thread-follow.webp",
+            "width": 2252,
+            "height": 1040,
+            "bytes": 60760
+        },
+        "notification-settings": {
+            "guide": "mattermost-basics",
+            "file": "notification-settings.webp",
+            "width": 1600,
+            "height": 1484,
+            "bytes": 91930
+        },
+        "notification-keywords": {
+            "guide": "mattermost-basics",
+            "file": "notification-keywords.webp",
+            "width": 1600,
+            "height": 1620,
+            "bytes": 93632
+        },
+        "channel-notification-preferences": {
+            "guide": "mattermost-basics",
+            "file": "channel-notification-preferences.webp",
+            "width": 1200,
+            "height": 1484,
+            "bytes": 64078
+        },
+        "drafts-view": {
+            "guide": "mattermost-basics",
+            "file": "drafts-view.webp",
+            "width": 2252,
+            "height": 920,
+            "bytes": 20522
+        },
+        "message-priority": {
+            "guide": "mattermost-basics",
+            "file": "message-priority.webp",
+            "width": 388,
+            "height": 362,
+            "bytes": 7608
+        },
+        "formatting-toolbar": {
+            "guide": "mattermost-basics",
+            "file": "formatting-toolbar.webp",
+            "width": 2252,
+            "height": 244,
+            "bytes": 9818
+        },
+        "formatting-preview": {
+            "guide": "mattermost-basics",
+            "file": "formatting-preview.webp",
+            "width": 2252,
+            "height": 420,
+            "bytes": 15060
+        },
+        "saved-messages": {
+            "guide": "mattermost-basics",
+            "file": "saved-messages.webp",
+            "width": 800,
+            "height": 600,
+            "bytes": 17382
+        },
+        "message-actions-menu": {
+            "guide": "mattermost-basics",
+            "file": "message-actions-menu.webp",
+            "width": 528,
+            "height": 730,
+            "bytes": 17080
+        },
+        "remind-menu": {
+            "guide": "mattermost-basics",
+            "file": "remind-menu.webp",
+            "width": 958,
+            "height": 854,
+            "bytes": 26144
+        },
+        "quick-switcher": {
+            "guide": "mattermost-basics",
+            "file": "quick-switcher.webp",
+            "width": 1200,
+            "height": 950,
+            "bytes": 35216
+        },
+        "recent-mentions": {
+            "guide": "mattermost-basics",
+            "file": "recent-mentions.webp",
+            "width": 800,
+            "height": 470,
+            "bytes": 15562
+        },
+        "emoji-reaction": {
+            "guide": "mattermost-basics",
+            "file": "emoji-reaction.webp",
+            "width": 700,
+            "height": 884,
+            "bytes": 69506
+        },
+        "create-category": {
+            "guide": "mattermost-basics",
+            "file": "create-category.webp",
+            "width": 1200,
+            "height": 508,
+            "bytes": 15456
+        },
+        "status-menu": {
+            "guide": "mattermost-basics",
+            "file": "status-menu.webp",
+            "width": 528,
+            "height": 816,
+            "bytes": 17710
+        }
+    }
+}
