@@ -1106,6 +1106,7 @@
 
 .academy-step {
     display: flex;
+    align-items: flex-start;
     gap: 14px;
 
     &__num {
@@ -1120,8 +1121,7 @@
         color: rgba(var(--center-channel-color-rgb), 0.75);
         font-size: 12px;
         font-weight: 700;
-        position: relative;
-        top: -3px;
+        line-height: 1;
     }
 
     &__body {
@@ -1136,6 +1136,7 @@
         @at-root h3#{&} {
             font-size: 18px;
             font-weight: 700;
+            line-height: 24px;
         }
     }
 

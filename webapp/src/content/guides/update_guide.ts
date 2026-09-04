@@ -307,7 +307,7 @@ const updateGuide: Guide = {
                 },
                 {
                     title: 'Point people at the Academy guides',
-                    description: 'Announce the upgrade in a channel with links people can act on. Send them to <a href="/academy/guides/ai-quick-start">AI Assistance with Agents</a> for agents, summaries, and rewrites, <a href="/academy/guides/mattermost-basics">Collaboration Basics</a> for anyone still finding their way around, and <a href="/academy/guides/advanced-search">Advanced Search Techniques</a> for people who lose time hunting for old messages.',
+                    description: 'Announce the upgrade in a channel with links people can act on. Send them to <a href="/academy/guides/ai-quick-start">AI Assistance with Agents</a> for agents, summaries, and rewrites, <a href="/academy/guides/mattermost-basics">Collaboration Basics</a> for anyone still finding their way around, <a href="/academy/guides/productivity-tips">Productivity Tips</a> for shortcuts and slash commands, and <a href="/academy/guides/advanced-search">Advanced Search Techniques</a> for people who lose time hunting for old messages.',
                 },
                 {
                     title: 'Fold the new release into your own admin routine',

@@ -20,7 +20,8 @@ Short, interactive walk-through guides that help end-users and admins get more d
 
 ### End-user
 
-- **[Collaboration Basics](webapp/src/content/guides/mattermost_basics.ts)**: Channels, threads, notifications, composing, formatting, slash commands, and shortcuts
+- **[Collaboration Basics](webapp/src/content/guides/mattermost_basics.ts)**: Channel organization, composing, formatting, threaded replies, and notifications
+- **[Productivity Tips](webapp/src/content/guides/productivity_tips.ts)**: Keyboard shortcuts, slash commands, and finding messages again
 - **[AI Assistance with Agents](webapp/src/content/guides/ai_quick_start.ts)**: Chat, summaries, calls, search, rewrites, and custom agents
 - **[Advanced Search Techniques](webapp/src/content/guides/advanced_search.ts)**: Modifiers, date filters, file search, and AI semantic search
 - **[Project Tracking with Boards](webapp/src/content/guides/boards.ts)**: Boards, cards, properties, views, and channel links

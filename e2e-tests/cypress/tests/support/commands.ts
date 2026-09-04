@@ -5,13 +5,10 @@ const PLUGIN_ID = 'com.mattermost.academy';
 
 const BASICS_MODULES = [
     'channels-and-sidebar',
-    'threads',
-    'notifications',
     'composing',
     'formatting',
-    'slash-commands',
-    'finding-it-again',
-    'speed',
+    'threads',
+    'notifications',
 ];
 
 type UserProfile = {

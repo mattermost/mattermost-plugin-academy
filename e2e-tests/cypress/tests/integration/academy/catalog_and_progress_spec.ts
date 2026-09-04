@@ -9,16 +9,16 @@ describe('Academy catalog and progress', () => {
         cy.contains('h1', 'Mattermost Academy').should('be.visible');
         cy.contains('.academy-card__title', 'Collaboration Basics').click();
 
-        cy.contains('h2', 'Channels and your sidebar').should('be.visible');
+        cy.contains('h2', 'Channel Organization').should('be.visible');
         cy.contains('button', 'Complete & continue').click();
 
-        cy.contains('h2', 'Threads').should('be.visible');
+        cy.contains('h2', 'Composing Messages').should('be.visible');
         cy.reload();
-        cy.contains('h2', 'Threads').should('be.visible');
+        cy.contains('h2', 'Composing Messages').should('be.visible');
 
         cy.visitAcademy();
         cy.contains('.academy-card', 'Collaboration Basics').
             should('contain', 'Continue').
-            and('contain', '1 / 8 Modules');
+            and('contain', '1 / 5 Modules');
     });
 });
