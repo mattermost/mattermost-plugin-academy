@@ -3,7 +3,7 @@
 
 import React from 'react';
 
-const TOKEN = /(<\/?strong>|<a\s+href="[^"]*"\s*>|<\/a>)/i;
+const TOKEN = /(<\/?strong>|<\/?code>|<a\s+href="[^"]*"\s*>|<\/a>)/i;
 const OPEN_LINK = /^<a\s+href="([^"]*)"\s*>$/i;
 
 /**
@@ -23,12 +23,13 @@ export function safeHref(href: string): string | null {
 }
 
 /**
- * Renders guide copy that may include <strong> emphasis and <a href="..."> links.
+ * Renders guide copy that may include <strong>, <code>, and <a href="...">.
  * Unrecognised or unsafe markup degrades to plain text rather than throwing.
  */
 export default function RichText({text}: {text: string}) {
     const nodes: React.ReactNode[] = [];
     let bold = false;
+    let code = false;
     let href: string | null = null;
 
     text.split(TOKEN).forEach((part, index) => {
@@ -43,6 +44,14 @@ export default function RichText({text}: {text: string}) {
             bold = false;
             return;
         }
+        if ((/^<code>$/i).test(part)) {
+            code = true;
+            return;
+        }
+        if ((/^<\/code>$/i).test(part)) {
+            code = false;
+            return;
+        }
 
         const open = part.match(OPEN_LINK);
         if (open) {
@@ -54,7 +63,13 @@ export default function RichText({text}: {text: string}) {
             return;
         }
 
-        const content = bold ? <strong>{part}</strong> : part;
+        let content: React.ReactNode = part;
+        if (code) {
+            content = <code>{content}</code>;
+        }
+        if (bold) {
+            content = <strong>{content}</strong>;
+        }
         if (href === null) {
             nodes.push(<React.Fragment key={index}>{content}</React.Fragment>);
             return;

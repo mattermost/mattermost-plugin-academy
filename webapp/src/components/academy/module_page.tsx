@@ -125,7 +125,12 @@ export default function ModulePage() {
 
                     {mod.checklist?.length ? <Checklist items={mod.checklist}/> : null}
 
-                    {mod.commandGroups?.length ? <CommandGroups groups={mod.commandGroups}/> : null}
+                    {mod.commandGroups?.length ? (
+                        <CommandGroups
+                            groups={mod.commandGroups}
+                            headers={mod.commandHeaders}
+                        />
+                    ) : null}
                 </div>
             </div>
         </div>

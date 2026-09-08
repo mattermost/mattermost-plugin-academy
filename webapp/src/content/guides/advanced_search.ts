@@ -8,12 +8,12 @@ const advancedSearch: Guide = {
     id: 'advanced-search',
     title: 'Advanced Search Techniques',
     heroTitle: 'Advanced Search Techniques',
-    subtitle: 'Modifiers, date filters, file search, and AI semantic search to find the right message in seconds.',
-    description: 'Modifiers, date filters, file search, and AI semantic search to find the right message in seconds.',
+    subtitle: 'Search filters, precision syntax, file search, and AI semantic search to find the right message in seconds.',
+    description: 'Search filters, precision syntax, file search, and AI semantic search to find the right message in seconds.',
     icon: 'search-list',
     audiences: ['end-user'],
     doneTitle: 'You can find anything in Mattermost',
-    doneSummary: 'You\'ve covered search scope, modifiers, date filters, precision syntax, file search, and semantic search. Keep the full reference handy:',
+    doneSummary: 'You\'ve covered search scope, filters, precision syntax, file search, and semantic search. Keep the full reference handy:',
     doneLinks: [
         {label: 'Search for messages', href: 'https://docs.mattermost.com/end-user-guide/collaborate/search-for-messages.html'},
         {label: 'Save and pin messages', href: 'https://docs.mattermost.com/end-user-guide/collaborate/save-pin-messages.html'},
@@ -21,10 +21,10 @@ const advancedSearch: Guide = {
     modules: [
         {
             id: 'search-basics',
-            navTitle: 'How Search Works',
+            navTitle: 'Search Basics',
             icon: 'magnify',
             minutes: 3,
-            title: 'How Mattermost search works',
+            title: 'Search Basics',
             summary: 'Every search starts with two decisions — whether you want messages or files, and how wide to cast the net across your teams.',
             steps: [
                 {
@@ -37,7 +37,7 @@ const advancedSearch: Guide = {
                 },
                 {
                     title: 'Know what search matches',
-                    description: 'A multi-word search returns only messages that contain <strong>all</strong> of your terms. Very common words such as "the" and "are", along with one- and two-letter terms, are filtered out. URLs and IP addresses do not return results.',
+                    description: 'A multi-word search returns only messages that contain <strong>all</strong> of your terms. Very common words such as <code>the</code> and <code>are</code>, along with one- and two-letter terms, are filtered out. URLs and IP addresses do not return results.',
                     tip: 'You can search archived channels as long as you were a member of them. To drop archived channels from your results, leave the archived channel.',
                 },
                 {
@@ -51,62 +51,29 @@ const advancedSearch: Guide = {
             ],
         },
         {
-            id: 'from-and-in',
-            navTitle: 'from: and in:',
+            id: 'search-filters',
+            navTitle: 'Search Filters',
             icon: 'account-multiple-outline',
-            minutes: 3,
-            title: 'Narrow by person and by channel',
-            summary: 'The two modifiers you will reach for most often. Use from: to pin a search to a person, and in: to pin it to a conversation.',
+            minutes: 4,
+            title: 'Search Filters',
+            summary: 'Pin a search to a person, a conversation, or a date. These modifiers stack, so a few of them turn a noisy result list into a handful of messages.',
             steps: [
                 {
-                    title: 'Find messages from a person',
-                    description: 'Add <strong>from:</strong> followed by a username to return only content that person posted. For example, <strong>budget from:john.smith</strong> returns messages containing "budget" that John Smith wrote.',
+                    title: 'Filter by person',
+                    description: 'Add <code>from:</code> and a username to return only what that person posted. For example, <code>budget from:john.smith</code> returns messages containing "budget" that John Smith wrote.',
+                    tip: 'When you search across <strong>All Teams</strong>, type <code>from:</code> yourself. Autocomplete does not offer it in a cross-team search, but the modifier still works.',
                 },
                 {
-                    title: 'Find messages in a channel',
-                    description: 'Add <strong>in:</strong> followed by a channel to limit results to that conversation. For example, <strong>Mattermost in:town-square</strong> returns only results from Town Square. You can specify a channel by display name or by channel ID.',
+                    title: 'Filter by channel',
+                    description: 'Add <code>in:</code> and a channel to stay in one conversation — <code>Mattermost in:town-square</code>. <code>in:</code> also works on direct messages, group messages, and private channels you belong to, as in <code>Mattermost in:john.doe</code>.',
                 },
                 {
-                    title: 'Search a DM or group message',
-                    description: '<strong>in:</strong> also works on direct and group messages, including private channels you belong to. For example, <strong>Mattermost in:john.doe</strong> searches only your direct message history with John Doe.',
+                    title: 'Filter by date',
+                    description: '<code>before:</code> returns content posted earlier than a date, <code>after:</code> later than a date, and <code>on:</code> that day only. For example, <code>website before:2026-03-01</code>, <code>website after:2026-02-01</code>, or <code>website on:2026-03-01</code>. Selecting a date modifier from autocomplete opens a date picker; if you type it, use <code>YYYY-MM-DD</code>.',
                 },
                 {
-                    title: 'Combine both to cut results down fast',
-                    description: 'Modifiers stack. <strong>deploy from:john.smith in:release-discussion</strong> returns only messages about "deploy" that John posted in that one channel.',
-                },
-                {
-                    title: 'Type from: yourself for cross-team searches',
-                    description: 'When you search across <strong>All Teams</strong>, you have to type the <strong>from:</strong> modifier into the search field manually. The autocomplete list does not offer it in cross-team searches, but the modifier still works once typed.',
-                },
-            ],
-        },
-        {
-            id: 'date-filters',
-            navTitle: 'Date Filters',
-            icon: 'calendar-outline',
-            minutes: 3,
-            title: 'Filter results by date',
-            summary: 'Three date modifiers — before:, after:, and on: — turn "somewhere in the last year" into a handful of results.',
-            steps: [
-                {
-                    title: 'Search before a date',
-                    description: 'Use <strong>before:</strong> to return only content posted earlier than a date. For example, <strong>website before:2026-03-01</strong> returns messages containing "website" posted prior to March 1, 2026.',
-                },
-                {
-                    title: 'Search after a date',
-                    description: 'Use <strong>after:</strong> to return only content posted later than a date. For example, <strong>website after:2026-02-01</strong> returns messages containing "website" posted after February 1, 2026.',
-                },
-                {
-                    title: 'Search a single day',
-                    description: 'Use <strong>on:</strong> when you know the exact day. For example, <strong>website on:2026-03-01</strong> returns messages containing "website" posted that day only.',
-                },
-                {
-                    title: 'Combine before: and after: for a range',
-                    description: 'Use both together to bracket a window. <strong>website after:2026-02-01 before:2026-03-01</strong> returns messages containing "website" posted between those two dates.',
-                },
-                {
-                    title: 'Use the date picker instead of typing',
-                    description: 'When you select a date modifier from the search autocomplete, a date picker opens so you can choose the day visually. If you would rather type, use <strong>YYYY-MM-DD</strong> format.',
+                    title: 'Combine filters',
+                    description: 'Modifiers stack. <code>deploy from:john.smith in:release-discussion</code> returns only messages about "deploy" that John posted in that channel. Add dates the same way — <code>website after:2026-02-01 before:2026-03-01 from:john.smith</code> brackets a window and a person at once.',
                 },
             ],
         },
@@ -120,24 +87,24 @@ const advancedSearch: Guide = {
             steps: [
                 {
                     title: 'Quote an exact phrase',
-                    description: 'Wrap terms in quotation marks to match them together and in order. Searching <strong>"Mattermost website"</strong> returns messages containing that exact phrase, and skips messages that happen to mention "Mattermost" and "website" separately.',
+                    description: 'Wrap terms in quotation marks to match them together and in order. Searching <code>"Mattermost website"</code> returns messages containing that exact phrase, and skips messages that happen to mention "Mattermost" and "website" separately.',
                 },
                 {
                     title: 'Exclude terms with a hyphen',
-                    description: 'Prefix a term with <strong>-</strong> to remove it from your results. Searching <strong>test -release</strong> returns results containing "test" that do not contain "release".',
+                    description: 'Prefix a term with <code>-</code> to remove it from your results. Searching <code>test -release</code> returns results containing "test" that do not contain "release".',
                 },
                 {
                     title: 'Exclude whole channels and people',
-                    description: 'The hyphen also works in front of a modifier. <strong>test -release -in:release-discussion -from:eric</strong> keeps results for "test" while dropping the term "release", that one channel, and that one sender.',
+                    description: 'The hyphen also works in front of a modifier. <code>test -release -in:release-discussion -from:eric</code> keeps results for "test" while dropping the term "release", that one channel, and that one sender.',
                 },
                 {
                     title: 'Match word beginnings with a wildcard',
-                    description: 'Add <strong>*</strong> to the end of a word to match everything starting with those letters. Searching <strong>rea*</strong> matches "reach", "reason", "reality", and "real". The wildcard only works at the end of a word, so <strong>*each</strong> and <strong>re*ch</strong> are not valid.',
+                    description: 'Add <code>*</code> to the end of a word to match everything starting with those letters. Searching <code>rea*</code> matches "reach", "reason", "reality", and "real". The wildcard only works at the end of a word, so <code>*each</code> and <code>re*ch</code> are not valid.',
                 },
                 {
                     title: 'Search hashtags',
-                    description: 'Hashtags are searchable labels anyone can add to a message with <strong>#</strong>. Select a hashtag in an existing post, or type it including the pound symbol, to find every message tagged with it.',
-                    tip: 'Hashtags are not channel links. Selecting #marketing does not open the Marketing channel. To link a public channel, use the tilde symbol instead, as in ~marketing.',
+                    description: 'Hashtags are searchable labels anyone can add to a message with <code>#</code>. Select a hashtag in an existing post, or type it including the pound symbol, to find every message tagged with it.',
+                    tip: 'Hashtags are not channel links. Selecting <code>#marketing</code> does not open the Marketing channel. To link a public channel, use the tilde symbol instead, as in <code>~marketing</code>.',
                 },
             ],
             commandGroups: [
@@ -194,7 +161,7 @@ const advancedSearch: Guide = {
                 },
                 {
                     title: 'Filter by file extension',
-                    description: 'Use <strong>ext:</strong> followed by an extension to return only that file type, as in <strong>ext:pdf</strong>. The search autocomplete suggests extensions as you type, so you do not have to remember them.',
+                    description: 'Use <code>ext:</code> followed by an extension to return only that file type, as in <code>ext:pdf</code>. The search autocomplete suggests extensions as you type, so you do not have to remember them.',
                 },
                 {
                     title: 'Filter by file category instead',
@@ -207,7 +174,7 @@ const advancedSearch: Guide = {
                 },
                 {
                     title: 'Stack modifiers on file searches too',
-                    description: '<strong>from:</strong>, <strong>in:</strong>, <strong>before:</strong>, <strong>after:</strong>, and <strong>on:</strong> all work in the Files tab. <strong>budget from:john.smith ext:pdf after:2026-02-01</strong> finds one PDF instead of a page of them.',
+                    description: '<code>from:</code>, <code>in:</code>, <code>before:</code>, <code>after:</code>, and <code>on:</code> all work in the Files tab. <code>budget from:john.smith ext:pdf after:2026-02-01</code> finds one PDF instead of a page of them.',
                 },
                 {
                     title: 'Browse a channel\'s recent files',
@@ -225,7 +192,7 @@ const advancedSearch: Guide = {
             steps: [
                 {
                     title: 'Search only the channel you\'re in',
-                    description: 'Press <strong>Ctrl+Shift+F</strong> on Windows or Linux, or <strong>Cmd+Shift+F</strong> on Mac, to move focus to the search field with the current channel already scoped. This is the fastest way to search one conversation without typing an <strong>in:</strong> modifier.',
+                    description: 'Press <strong>Ctrl+Shift+F</strong> on Windows or Linux, or <strong>Cmd+Shift+F</strong> on Mac, to move focus to the search field with the current channel already scoped. This is the fastest way to search one conversation without typing an <code>in:</code> modifier.',
                 },
                 {
                     title: 'Find a channel rather than a message',
@@ -261,7 +228,7 @@ const advancedSearch: Guide = {
                 },
                 {
                     title: 'Ask a full question',
-                    description: 'Type what you are looking for the way you would ask a colleague — for example, "what did we decide about the pricing change?" You do not need modifiers, quotation marks, or exact wording.',
+                    description: 'Type what you are looking for the way you would ask a colleague — for example, <code>what did we decide about the pricing change?</code> You do not need modifiers, quotation marks, or exact wording.',
                 },
                 {
                     title: 'Know which search to reach for',

@@ -1016,6 +1016,15 @@
     line-height: 1.5;
     padding: var(--academy-content-padding);
 
+    code {
+        font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+        font-size: 0.875em;
+        background: rgba(var(--center-channel-color-rgb), 0.08);
+        border-radius: var(--radius-s, 4px);
+        padding: 1px 5px;
+        overflow-wrap: anywhere;
+    }
+
     &__content {
         color: rgba(var(--center-channel-color-rgb), 0.88);
         box-sizing: border-box;

@@ -64,11 +64,13 @@ function withoutHrefs(text: string): string {
 
 /**
  * Commands, API parameters, and other literals the reader types are wrapped in
- * <strong> by convention, and those legitimately contain underscores. Icon
- * ligatures leaked into bare running prose, which is what this leaves behind.
+ * <strong> or <code> by convention, and those legitimately contain underscores.
+ * Icon ligatures leaked into bare running prose, which is what this leaves behind.
  */
 function withoutLiterals(text: string): string {
-    return text.replace(/<strong>[\s\S]*?<\/strong>/gi, '');
+    return text.
+        replace(/<strong>[\s\S]*?<\/strong>/gi, '').
+        replace(/<code>[\s\S]*?<\/code>/gi, '');
 }
 
 function allModules(): Array<{guide: Guide; mod: Module}> {

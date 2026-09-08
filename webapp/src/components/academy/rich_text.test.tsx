@@ -35,6 +35,11 @@ describe('RichText', () => {
             toBe('Press <strong>Enter</strong> to send');
     });
 
+    it('renders inline code', () => {
+        expect(html('Search <code>from:jane</code> to filter')).
+            toBe('Search <code>from:jane</code> to filter');
+    });
+
     it('opens external links in a new tab', () => {
         expect(html('See <a href="https://docs.mattermost.com/">the docs</a>')).
             toBe('See <a href="https://docs.mattermost.com/" target="_blank" rel="noopener noreferrer">the docs</a>');

@@ -7,16 +7,15 @@ const mattermostBasics: Guide = {
     id: 'mattermost-basics',
     title: 'Collaboration Basics',
     heroTitle: 'Collaboration Basics',
-    subtitle: 'Channel organization, composing, formatting, threaded replies, and notifications — the collaboration habits you use every day.',
-    description: 'Channel organization, composing, formatting, threaded replies, and notifications — the collaboration habits you use every day.',
+    subtitle: 'Channel organization, composing, formatting, and threaded replies — the collaboration habits you use every day.',
+    description: 'Channel organization, composing, formatting, and threaded replies — the collaboration habits you use every day.',
     icon: 'message-text-outline',
     audiences: ['end-user'],
     doneTitle: 'You know your way around Mattermost',
-    doneSummary: 'You\'ve covered channel organization, composing, formatting, threaded replies, and notifications. Keep these references handy:',
+    doneSummary: 'You\'ve covered channel organization, composing, formatting, and threaded replies. Keep these references handy:',
     doneLinks: [
         {label: 'Channels documentation', href: 'https://docs.mattermost.com/end-user-guide/collaborate/channel-types.html'},
         {label: 'Format messages', href: 'https://docs.mattermost.com/end-user-guide/collaborate/format-messages.html'},
-        {label: 'Notification preferences', href: 'https://docs.mattermost.com/end-user-guide/preferences/manage-your-notifications.html'},
     ],
     modules: [
         {
@@ -56,40 +55,35 @@ const mattermostBasics: Guide = {
         {
             id: 'composing',
             navTitle: 'Composing Messages',
-            icon: 'clock-send-outline',
-            minutes: 5,
+            icon: 'message-text-outline',
+            minutes: 4,
             title: 'Composing Messages',
-            summary: 'The message box does more than send text. React without a full reply, save a draft, send it at a better hour, and mark the rare message that genuinely cannot wait.',
+            summary: 'Every message starts in the compose area at the bottom of the channel. Format, attach files, add emoji, and leave a draft to come back to.',
             steps: [
                 {
+                    title: 'Start in the compose area',
+                    description: 'The message box at the bottom of the channel is where you write. Type your message, then select <strong>Send</strong> or press <strong>Enter</strong>. Press <strong>Shift Enter</strong> to add a new line without sending.',
+                },
+                {
+                    title: 'Use the formatting toolbar',
+                    description: 'The toolbar below the message box handles bold, italic, and strikethrough text, headings, links, numbered and bulleted lists, quoted text, and code — no syntax to remember. Select the <strong>Show/Hide Formatting</strong> icon to collapse it when you don\'t need it, and <strong>Show/Hide Preview</strong> to see how the message will look before you send. With text selected, <strong>Ctrl B</strong> or <strong>⌘ B</strong> bolds it, <strong>Ctrl I</strong> or <strong>⌘ I</strong> italicizes it, and <strong>Ctrl K</strong> or <strong>⌘ K</strong> turns it into a link.',
+                },
+                {
+                    title: 'Attach files to a message',
+                    description: 'Select the <strong>Attachment</strong> icon in the compose area, drag a file into the channel, or paste from your clipboard. You can attach up to 10 files per message. To find a file later, select the <strong>Channel files</strong> icon in the channel header.',
+                },
+                {
+                    title: 'Add emoji to a message',
+                    description: 'Select the <strong>emoji</strong> icon in the formatting toolbar to insert an emoji into your message. While typing, <strong>:</strong> followed by a few characters and then Tab autocompletes an emoji.',
+                },
+                {
                     title: 'React instead of replying',
-                    description: 'Hover over a message and select the <strong>emoji</strong> icon to add a reaction. A reaction confirms you\'ve seen something without adding a reply to the thread, and it also stops persistent notifications on an urgent message. While typing, <strong>:</strong> followed by a few characters and then Tab autocompletes an emoji.',
+                    description: 'Hover over a message and select the <strong>emoji</strong> icon to add a reaction. A reaction confirms you\'ve seen something without adding a reply to the thread, and it also stops persistent notifications on an urgent message.',
                 },
                 {
                     title: 'Leave a draft and come back to it',
                     description: 'Anything you type but don\'t send becomes a draft, collected in the <strong>Drafts</strong> view at the top of the channel sidebar. Drafts sync to the server by default, so a draft started in your browser is waiting for you in the desktop app. To keep drafts on one client only, turn off <strong>Settings</strong> > <strong>Advanced</strong> > <strong>Allow message drafts to sync with the server</strong>.',
-                },
-                {
-                    title: 'Schedule a message for later',
-                    description: 'Write the message, then select the right side of the <strong>Send</strong> button. Pick a preset or a custom time — Mattermost shows both your local time and the recipient\'s. Scheduled messages wait in the <strong>Drafts</strong> view under the <strong>Scheduled</strong> tab, where you can edit, reschedule, send now, or delete them.',
-                    media: {
-                        type: 'image',
-                        file: 'scheduled-messages-step1-9259c4fcaa.svg',
-                        alt: 'Message composer with Schedule message menu open',
-                    },
-                },
-                {
-                    title: 'Set message priority',
-                    description: 'Select the <strong>Message Priority</strong> icon in the formatting toolbar and choose <strong>Standard</strong>, <strong>Important</strong>, or <strong>Urgent</strong>. Priority applies to the first message of a thread, and the label appears next to your name in the channel and in the Threads view.',
-                },
-                {
-                    title: 'Request an acknowledgement',
-                    description: 'Turn on <strong>Request acknowledgement</strong> to add an <strong>Acknowledge</strong> button below your sent message. Hover the acknowledged icon to see exactly who has confirmed it. Marking a message <strong>Urgent</strong> requests an acknowledgement automatically.',
-                },
-                {
-                    title: 'Send persistent notifications when it truly cannot wait',
-                    description: 'On an <strong>Urgent</strong> message that @mentions at least one person or group, select <strong>Send persistent notifications</strong>. Those people are notified repeatedly until someone replies, acknowledges, or reacts to the message. Anyone set to Do Not Disturb is not notified.',
-                    tip: 'Server-synced drafts, scheduled messages, message priority, acknowledgements, and persistent notifications can each be turned off by a system admin. If you don\'t see one of these options, ask whether it\'s enabled on your instance.',
+                    tip: 'A system admin can turn off server-synced drafts. If a draft you started elsewhere doesn\'t appear, ask whether sync is enabled on your instance.',
                 },
             ],
         },
@@ -97,28 +91,20 @@ const mattermostBasics: Guide = {
             id: 'formatting',
             navTitle: 'Message Formatting',
             icon: 'text-box-outline',
-            minutes: 3,
+            minutes: 2,
             title: 'Message Formatting',
-            summary: 'A code block or a short list makes a message far easier to read. Use the toolbar, or type markdown directly — both produce the same result.',
+            summary: 'A cheat sheet of the markdown you\'ll use day to day. Type these symbols as you write — they do the same thing as the toolbar. Select any item to copy it.',
             steps: [
                 {
-                    title: 'Use the formatting toolbar',
-                    description: 'The toolbar below the message box handles bold, italic, and strikethrough text, headings, links, attachments, numbered and bulleted lists, quoted text, code, emojis and GIFs, and message priority — no syntax to remember. Select the <strong>Show/Hide Formatting</strong> icon to collapse the toolbar when you don\'t need it.',
-                },
-                {
-                    title: 'Preview before you send',
-                    description: 'Select the <strong>Show/Hide Preview</strong> icon to see how the message will look once posted, then select it again to return to your draft. This is worth doing for anything with a table or a long code block.',
-                },
-                {
-                    title: 'Learn the three shortcuts you\'ll use constantly',
-                    description: 'With text selected, press <strong>Ctrl B</strong> or <strong>⌘ B</strong> to bold it, <strong>Ctrl I</strong> or <strong>⌘ I</strong> to italicize it, and <strong>Ctrl K</strong> or <strong>⌘ K</strong> to turn it into a link.',
-                },
-                {
                     title: 'Type markdown directly',
-                    description: 'Once the syntax is in your fingers it\'s faster than the toolbar. The reference below covers what you\'ll use day to day. Select any item to copy it.',
-                    tip: 'Mattermost also supports task lists, horizontal lines, in-line images, and LaTeX math formulas. See the <a href="https://docs.mattermost.com/end-user-guide/collaborate/format-messages.html">message formatting documentation</a> for the full list.',
+                    description: 'Once the syntax is in your fingers it\'s faster than the toolbar. The table below is a reference you can come back to. Select any item to copy it.',
+                    tip: 'Mattermost also supports in-line images and LaTeX math formulas. See the <a href="https://docs.mattermost.com/end-user-guide/collaborate/format-messages.html">message formatting documentation</a> for the full list.',
                 },
             ],
+            commandHeaders: {
+                command: 'Syntax',
+                description: 'What it does',
+            },
             commandGroups: [
                 {
                     label: 'Text',
@@ -152,6 +138,7 @@ const mattermostBasics: Guide = {
                         {command: '[label](https://example.com)', description: 'A link with your own label instead of the raw URL'},
                         {command: '~channel-name', description: 'A link to a channel'},
                         {command: '| Column A | Column B |', description: 'A table row — put a row of dashes under the header row'},
+                        {command: '---', description: 'A horizontal line'},
                     ],
                 },
             ],
@@ -183,36 +170,6 @@ const mattermostBasics: Guide = {
                 {
                     title: 'Control notifications thread by thread',
                     description: 'Following is the per-thread switch: follow a thread to be notified about replies, unfollow it to stop. Under <strong>Settings</strong> > <strong>Notifications</strong>, <strong>Notify me about replies to threads I\'m following</strong> controls this behavior everywhere at once, and channel notification preferences can override it for a single channel.',
-                },
-            ],
-        },
-        {
-            id: 'notifications',
-            navTitle: 'Tuning Notifications',
-            icon: 'bell-outline',
-            minutes: 4,
-            title: 'Tuning Notifications',
-            summary: 'Notifications are worth ten minutes of setup. Set the global defaults once, then override them for the few channels that need something different.',
-            steps: [
-                {
-                    title: 'Open your notification settings',
-                    description: 'Select the <strong>Settings</strong> icon in the top right of the screen, then select <strong>Notifications</strong>. One place covers desktop, mobile push, and email notifications.',
-                },
-                {
-                    title: 'See what notifies you by default',
-                    description: 'You\'re notified when someone @mentions your username or first name, mentions a user group you belong to, or uses <strong>@channel</strong>, <strong>@all</strong>, or <strong>@here</strong>. Direct and group messages notify you, as do replies in threads you follow. Everything else just marks the channel as unread.',
-                },
-                {
-                    title: 'Add keywords that trigger notifications',
-                    description: 'In <strong>Settings</strong> > <strong>Notifications</strong>, add keywords so a project name, customer, or topic notifies you the way an @mention does. Keywords aren\'t case sensitive. Separate them with commas or by pressing Tab, and use Backspace to remove one. Depending on your plan you can also highlight keywords without triggering any notification.',
-                },
-                {
-                    title: 'Override settings for a single channel',
-                    description: 'Select the channel name, then <strong>Notification Preferences</strong>. You can <strong>mute the channel</strong>, choose <strong>Ignore mentions for @channel, @here and @all</strong>, change what the channel notifies you about, pick a notification sound, and auto-follow every new thread started there.',
-                },
-                {
-                    title: 'Use Do Not Disturb and a custom status',
-                    description: 'Select your profile picture to set your availability to <strong>Online</strong>, <strong>Away</strong>, <strong>Do Not Disturb</strong>, or <strong>Offline</strong>. Do Not Disturb turns off desktop, email, and push notifications, and you choose a preset expiry, a custom one, or <strong>Don\'t clear</strong>. From the same menu, <strong>Set a custom status</strong> adds an emoji and a short message next to your name, with an option for when it clears.',
                 },
             ],
         },

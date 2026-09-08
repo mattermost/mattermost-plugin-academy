@@ -2,7 +2,7 @@
 // See LICENSE.txt for license information.
 
 import {guideAssetURL} from 'content';
-import type {ChecklistItem, CommandGroup, Step, Tier, Variant} from 'content/types';
+import type {ChecklistItem, CommandGroup, CommandHeaders, Step, Tier, Variant} from 'content/types';
 import React, {useState} from 'react';
 
 import RichText from 'components/academy/rich_text';
@@ -161,7 +161,7 @@ export function Checklist({items}: {items: ChecklistItem[]}) {
     );
 }
 
-export function CommandGroups({groups}: {groups: CommandGroup[]}) {
+export function CommandGroups({groups, headers}: {groups: CommandGroup[]; headers?: CommandHeaders}) {
     const [copied, setCopied] = useState<string | null>(null);
 
     const copyCommand = async (command: string) => {
@@ -177,8 +177,8 @@ export function CommandGroups({groups}: {groups: CommandGroup[]}) {
     return (
         <div className='academy-cmd'>
             <div className='academy-cmd__hdr'>
-                <span>{'Command'}</span>
-                <span>{'What it does'}</span>
+                <span>{headers?.command ?? 'Command'}</span>
+                <span>{headers?.description ?? 'What it does'}</span>
             </div>
             {groups.map((group) => (
                 <div key={group.label}>
@@ -192,7 +192,7 @@ export function CommandGroups({groups}: {groups: CommandGroup[]}) {
                                 type='button'
                                 className='academy-cmd__try'
                                 onClick={() => copyCommand(item.command)}
-                                title='Copy command'
+                                title='Copy'
                             >
                                 <span>{item.command}</span>
                                 <AcademyIcon

@@ -8,7 +8,6 @@ const BASICS_MODULES = [
     'composing',
     'formatting',
     'threads',
-    'notifications',
 ];
 
 type UserProfile = {

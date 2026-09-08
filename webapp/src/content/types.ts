@@ -2,8 +2,8 @@
 // See LICENSE.txt for license information.
 
 /**
- * Fields commented "Rich" render through RichText and accept <strong> and
- * <a href="...">, with hrefs limited to https and in-app paths. Every other
+ * Fields commented "Rich" render through RichText and accept <strong>, <code>,
+ * and <a href="...">, with hrefs limited to https and in-app paths. Every other
  * field renders literally, so a tag written there shows as angle brackets.
  */
 export type Audience = 'end-user' | 'admin';
@@ -33,6 +33,11 @@ export type CommandItem = {
 export type CommandGroup = {
     label: string;
     items: CommandItem[];
+};
+
+export type CommandHeaders = {
+    command: string;
+    description: string;
 };
 
 export type TierItem = {
@@ -86,6 +91,7 @@ export type Module = {
     variants?: Variant[];
     checklist?: ChecklistItem[];
     commandGroups?: CommandGroup[];
+    commandHeaders?: CommandHeaders;
 
     /** Plugin IDs that must all be active for this module to be shown. */
     requiresPlugins?: string[];
