@@ -52,7 +52,7 @@ func (h *Handler) logWarn(message string, keyValuePairs ...any) {
 	}
 }
 
-func (h *Handler) List(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) ListProgress(w http.ResponseWriter, r *http.Request) {
 	records, err := h.store.ListForUser(access.UserFromContext(r.Context()))
 	if err != nil {
 		writeError(w, http.StatusInternalServerError, "failed to list progress")
@@ -61,7 +61,7 @@ func (h *Handler) List(w http.ResponseWriter, r *http.Request) {
 	writeJSON(w, http.StatusOK, map[string]any{"guides": records})
 }
 
-func (h *Handler) Get(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) GetProgress(w http.ResponseWriter, r *http.Request) {
 	guideID := r.PathValue("guideId")
 	if !validGuideID(guideID) {
 		writeError(w, http.StatusBadRequest, "invalid guide id")
@@ -76,9 +76,9 @@ func (h *Handler) Get(w http.ResponseWriter, r *http.Request) {
 	writeJSON(w, http.StatusOK, rec)
 }
 
-// Put handles PUT /api/v1/progress/{guideId}. Writes to a disabled guide
-// are refused; reads (Get/List) stay allowed so an open tab degrades quietly.
-func (h *Handler) Put(w http.ResponseWriter, r *http.Request) {
+// PutProgress handles PUT /api/v1/progress/{guideId}. Writes to a disabled
+// guide are refused; reads stay allowed so an open tab degrades quietly.
+func (h *Handler) PutProgress(w http.ResponseWriter, r *http.Request) {
 	guideID := r.PathValue("guideId")
 	if !validGuideID(guideID) {
 		writeError(w, http.StatusBadRequest, "invalid guide id")
@@ -102,10 +102,10 @@ func (h *Handler) Put(w http.ResponseWriter, r *http.Request) {
 	writeJSON(w, http.StatusOK, rec)
 }
 
-// UserCompletions handles GET /api/v1/users/{userId}/completions.
+// ListUserCompletions handles GET /api/v1/users/{userId}/completions.
 // Gated on ProfileBadgesEnabled so disabling badges closes the data too,
 // not just the UI.
-func (h *Handler) UserCompletions(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) ListUserCompletions(w http.ResponseWriter, r *http.Request) {
 	if !h.policy.ProfileBadgesEnabled() {
 		writeError(w, http.StatusForbidden, "profile badges are disabled")
 		return

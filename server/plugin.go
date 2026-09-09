@@ -5,6 +5,7 @@ package main
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"net/http"
 	"sync"
@@ -50,7 +51,7 @@ func (p *Plugin) OnActivate() error {
 func (p *Plugin) buildRouter() http.Handler {
 	auth := access.Checker{
 		IsSystemAdmin: p.userIsAdmin,
-		UserAllowed:   p.userHasAccess,
+		UserAllowed:   p.userAccessCheck,
 	}
 
 	mux := http.NewServeMux()
@@ -59,10 +60,10 @@ func (p *Plugin) buildRouter() http.Handler {
 	// its response tells the webapp whether the caller has access.
 	mux.Handle("GET /api/v1/settings", auth.RequireAuth(http.HandlerFunc(p.serveSettings)))
 
-	mux.Handle("GET /api/v1/progress", auth.RequireAcademyAccess(http.HandlerFunc(p.progressHandler.List)))
-	mux.Handle("GET /api/v1/progress/{guideId}", auth.RequireAcademyAccess(http.HandlerFunc(p.progressHandler.Get)))
-	mux.Handle("PUT /api/v1/progress/{guideId}", auth.RequireAcademyAccess(http.HandlerFunc(p.progressHandler.Put)))
-	mux.Handle("GET /api/v1/users/{userId}/completions", auth.RequireAcademyAccess(http.HandlerFunc(p.progressHandler.UserCompletions)))
+	mux.Handle("GET /api/v1/progress", auth.RequireAcademyAccess(http.HandlerFunc(p.progressHandler.ListProgress)))
+	mux.Handle("GET /api/v1/progress/{guideId}", auth.RequireAcademyAccess(http.HandlerFunc(p.progressHandler.GetProgress)))
+	mux.Handle("PUT /api/v1/progress/{guideId}", auth.RequireAcademyAccess(http.HandlerFunc(p.progressHandler.PutProgress)))
+	mux.Handle("GET /api/v1/users/{userId}/completions", auth.RequireAcademyAccess(http.HandlerFunc(p.progressHandler.ListUserCompletions)))
 
 	mux.Handle("GET /api/v1/admin/stats/completions-over-time", auth.RequireSystemAdmin(http.HandlerFunc(p.progressHandler.CompletionsOverTime)))
 	mux.Handle("GET /api/v1/admin/stats/completions.csv", auth.RequireSystemAdmin(http.HandlerFunc(p.progressHandler.CompletionsExport)))
@@ -124,4 +125,21 @@ func (p *Plugin) userIsAdmin(userID string) bool {
 		return false
 	}
 	return p.client.User.HasPermissionTo(userID, model.PermissionManageSystem)
+}
+
+// userAccessCheck separates policy denials from infrastructure errors so
+// the middleware can return 403 for the former and 500 for the latter.
+// Unexpected errors (e.g. Team API failures) are logged before being surfaced.
+func (p *Plugin) userAccessCheck(userID string) (bool, error) {
+	err := p.checkUserAccess(userID)
+	if err == nil {
+		return true, nil
+	}
+	if errors.Is(err, errUsageRestriction) {
+		return false, nil
+	}
+	if p.client != nil {
+		p.client.Log.Warn("Academy access check failed", "user_id", userID, "error", err.Error())
+	}
+	return false, err
 }

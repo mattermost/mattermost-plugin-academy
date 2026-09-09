@@ -45,7 +45,7 @@ func call(h func(http.ResponseWriter, *http.Request), method, path, body, userID
 
 func TestPutRejectedForDisabledGuide(t *testing.T) {
 	h := newTestHandler(nil, stubPolicy{guideEnabled: false})
-	w := call(h.Put, http.MethodPut, "/api/v1/progress/slash-commands", `{}`, "user1", map[string]string{"guideId": "slash-commands"})
+	w := call(h.PutProgress, http.MethodPut, "/api/v1/progress/slash-commands", `{}`, "user1", map[string]string{"guideId": "slash-commands"})
 
 	assert.Equal(t, http.StatusForbidden, w.Code)
 	assert.Contains(t, w.Body.String(), "guide is not available")
@@ -53,7 +53,7 @@ func TestPutRejectedForDisabledGuide(t *testing.T) {
 
 func TestCompletionsRejectedWhenBadgesDisabled(t *testing.T) {
 	h := newTestHandler(nil, stubPolicy{badgesEnabled: false})
-	w := call(h.UserCompletions, http.MethodGet, "/api/v1/users/abc123/completions", "", "user1", map[string]string{"userId": "abc123"})
+	w := call(h.ListUserCompletions, http.MethodGet, "/api/v1/users/abc123/completions", "", "user1", map[string]string{"userId": "abc123"})
 
 	assert.Equal(t, http.StatusForbidden, w.Code)
 	assert.Contains(t, w.Body.String(), "profile badges are disabled")
@@ -63,7 +63,7 @@ func TestPutThenGetProgress(t *testing.T) {
 	h := newTestHandler(newTestStore(newMemKV()), stubPolicy{guideEnabled: true, badgesEnabled: true})
 	body := `{"completedModuleIds":["chat"],"moduleIds":["chat","search"]}`
 
-	put := call(h.Put, http.MethodPut, "/api/v1/progress/ai-quick-start", body, "user1", map[string]string{"guideId": "ai-quick-start"})
+	put := call(h.PutProgress, http.MethodPut, "/api/v1/progress/ai-quick-start", body, "user1", map[string]string{"guideId": "ai-quick-start"})
 	require.Equal(t, http.StatusOK, put.Code)
 
 	var saved Record
@@ -71,7 +71,7 @@ func TestPutThenGetProgress(t *testing.T) {
 	assert.Equal(t, []string{"chat"}, saved.CompletedModuleIDs)
 	assert.False(t, saved.EverCompleted)
 
-	get := call(h.Get, http.MethodGet, "/api/v1/progress/ai-quick-start", "", "user1", map[string]string{"guideId": "ai-quick-start"})
+	get := call(h.GetProgress, http.MethodGet, "/api/v1/progress/ai-quick-start", "", "user1", map[string]string{"guideId": "ai-quick-start"})
 	require.Equal(t, http.StatusOK, get.Code)
 	var loaded Record
 	require.NoError(t, json.Unmarshal(get.Body.Bytes(), &loaded))
@@ -82,10 +82,10 @@ func TestListProgressAndCompletionsAfterFinish(t *testing.T) {
 	h := newTestHandler(newTestStore(newMemKV()), stubPolicy{guideEnabled: true, badgesEnabled: true})
 	body := `{"completedModuleIds":["chat","search"],"moduleIds":["chat","search"]}`
 
-	put := call(h.Put, http.MethodPut, "/api/v1/progress/ai-quick-start", body, "user1", map[string]string{"guideId": "ai-quick-start"})
+	put := call(h.PutProgress, http.MethodPut, "/api/v1/progress/ai-quick-start", body, "user1", map[string]string{"guideId": "ai-quick-start"})
 	require.Equal(t, http.StatusOK, put.Code)
 
-	list := call(h.List, http.MethodGet, "/api/v1/progress", "", "user1", nil)
+	list := call(h.ListProgress, http.MethodGet, "/api/v1/progress", "", "user1", nil)
 	require.Equal(t, http.StatusOK, list.Code)
 	var listed struct {
 		Guides map[string]Record `json:"guides"`
@@ -94,7 +94,7 @@ func TestListProgressAndCompletionsAfterFinish(t *testing.T) {
 	require.Contains(t, listed.Guides, "ai-quick-start")
 	assert.True(t, listed.Guides["ai-quick-start"].EverCompleted)
 
-	completions := call(h.UserCompletions, http.MethodGet, "/api/v1/users/user1/completions", "", "viewer", map[string]string{"userId": "user1"})
+	completions := call(h.ListUserCompletions, http.MethodGet, "/api/v1/users/user1/completions", "", "viewer", map[string]string{"userId": "user1"})
 	require.Equal(t, http.StatusOK, completions.Code)
 	var payload struct {
 		Completions []Completion `json:"completions"`
@@ -107,9 +107,9 @@ func TestListProgressAndCompletionsAfterFinish(t *testing.T) {
 func TestPutInvalidJSONAndGuideID(t *testing.T) {
 	h := newTestHandler(newTestStore(newMemKV()), stubPolicy{guideEnabled: true})
 
-	badJSON := call(h.Put, http.MethodPut, "/api/v1/progress/ai-quick-start", `{`, "user1", map[string]string{"guideId": "ai-quick-start"})
+	badJSON := call(h.PutProgress, http.MethodPut, "/api/v1/progress/ai-quick-start", `{`, "user1", map[string]string{"guideId": "ai-quick-start"})
 	assert.Equal(t, http.StatusBadRequest, badJSON.Code)
 
-	badID := call(h.Put, http.MethodPut, "/api/v1/progress/Not-Valid", `{}`, "user1", map[string]string{"guideId": "Not-Valid"})
+	badID := call(h.PutProgress, http.MethodPut, "/api/v1/progress/Not-Valid", `{}`, "user1", map[string]string{"guideId": "Not-Valid"})
 	assert.Equal(t, http.StatusBadRequest, badID.Code)
 }

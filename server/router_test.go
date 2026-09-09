@@ -43,6 +43,35 @@ func TestEveryRouteRequiresAuthentication(t *testing.T) {
 	}
 }
 
+// TestAdminRoutesRequireSystemAdmin asserts that an authenticated non-admin
+// user is refused on every admin stats route through the configured router.
+// With nil client, userIsAdmin returns false, standing in for "not admin".
+func TestAdminRoutesRequireSystemAdmin(t *testing.T) {
+	p := &Plugin{}
+	cfg := defaultUserAccessConfig()
+	p.setConfiguration(&configuration{UserAccessConfig: &cfg})
+	p.progressHandler = progress.NewHandler(nil, p, nil)
+	router := p.buildRouter()
+
+	adminRoutes := []struct {
+		method string
+		path   string
+	}{
+		{http.MethodGet, "/api/v1/admin/stats/completions-over-time"},
+		{http.MethodGet, "/api/v1/admin/stats/completions.csv"},
+	}
+
+	for _, rt := range adminRoutes {
+		t.Run(rt.method+" "+rt.path, func(t *testing.T) {
+			r := httptest.NewRequest(rt.method, rt.path, nil)
+			r.Header.Set("Mattermost-User-Id", "regular-user")
+			w := httptest.NewRecorder()
+			router.ServeHTTP(w, r)
+			assert.Equal(t, http.StatusForbidden, w.Code, "route %s %s must require system admin", rt.method, rt.path)
+		})
+	}
+}
+
 // TestAcademyAllowListEnforcedOnEveryProgressRoute asserts that a blocked
 // user is refused on every progress and peer-completion route.
 func TestAcademyAllowListEnforcedOnEveryProgressRoute(t *testing.T) {

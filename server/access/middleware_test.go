@@ -1,6 +1,7 @@
 package access
 
 import (
+	"errors"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -47,7 +48,7 @@ func TestRequireAuth(t *testing.T) {
 }
 
 func TestRequireAcademyAccess(t *testing.T) {
-	c := Checker{UserAllowed: func(id string) bool { return id == "allowed" }}
+	c := Checker{UserAllowed: func(id string) (bool, error) { return id == "allowed", nil }}
 	var seen string
 	h := c.RequireAcademyAccess(captureUser(&seen))
 
@@ -69,6 +70,14 @@ func TestRequireAcademyAccess(t *testing.T) {
 		h.ServeHTTP(w, newRequest("allowed"))
 		require.Equal(t, http.StatusOK, w.Code)
 		assert.Equal(t, "allowed", seen)
+	})
+
+	t.Run("500 on infrastructure error", func(t *testing.T) {
+		boom := errors.New("team API unavailable")
+		h := Checker{UserAllowed: func(string) (bool, error) { return false, boom }}.RequireAcademyAccess(captureUser(&seen))
+		w := httptest.NewRecorder()
+		h.ServeHTTP(w, newRequest("user1"))
+		assert.Equal(t, http.StatusInternalServerError, w.Code)
 	})
 
 	t.Run("nil predicate fails closed", func(t *testing.T) {

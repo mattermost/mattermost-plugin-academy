@@ -2,12 +2,16 @@ package access
 
 import "net/http"
 
-// Checker holds the two authorization predicates the middleware needs.
+// Checker holds the authorization predicates the middleware needs.
 // Function fields (not an interface) keep the plugin from having to build
 // an adapter type just to wire itself in.
+//
+// UserAllowed returns (true, nil) if allowed, (false, nil) for a policy
+// denial (→ 403), or (_, err) for an infrastructure failure (→ 500).
+// Callers are expected to log err before returning it.
 type Checker struct {
 	IsSystemAdmin func(userID string) bool
-	UserAllowed   func(userID string) bool
+	UserAllowed   func(userID string) (bool, error)
 }
 
 // RequireAuth rejects requests without Mattermost-User-Id and injects the
@@ -24,10 +28,21 @@ func (c Checker) RequireAuth(next http.Handler) http.Handler {
 }
 
 // RequireAcademyAccess enforces authentication and the Academy allow-list.
-// Fails closed if UserAllowed is nil.
+// Fails closed if UserAllowed is nil. Distinguishes policy denials (403)
+// from infrastructure errors (500) so a Team API blip doesn't look like an
+// authorization decision.
 func (c Checker) RequireAcademyAccess(next http.Handler) http.Handler {
 	return c.RequireAuth(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		if c.UserAllowed == nil || !c.UserAllowed(UserFromContext(r.Context())) {
+		if c.UserAllowed == nil {
+			http.Error(w, "forbidden", http.StatusForbidden)
+			return
+		}
+		allowed, err := c.UserAllowed(UserFromContext(r.Context()))
+		if err != nil {
+			http.Error(w, "internal server error", http.StatusInternalServerError)
+			return
+		}
+		if !allowed {
 			http.Error(w, "forbidden", http.StatusForbidden)
 			return
 		}
