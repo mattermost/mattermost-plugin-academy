@@ -9,7 +9,7 @@ describe('Academy admin completions', () => {
     it('loads the chart and exports a CSV with formula cells sanitized', () => {
         cy.apiLogin();
         cy.apiMe().then((me) => {
-            cy.request({
+            cy.apiRequest({
                 method: 'PUT',
                 url: `/api/v4/users/${me.id}/patch`,
                 body: {last_name: FORMULA_LAST},
@@ -18,7 +18,7 @@ describe('Academy admin completions', () => {
         cy.apiCompleteGuide('mattermost-basics', BASICS_MODULES);
 
         cy.visit(`/admin_console/plugins/plugin_${PLUGIN_ID}`);
-        cy.contains('Guide completions', {timeout: 20000}).should('be.visible');
+        cy.contains('Guide completions', {timeout: 20000}).scrollIntoView().should('be.visible');
         cy.get('.AcademyAdminCompletions canvas, .AcademyAdminCompletions__chart').should('exist');
 
         cy.intercept('GET', `**/plugins/${PLUGIN_ID}/api/v1/admin/stats/completions.csv**`).as('exportCsv');
@@ -31,7 +31,7 @@ describe('Academy admin completions', () => {
         });
 
         cy.apiMe().then((me) => {
-            cy.request({
+            cy.apiRequest({
                 method: 'PUT',
                 url: `/api/v4/users/${me.id}/patch`,
                 body: {last_name: ''},

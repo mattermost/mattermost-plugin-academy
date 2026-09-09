@@ -3,6 +3,7 @@
 
 declare namespace Cypress {
     interface Chainable {
+        apiRequest(options: Partial<Cypress.RequestOptions> & {url: string}): Chainable<Cypress.Response<unknown>>;
         apiLogin(username?: string, password?: string): Chainable<Cypress.Response<unknown>>;
         apiMe(): Chainable<{id: string; username: string}>;
         apiEnsureTeam(): Chainable<{id: string; name: string}>;
