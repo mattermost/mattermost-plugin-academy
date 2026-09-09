@@ -25,8 +25,8 @@ import ClockSendOutlineIcon from '@mattermost/compass-icons/components/clock-sen
 import CodeTagsIcon from '@mattermost/compass-icons/components/code-tags';
 import CogOutlineIcon from '@mattermost/compass-icons/components/cog-outline';
 import ConsoleIcon from '@mattermost/compass-icons/components/console';
-import CreationOutlineIcon from '@mattermost/compass-icons/components/creation-outline';
 import ContentCopyIcon from '@mattermost/compass-icons/components/content-copy';
+import CreationOutlineIcon from '@mattermost/compass-icons/components/creation-outline';
 import DownloadOutlineIcon from '@mattermost/compass-icons/components/download-outline';
 import DrawIcon from '@mattermost/compass-icons/components/draw';
 import FilterVariantIcon from '@mattermost/compass-icons/components/filter-variant';

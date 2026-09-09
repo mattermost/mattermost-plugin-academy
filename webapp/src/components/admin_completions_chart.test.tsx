@@ -12,10 +12,12 @@ import AdminCompletionsChart from './admin_completions_chart';
 import {act, render, waitFor} from '../../tests/render';
 
 jest.mock('chart.js', () => {
-    const Chart = jest.fn().mockImplementation(() => ({
-        destroy: jest.fn(),
-    }));
-    Chart.register = jest.fn();
+    const Chart = Object.assign(
+        jest.fn().mockImplementation(() => ({
+            destroy: jest.fn(),
+        })),
+        {register: jest.fn()},
+    );
     return {
         Chart,
         CategoryScale: {},
