@@ -8,7 +8,7 @@ Plugin id `com.mattermost.academy`. License Apache-2.0. Repo: [mattermost/matter
 
 ## 1. Summary
 
-Mattermost Academy is an in-product learning experience: short, interactive guides for end-users and admins. It registers as a full-screen **product** at `/academy` (same class of UI as Boards or Playbooks), plus a right-hand sidebar catalog and several entry points (product switcher, apps bar, channel header, help menu, `/learn`). Guides are authored in code, not a CMS. Progress and badges are persisted per user.
+Mattermost Academy is an in-product learning experience: short, interactive guides for end-users and admins. It registers as a full-screen **product** at `/academy` (same class of UI as Boards or Playbooks), plus a right-hand sidebar catalog and several entry points (product switcher, apps bar, channel header, help menu, `/academy`). Guides are authored in code, not a CMS. Progress and badges are persisted per user.
 
 ---
 
@@ -38,7 +38,7 @@ flowchart LR
 
 **Three deliverable sides** (standard Mattermost plugin layout):
 
-- **Server** ([server/](../server/)): Go 1.25. HTTP APIs, `/learn` slash command, access policy, progress persistence. Entry: [server/plugin.go](../server/plugin.go).
+- **Server** ([server/](../server/)): Go 1.25. HTTP APIs, `/academy` slash command, access policy, progress persistence. Entry: [server/plugin.go](../server/plugin.go).
 - **Webapp** ([webapp/](../webapp/)): React 18 + TypeScript + Redux (`mattermost-redux`) + Webpack. Catalog, lessons, badges, admin console UI. Bootstrap: [webapp/src/index.tsx](../webapp/src/index.tsx).
 - **Public** ([public/](../public/)): Guide images/SVGs. Served by Mattermost, not by plugin HTTP.
 
@@ -62,7 +62,7 @@ flowchart LR
 - **Plugin gating** — A guide or module can require another plugin (e.g. Boards, Playbooks). Hidden unless that plugin is present, or Test Mode is on.
 - **Access controls** — Who can see Academy at all, and which guides are enabled (System Console).
 - **Completion reporting** — System Console chart of completions over time, plus CSV export (system admins).
-- **Entry points** — Product switcher, apps bar → RHS, channel header, help menu, `/learn`.
+- **Entry points** — Product switcher, apps bar → RHS, channel header, help menu, `/academy`.
 
 **Shipped guides on master**
 
@@ -137,7 +137,7 @@ Base: `/plugins/com.mattermost.academy`
 - `GET /api/v1/admin/stats/completions-over-time` — system admin
 - `GET /api/v1/admin/stats/completions.csv` — system admin
 
-Slash command: `/learn` (server registers it; webapp hook navigates to `/academy`).
+Slash command: `/academy` (server registers it; webapp hook navigates to `/academy`).
 
 ---
 

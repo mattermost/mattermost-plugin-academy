@@ -1,6 +1,7 @@
 // Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
 
+import {hideAcademyAutocomplete} from 'client/hide_academy_autocomplete';
 import {setClientSiteURL} from 'client/mm_client';
 import {fetchPluginSettings} from 'client/settings';
 import manifest from 'manifest';
@@ -26,6 +27,7 @@ import type {PluginRegistry} from 'types/mattermost-webapp';
 
 export default class Plugin {
     private stopWatchingReload?: () => void;
+    private stopHidingAcademyAutocomplete?: () => void;
 
     public async initialize(registry: PluginRegistry, store: Store<GlobalState>) {
         let siteURL = store.getState().entities.general.config.SiteURL;
@@ -66,6 +68,7 @@ export default class Plugin {
 
         if (!userAllowed) {
             registry.unregisterComponent(productId);
+            this.stopHidingAcademyAutocomplete = hideAcademyAutocomplete();
             discardAcademyRestore();
             if (isAcademyLocation()) {
                 navigateToChannels();
@@ -104,7 +107,7 @@ export default class Plugin {
 
         registry.registerSlashCommandWillBePostedHook((message, args) => {
             const trigger = message.trim().split(/\s+/)[0];
-            if (trigger === '/learn') {
+            if (trigger === '/academy') {
                 navigateToAcademy();
                 return {};
             }
@@ -113,6 +116,8 @@ export default class Plugin {
     }
 
     public uninitialize() {
+        this.stopHidingAcademyAutocomplete?.();
+        this.stopHidingAcademyAutocomplete = undefined;
         this.stopWatchingReload?.();
         this.stopWatchingReload = undefined;
         leaveAcademyForReload();

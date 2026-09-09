@@ -20,7 +20,10 @@ func setupTest() *env {
 	driver := &plugintest.Driver{}
 	client := pluginapi.NewClient(api, driver)
 
+	api.On("UnregisterCommand", mock.Anything, mock.Anything).Return(nil)
 	api.On("RegisterCommand", mock.Anything).Return(nil)
+	api.On("LogDebug", mock.Anything).Maybe()
+	api.On("LogError", mock.Anything).Maybe()
 
 	return &env{
 		client: client,
@@ -28,14 +31,14 @@ func setupTest() *env {
 	}
 }
 
-func TestLearnCommand(t *testing.T) {
+func TestAcademyCommand(t *testing.T) {
 	assert := assert.New(t)
 	env := setupTest()
 
 	cmdHandler := NewCommandHandler(env.client)
 
 	response, err := cmdHandler.Handle(&model.CommandArgs{
-		Command:   "/learn",
+		Command:   "/academy",
 		TeamId:    "team-id",
 		ChannelId: "channel-id",
 	})

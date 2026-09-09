@@ -1,6 +1,7 @@
 // Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
 
+import {hideAcademyAutocomplete} from 'client/hide_academy_autocomplete';
 import {fetchPluginSettings} from 'client/settings';
 import type {Store} from 'redux';
 
@@ -16,6 +17,10 @@ jest.mock('client/mm_client', () => ({
 
 jest.mock('client/settings', () => ({
     fetchPluginSettings: jest.fn(),
+}));
+
+jest.mock('client/hide_academy_autocomplete', () => ({
+    hideAcademyAutocomplete: jest.fn(() => jest.fn()),
 }));
 
 jest.mock('components/academy_badges', () => () => null);
@@ -44,6 +49,7 @@ jest.mock('navigation', () => ({
 }));
 
 const fetchPluginSettingsMock = fetchPluginSettings as jest.MockedFunction<typeof fetchPluginSettings>;
+const hideAcademyAutocompleteMock = hideAcademyAutocomplete as jest.MockedFunction<typeof hideAcademyAutocomplete>;
 
 function deferred<T>() {
     let resolve!: (value: T) => void;
@@ -123,6 +129,32 @@ describe('Plugin.initialize', () => {
         );
 
         expect(registry.unregisterComponent).toHaveBeenCalledWith('product-id');
+        expect(registry.registerAppBarComponent).not.toHaveBeenCalled();
         expect(registry.registerChannelHeaderButtonAction).not.toHaveBeenCalled();
+        expect(registry.registerUserGuideDropdownMenuAction).not.toHaveBeenCalled();
+        expect(registry.registerSlashCommandWillBePostedHook).not.toHaveBeenCalled();
+        expect(hideAcademyAutocompleteMock).toHaveBeenCalled();
+    });
+
+    it('does not hide /academy autocomplete when the user is allowed', async () => {
+        fetchPluginSettingsMock.mockResolvedValue({
+            enableProfileBadges: true,
+            userAllowed: true,
+            disabledGuideIDs: [],
+            isAdmin: false,
+            testMode: false,
+        });
+
+        const registry = makeRegistry();
+        const plugin = new Plugin();
+        await plugin.initialize(
+            registry as unknown as PluginRegistry,
+            makeStore(),
+        );
+
+        expect(registry.unregisterComponent).not.toHaveBeenCalled();
+        expect(registry.registerAppBarComponent).toHaveBeenCalled();
+        expect(registry.registerSlashCommandWillBePostedHook).toHaveBeenCalled();
+        expect(hideAcademyAutocompleteMock).not.toHaveBeenCalled();
     });
 });
