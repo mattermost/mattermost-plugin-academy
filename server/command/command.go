@@ -14,8 +14,10 @@ type Command interface {
 	Handle(args *model.CommandArgs) (*model.CommandResponse, error)
 }
 
-const academyCommandTrigger = "academy"
-const legacyLearnTrigger = "learn"
+const (
+	academyCommandTrigger = "academy"
+	legacyLearnTrigger    = "learn"
+)
 
 func NewCommandHandler(client *pluginapi.Client) Command {
 	if err := client.SlashCommand.Unregister("", legacyLearnTrigger); err != nil {
