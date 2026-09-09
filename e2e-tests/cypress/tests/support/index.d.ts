@@ -11,5 +11,6 @@ declare namespace Cypress {
         apiCompleteGuide(guideId: string, moduleIds?: string[]): Chainable<void>;
         visitAcademy(path?: string): Chainable<void>;
         visitTownSquare(): Chainable<void>;
+        visitPluginSettings(): Chainable<void>;
     }
 }

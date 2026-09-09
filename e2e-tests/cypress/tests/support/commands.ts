@@ -58,6 +58,12 @@ function persistSession(userId: string, headers: Record<string, unknown>) {
     if (csrf) {
         cy.setCookie('MMCSRF', csrf, opts);
     }
+
+    // Mattermost's webapp treats a missing flag as "not logged in" and can
+    // stay on a blank screen for System Console even when cookies are set.
+    cy.window().then((win) => {
+        win.localStorage.setItem('was_logged_in', 'true');
+    });
 }
 
 function authHeaders(extra?: Record<string, string>): Record<string, string> {
@@ -182,7 +188,14 @@ Cypress.Commands.add('visitAcademy', (path = '') => {
 Cypress.Commands.add('visitTownSquare', () => {
     cy.apiEnsureTeam().then((team) => {
         cy.visit(`/${team.name}/channels/town-square`);
+        cy.contains('Town Square', {timeout: 30000}).should('be.visible');
     });
+});
+
+Cypress.Commands.add('visitPluginSettings', () => {
+    cy.visitTownSquare();
+    cy.visit(`/admin_console/plugins/plugin_${PLUGIN_ID}`);
+    cy.get('.admin-console', {timeout: 30000}).should('be.visible');
 });
 
 export {BASICS_MODULES, PLUGIN_ID};

@@ -17,7 +17,7 @@ describe('Academy admin completions', () => {
         });
         cy.apiCompleteGuide('mattermost-basics', BASICS_MODULES);
 
-        cy.visit(`/admin_console/plugins/plugin_${PLUGIN_ID}`);
+        cy.visitPluginSettings();
         cy.contains('Guide completions', {timeout: 20000}).scrollIntoView().should('be.visible');
         cy.get('.AcademyAdminCompletions canvas, .AcademyAdminCompletions__chart').should('exist');
 
