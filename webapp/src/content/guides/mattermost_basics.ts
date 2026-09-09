@@ -83,7 +83,6 @@ const mattermostBasics: Guide = {
                 {
                     title: 'Leave a draft and come back to it',
                     description: 'Anything you type but don\'t send becomes a draft, collected in the <strong>Drafts</strong> view at the top of the channel sidebar. Drafts sync to the server by default, so a draft started in your browser is waiting for you in the desktop app. To keep drafts on one client only, turn off <strong>Settings</strong> > <strong>Advanced</strong> > <strong>Allow message drafts to sync with the server</strong>.',
-                    tip: 'A system admin can turn off server-synced drafts. If a draft you started elsewhere doesn\'t appear, ask whether sync is enabled on your instance.',
                 },
             ],
         },

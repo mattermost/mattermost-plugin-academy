@@ -130,7 +130,6 @@ const productivityTips: Guide = {
                 {
                     title: 'Manage scheduled messages from Drafts',
                     description: 'Scheduled messages wait in the <strong>Drafts</strong> view under the <strong>Scheduled</strong> tab. From there you can edit, reschedule, send now, or delete them.',
-                    tip: 'Scheduled messages can be turned off by a system admin. If you don\'t see the option on the Send button, ask whether it\'s enabled on your instance.',
                 },
             ],
         },
@@ -153,7 +152,6 @@ const productivityTips: Guide = {
                 {
                     title: 'Send persistent notifications when it truly cannot wait',
                     description: 'On an <strong>Urgent</strong> message that @mentions at least one person or group, select <strong>Send persistent notifications</strong>. Those people are notified repeatedly until someone replies, acknowledges, or reacts to the message. Anyone set to Do Not Disturb is not notified.',
-                    tip: 'Message priority, acknowledgements, and persistent notifications can each be turned off by a system admin. If you don\'t see one of these options, ask whether it\'s enabled on your instance.',
                 },
             ],
         },
