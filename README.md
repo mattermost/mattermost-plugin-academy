@@ -14,7 +14,7 @@ Short, interactive walk-through guides that help end-users and admins get more d
 - **Audience filters**: Browse guides for end-users, admins, or everyone
 - **Access controls**: Admins choose who can use Academy and which guides are available
 - **Completion reporting**: System Console charts and export for guide completion over time
-- **Deep integration**: Entry points in the product switcher, apps bar, help menu, and `/learn` slash command
+- **Deep integration**: Entry points in the product switcher, apps bar, help menu, and `/academy` slash command
 
 ## Guides
 
@@ -45,7 +45,7 @@ Short, interactive walk-through guides that help end-users and admins get more d
 
 After installation:
 
-1. Open Academy from the product switcher, apps bar, help menu, or run `/learn`.
+1. Open Academy from the product switcher, apps bar, help menu, or run `/academy`.
 2. Pick a guide from the catalog.
 3. Work through modules; progress is saved as you go.
 4. Finish a guide to earn a badge.
@@ -141,7 +141,7 @@ Pushes to `master`/`main` and pull requests run lint, unit tests, and a plugin b
 | `webapp/` | Product UI, catalog/guides/lessons, badges, admin sections |
 | `webapp/src/content/` | Guide/module content (TypeScript) |
 | `public/guides/assets/` | Lesson images and UI mock SVGs |
-| `server/command/` | `/learn` slash command |
+| `server/command/` | `/academy` slash command |
 | `server/progress/` | Progress / completion API |
 | `e2e-tests/cypress/` | Cypress smoke tests (catalog, badges, admin CSV) |
 | `plugin.json` | Plugin id, name, and bundle paths |

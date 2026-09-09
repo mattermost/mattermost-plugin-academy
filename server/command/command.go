@@ -14,15 +14,20 @@ type Command interface {
 	Handle(args *model.CommandArgs) (*model.CommandResponse, error)
 }
 
-const learnCommandTrigger = "learn"
+const academyCommandTrigger = "academy"
+const legacyLearnTrigger = "learn"
 
 func NewCommandHandler(client *pluginapi.Client) Command {
+	if err := client.SlashCommand.Unregister("", legacyLearnTrigger); err != nil {
+		client.Log.Debug("Failed to unregister legacy /learn command", "error", err)
+	}
+
 	if err := client.SlashCommand.Register(&model.Command{
-		Trigger:          learnCommandTrigger,
+		Trigger:          academyCommandTrigger,
 		AutoComplete:     true,
 		AutoCompleteDesc: "Mattermost Academy",
 		AutoCompleteHint: "",
-		AutocompleteData: model.NewAutocompleteData(learnCommandTrigger, "", "Mattermost Academy"),
+		AutocompleteData: model.NewAutocompleteData(academyCommandTrigger, "", "Mattermost Academy"),
 	}); err != nil {
 		client.Log.Error("Failed to register command", "error", err)
 	}
@@ -41,8 +46,8 @@ func (c *Handler) Handle(args *model.CommandArgs) (*model.CommandResponse, error
 
 	trigger := strings.TrimPrefix(fields[0], "/")
 	switch trigger {
-	case learnCommandTrigger:
-		return c.executeLearnCommand(), nil
+	case academyCommandTrigger:
+		return c.executeAcademyCommand(), nil
 	default:
 		return &model.CommandResponse{
 			ResponseType: model.CommandResponseTypeEphemeral,
@@ -51,7 +56,7 @@ func (c *Handler) Handle(args *model.CommandArgs) (*model.CommandResponse, error
 	}
 }
 
-func (c *Handler) executeLearnCommand() *model.CommandResponse {
+func (c *Handler) executeAcademyCommand() *model.CommandResponse {
 	return &model.CommandResponse{
 		GotoLocation: "/academy",
 	}

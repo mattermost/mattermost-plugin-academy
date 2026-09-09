@@ -81,8 +81,17 @@ func (p *Plugin) ProfileBadgesEnabled() bool {
 	return p.getConfiguration().profileBadgesEnabled()
 }
 
-// ExecuteCommand runs registered slash commands (currently /learn).
+// ExecuteCommand runs registered slash commands (currently /academy).
 func (p *Plugin) ExecuteCommand(_ *plugin.Context, args *model.CommandArgs) (*model.CommandResponse, *model.AppError) {
+	if args != nil && !p.userHasAccess(args.UserId) {
+		return &model.CommandResponse{
+			ResponseType: model.CommandResponseTypeEphemeral,
+			Text:         fmt.Sprintf("Unknown command: %s", args.Command),
+		}, nil
+	}
+	if p.commandClient == nil {
+		return &model.CommandResponse{}, nil
+	}
 	response, err := p.commandClient.Handle(args)
 	if err != nil {
 		return nil, model.NewAppError("ExecuteCommand", "plugin.command.execute_command.app_error", nil, err.Error(), http.StatusInternalServerError)
