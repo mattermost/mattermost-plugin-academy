@@ -15,3 +15,8 @@ func TestUserIsAdmin(t *testing.T) {
 		assert.False(t, p.userIsAdmin("user1"))
 	})
 }
+
+func TestPluginEnabled(t *testing.T) {
+	p := &Plugin{}
+	assert.False(t, p.PluginEnabled("com.mattermost.calls"))
+}

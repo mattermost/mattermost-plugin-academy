@@ -86,12 +86,13 @@ func (s *Store) Get(userID, guideID string) (Record, error) {
 }
 
 // Put merges completed module IDs and updates ever-completed / indexes when appropriate.
-func (s *Store) Put(userID, guideID string, req PutRequest) (Record, error) {
+// curriculum is the server-known yardstick; client-supplied module lists are ignored.
+func (s *Store) Put(userID, guideID string, completedModuleIDs, curriculum []string) (Record, error) {
 	key := progressKey(userID, guideID)
 	now := time.Now().Unix()
 
-	completed := normalizeIDs(req.CompletedModuleIDs)
-	curriculum := normalizeIDs(req.ModuleIDs)
+	completed := filterKnownModules(guideID, completedModuleIDs)
+	curriculum = filterKnownModules(guideID, curriculum)
 
 	var next Record
 	becameComplete := false

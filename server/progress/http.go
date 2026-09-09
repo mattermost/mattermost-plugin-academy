@@ -17,6 +17,8 @@ import (
 type Policy interface {
 	GuideEnabled(guideID string) bool
 	ProfileBadgesEnabled() bool
+	TestMode() bool
+	PluginEnabled(pluginID string) bool
 }
 
 // Handler serves progress HTTP APIs. Authentication and access gating are
@@ -52,6 +54,16 @@ func (h *Handler) logWarn(message string, keyValuePairs ...any) {
 	}
 }
 
+func (h *Handler) curriculumFor(guideID string) []string {
+	ignorePluginReqs := h.policy != nil && h.policy.TestMode()
+	var pluginEnabled func(string) bool
+	if h.policy != nil {
+		pluginEnabled = h.policy.PluginEnabled
+	}
+	ids, _ := EffectiveCurriculum(guideID, pluginEnabled, ignorePluginReqs)
+	return ids
+}
+
 func (h *Handler) ListProgress(w http.ResponseWriter, r *http.Request) {
 	records, err := h.store.ListForUser(access.UserFromContext(r.Context()))
 	if err != nil {
@@ -77,11 +89,15 @@ func (h *Handler) GetProgress(w http.ResponseWriter, r *http.Request) {
 }
 
 // PutProgress handles PUT /api/v1/progress/{guideId}. Writes to a disabled
-// guide are refused; reads stay allowed so an open tab degrades quietly.
+// or unknown guide are refused; reads stay allowed so an open tab degrades quietly.
 func (h *Handler) PutProgress(w http.ResponseWriter, r *http.Request) {
 	guideID := r.PathValue("guideId")
 	if !validGuideID(guideID) {
 		writeError(w, http.StatusBadRequest, "invalid guide id")
+		return
+	}
+	if !KnownGuide(guideID) {
+		writeError(w, http.StatusNotFound, "unknown guide")
 		return
 	}
 	if !h.policy.GuideEnabled(guideID) {
@@ -94,7 +110,7 @@ func (h *Handler) PutProgress(w http.ResponseWriter, r *http.Request) {
 		writeError(w, http.StatusBadRequest, "invalid json")
 		return
 	}
-	rec, err := h.store.Put(access.UserFromContext(r.Context()), guideID, req)
+	rec, err := h.store.Put(access.UserFromContext(r.Context()), guideID, req.CompletedModuleIDs, h.curriculumFor(guideID))
 	if err != nil {
 		writeError(w, http.StatusInternalServerError, "failed to save progress")
 		return

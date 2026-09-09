@@ -1,0 +1,71 @@
+{
+  "mattermost-basics": {
+    "modules": [
+      {"id": "channels-and-sidebar"},
+      {"id": "composing"},
+      {"id": "formatting"},
+      {"id": "threads"}
+    ]
+  },
+  "productivity-tips": {
+    "modules": [
+      {"id": "keyboard-shortcuts"},
+      {"id": "slash-commands"},
+      {"id": "scheduled-messages"},
+      {"id": "message-priority"},
+      {"id": "notifications"},
+      {"id": "finding-messages-again"}
+    ]
+  },
+  "ai-quick-start": {
+    "modules": [
+      {"id": "ai-chat"},
+      {"id": "summarize-threads"},
+      {"id": "summarize-channels"},
+      {"id": "summarize-calls", "requiresPlugins": ["com.mattermost.calls"]},
+      {"id": "ai-search"},
+      {"id": "rewrite-with-ai"},
+      {"id": "custom-agents"}
+    ]
+  },
+  "advanced-search": {
+    "modules": [
+      {"id": "search-basics"},
+      {"id": "search-filters"},
+      {"id": "precision"},
+      {"id": "file-search"},
+      {"id": "channels-mentions-saved"},
+      {"id": "semantic-search", "requiresPlugins": ["mattermost-ai"]}
+    ]
+  },
+  "boards": {
+    "modules": [
+      {"id": "opening-boards"},
+      {"id": "create-a-board"},
+      {"id": "cards-and-properties"},
+      {"id": "views"},
+      {"id": "sharing-and-linking"}
+    ]
+  },
+  "playbooks": {
+    "modules": [
+      {"id": "playbooks-and-runs"},
+      {"id": "joining-a-run"},
+      {"id": "working-the-checklist"},
+      {"id": "status-updates"},
+      {"id": "building-a-playbook"},
+      {"id": "triggers"},
+      {"id": "retrospectives"}
+    ]
+  },
+  "update-guide": {
+    "modules": [
+      {"id": "know-your-track"},
+      {"id": "plan-the-path"},
+      {"id": "pre-flight"},
+      {"id": "running-it"},
+      {"id": "verify-and-roll-back"},
+      {"id": "what-you-unlocked"}
+    ]
+  }
+}

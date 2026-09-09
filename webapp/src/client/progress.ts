@@ -48,13 +48,12 @@ export async function fetchGuideProgress(guideId: string): Promise<ProgressRecor
 export async function saveGuideProgress(
     guideId: string,
     completedModuleIds: string[],
-    moduleIds: string[],
 ): Promise<ProgressRecord> {
     const res = await fetch(progressURL(guideId), {
         method: 'PUT',
         credentials: 'same-origin',
         headers: jsonHeaders,
-        body: JSON.stringify({completedModuleIds, moduleIds}),
+        body: JSON.stringify({completedModuleIds}),
     });
     if (!res.ok) {
         throw new Error('failed to save progress');

@@ -15,17 +15,15 @@ type Record struct {
 	CompletedModuleIDs []string `json:"completedModuleIds"`
 	UpdatedAt          int64    `json:"updatedAt"`
 	// EverCompleted is set the first time the user completes every module in
-	// the curriculum they sent. Kept for reporting even if modules are added later.
+	// the server-known curriculum. Kept for reporting even if modules are added later.
 	EverCompleted bool  `json:"everCompleted"`
 	CompletedAt   int64 `json:"completedAt,omitempty"`
 }
 
-// PutRequest is the body for saving progress.
-// ModuleIDs is the guide's current curriculum (stable IDs) used only to decide
-// whether the guide is fully complete right now.
+// PutRequest is the body for saving progress. Completion is decided against
+// the server catalog, not against any client-supplied module list.
 type PutRequest struct {
 	CompletedModuleIDs []string `json:"completedModuleIds"`
-	ModuleIDs          []string `json:"moduleIds"`
 }
 
 // Completion is a public summary of a finished guide (no module-level detail).

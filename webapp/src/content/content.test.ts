@@ -1,7 +1,7 @@
 // Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
 
-import {existsSync} from 'fs';
+import {existsSync, readFileSync} from 'fs';
 import path from 'path';
 
 import {GUIDE_LIST, guideMinutes} from 'content';
@@ -10,9 +10,12 @@ import type {Guide, Module} from 'content/types';
 import {ICON_NAMES} from 'components/icons';
 
 const ASSET_ROOT = path.resolve(__dirname, '../../../public/guides/assets');
+const CURRICULUM_PATH = path.resolve(__dirname, '../../../server/progress/curriculum.json');
 
-/** Mirrors validGuideID in server/progress/progress.go. */
+/** Mirrors validGuideID in server/progress/ids.go. */
 const GUIDE_ID = /^[a-z0-9_-]+$/;
+
+type ServerCurriculum = Record<string, {modules: Array<{id: string; requiresPlugins?: string[]}>}>;
 
 /**
  * Material icon ligatures leaked into copy when the guides were ported from
@@ -108,6 +111,22 @@ describe('guide registry', () => {
         GUIDE_LIST.forEach((guide) => {
             const ids = guide.modules.map((mod) => mod.id);
             expect(new Set(ids).size).toBe(ids.length);
+        });
+    });
+
+    it('matches the server curriculum registry', () => {
+        const catalog = JSON.parse(readFileSync(CURRICULUM_PATH, 'utf8')) as ServerCurriculum;
+        const serverIDs = Object.keys(catalog).sort();
+        const clientIDs = GUIDE_LIST.map((guide) => guide.id).sort();
+
+        expect(clientIDs).toEqual(serverIDs);
+
+        GUIDE_LIST.forEach((guide) => {
+            const spec = catalog[guide.id];
+            expect(spec.modules.map((mod) => mod.id)).toEqual(guide.modules.map((mod) => mod.id));
+            guide.modules.forEach((mod, i) => {
+                expect(spec.modules[i].requiresPlugins ?? []).toEqual(mod.requiresPlugins ?? []);
+            });
         });
     });
 });

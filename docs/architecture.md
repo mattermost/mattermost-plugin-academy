@@ -47,7 +47,7 @@ flowchart LR
 **Runtime split of responsibility:**
 
 - Content and lesson UI live in the webapp.
-- Access policy, progress/completions, and admin reporting live on the server.
+- Access policy, progress/completions, and admin reporting live on the server. The server also ships a catalog of known guide IDs and module IDs so progress writes cannot invent curriculum.
 - Mattermost provides session auth, System Console, product shell, and KV storage.
 
 ---
@@ -75,7 +75,7 @@ flowchart LR
 
 ## 4. Content model
 
-Guides are **static TypeScript objects** in [webapp/src/content/guides/](../webapp/src/content/guides/), registered in catalog order in [webapp/src/content/index.ts](../webapp/src/content/index.ts). Not markdown, not a CMS. Structure: Guide → Modules → Steps. Some copy allows a tiny “rich text” subset (`<strong>` and safe links).
+Guides are **static TypeScript objects** in [webapp/src/content/guides/](../webapp/src/content/guides/), registered in catalog order in [webapp/src/content/index.ts](../webapp/src/content/index.ts). Not markdown, not a CMS. Structure: Guide → Modules → Steps. Some copy allows a tiny “rich text” subset (`<strong>` and safe links). Guide and module IDs (plus any plugin gates) are mirrored on the server in [curriculum.json](../server/progress/curriculum.json) so completion cannot be decided from a client-supplied list.
 
 Lesson images live under `public/guides/assets/<guideId>/`. **New content ships as a plugin release** (code change + rebuild + deploy).
 
@@ -96,7 +96,7 @@ No SQL schema of its own. Persistence is:
 - Per user: list of guides with progress; list of finished guides (badges / reporting).
 - Global: set of users who have completed anything (so admin charts do not scan every user).
 
-**Not persisted:** the catalog itself, estimated minutes, visibility (computed from audience + installed plugins + disabled guides).
+**Not persisted:** estimated minutes and visibility (computed from audience + installed plugins + disabled guides). Guide IDs and their module lists are compiled into the server as a positive-list catalog ([server/progress/curriculum.json](../server/progress/curriculum.json)); the webapp copy of the same IDs is checked in CI so the two cannot drift.
 
 **Browser storage:** no product `localStorage`. `sessionStorage` is only used to restore the Academy URL across a plugin reload. Short in-memory cache (~15s) for plugin settings on the client.
 
@@ -111,7 +111,9 @@ Academy does **not** invent login. Browser calls `/plugins/com.mattermost.academ
 **Authorization layers:**
 
 - **Academy usage** — all users, or an allow-list of users and/or teams ([server/user_access.go](../server/user_access.go)). Denied users do not get progress or peer-completion APIs; the webapp also unregisters the product so entry points disappear. If settings fail to load, the UI **fails open** (shows Academy) — worth knowing for lockdown deployments.
+- **Known guides** — PUT progress accepted only for IDs in the server catalog (positive list). Unknown IDs are rejected even if they pass the character-set check.
 - **Disabled guides** — PUT progress rejected for those IDs.
+- **Completion yardstick** — whether a guide is finished is computed against the server catalog (plugin-gated modules omitted unless that plugin is running, or Test Mode is on). Client-supplied module lists are ignored.
 - **Admin stats/CSV** — requires Mattermost `PermissionManageSystem`.
 - **Profile completions** — any logged-in Academy user may read another user’s finished-guide list **if** profile badges are enabled (needed for popovers).
 
@@ -120,7 +122,7 @@ Academy does **not** invent login. Browser calls `/plugins/com.mattermost.academ
 - CSRF: clients send `X-Requested-With: XMLHttpRequest` (Mattermost’s usual plugin pattern).
 - XSS: lesson rich text is parsed, not dumped as HTML; only `<strong>` and `https://` or site-root links.
 - CSV export sanitizes formula-like cells.
-- Guide/user IDs validated against a strict character set.
+- Guide/user IDs validated against a strict character set, then against the catalog.
 - No application secrets in the plugin. Deploy tooling uses `MM_SERVICESETTINGS_SITEURL` plus admin user/password or token.
 
 Every route is registered in `buildRouter` ([server/plugin.go](../server/plugin.go)) with an explicit middleware wrapper from [server/access/](../server/access/): `RequireAuth`, `RequireAcademyAccess`, or `RequireSystemAdmin`. The `Mattermost-User-Id` header is read once by the middleware and passed to handlers via request context, so a new route cannot silently skip the auth check. No `SECURITY.md`.

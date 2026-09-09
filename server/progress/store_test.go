@@ -30,6 +30,15 @@ func TestPutRequestCompleteness(t *testing.T) {
 	require.True(t, containsAll(have, need))
 }
 
+func TestPutUnknownGuideNeverCompletes(t *testing.T) {
+	s := newTestStore(newMemKV())
+	rec, err := s.Put("user1", "totally-fake", []string{"x"}, []string{"x"})
+	require.NoError(t, err)
+	assert.False(t, rec.EverCompleted)
+	assert.Empty(t, rec.CompletedModuleIDs)
+	assert.Zero(t, rec.CompletedAt)
+}
+
 func TestGetEmptyRecord(t *testing.T) {
 	s := newTestStore(newMemKV())
 	rec, err := s.Get("user1", "boards")
@@ -48,34 +57,29 @@ func TestPutIndexesWithoutScanning(t *testing.T) {
 	kv := newMemKV()
 	s := newTestStore(kv)
 
-	_, err := s.Put("user1", "ai-quick-start", PutRequest{
-		CompletedModuleIDs: []string{"chat"},
-		ModuleIDs:          []string{"chat", "search"},
-	})
+	basics := []string{"channels-and-sidebar", "composing", "formatting", "threads"}
+	_, err := s.Put("user1", "mattermost-basics", []string{"composing"}, basics)
 	require.NoError(t, err)
 
 	listCallsBefore := kv.listCalls
 	records, err := s.ListForUser("user1")
 	require.NoError(t, err)
-	require.Contains(t, records, "ai-quick-start")
-	assert.Equal(t, []string{"chat"}, records["ai-quick-start"].CompletedModuleIDs)
-	assert.False(t, records["ai-quick-start"].EverCompleted)
+	require.Contains(t, records, "mattermost-basics")
+	assert.Equal(t, []string{"composing"}, records["mattermost-basics"].CompletedModuleIDs)
+	assert.False(t, records["mattermost-basics"].EverCompleted)
 	assert.Equal(t, listCallsBefore, kv.listCalls)
 
 	completions, err := s.ListCompletionsForUser("user1")
 	require.NoError(t, err)
 	assert.Empty(t, completions)
 
-	_, err = s.Put("user1", "ai-quick-start", PutRequest{
-		CompletedModuleIDs: []string{"search"},
-		ModuleIDs:          []string{"chat", "search"},
-	})
+	_, err = s.Put("user1", "mattermost-basics", []string{"channels-and-sidebar", "formatting", "threads"}, basics)
 	require.NoError(t, err)
 
 	completions, err = s.ListCompletionsForUser("user1")
 	require.NoError(t, err)
 	require.Len(t, completions, 1)
-	assert.Equal(t, "ai-quick-start", completions[0].GuideID)
+	assert.Equal(t, "mattermost-basics", completions[0].GuideID)
 	assert.Greater(t, completions[0].CompletedAt, int64(0))
 
 	events, err := s.ListAllCompletions()
