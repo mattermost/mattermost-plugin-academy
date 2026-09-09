@@ -106,6 +106,7 @@ func (p *Plugin) ServeHTTP(_ *plugin.Context, w http.ResponseWriter, r *http.Req
 		http.NotFound(w, r)
 		return
 	}
+	r.Body = http.MaxBytesReader(w, r.Body, progress.MaxRequestBodyBytes)
 	p.router.ServeHTTP(w, r)
 }
 

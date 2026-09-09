@@ -5,6 +5,8 @@ package progress
 
 import (
 	"encoding/json"
+	"errors"
+	"io"
 	"net/http"
 
 	"github.com/mattermost/mattermost/server/public/pluginapi"
@@ -89,13 +91,32 @@ func (h *Handler) PutProgress(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var req PutRequest
-	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+	r.Body = http.MaxBytesReader(w, r.Body, MaxRequestBodyBytes)
+	body, err := io.ReadAll(r.Body)
+	if err != nil {
+		var maxBytesErr *http.MaxBytesError
+		if errors.As(err, &maxBytesErr) {
+			writeError(w, http.StatusRequestEntityTooLarge, "request body too large")
+			return
+		}
 		writeError(w, http.StatusBadRequest, "invalid json")
+		return
+	}
+	var req PutRequest
+	if err := json.Unmarshal(body, &req); err != nil {
+		writeError(w, http.StatusBadRequest, "invalid json")
+		return
+	}
+	if err := validatePutRequest(req); err != nil {
+		writeError(w, http.StatusBadRequest, err.Error())
 		return
 	}
 	rec, err := h.store.Put(access.UserFromContext(r.Context()), guideID, req)
 	if err != nil {
+		if errors.Is(err, errTooManyStoredModuleIDs) {
+			writeError(w, http.StatusBadRequest, err.Error())
+			return
+		}
 		writeError(w, http.StatusInternalServerError, "failed to save progress")
 		return
 	}
