@@ -71,7 +71,7 @@ func sanitizeCSVCell(s string) string {
 	}
 }
 
-func (h *Handler) serveCompletionsExport(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) CompletionsExport(w http.ResponseWriter, r *http.Request) {
 	q, err := parseCompletionsQuery(r)
 	if err != nil {
 		writeError(w, http.StatusBadRequest, err.Error())

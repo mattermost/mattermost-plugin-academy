@@ -8,20 +8,15 @@ import (
 	"github.com/mattermost/mattermost/server/public/pluginapi"
 )
 
-// Platform is the Mattermost user/log surface admin HTTP routes need.
-// Tests substitute an in-memory stub so handlers do not need a live server.
+// Platform is the Mattermost user/log surface the CSV export needs.
+// Auth lookups live in the access package, not here.
 type Platform interface {
-	HasPermissionTo(userID string, permission *model.Permission) bool
 	ListByUserIDs(userIDs []string) ([]*model.User, error)
 	LogWarn(message string, keyValuePairs ...any)
 }
 
 type pluginPlatform struct {
 	client *pluginapi.Client
-}
-
-func (p pluginPlatform) HasPermissionTo(userID string, permission *model.Permission) bool {
-	return p.client.User.HasPermissionTo(userID, permission)
 }
 
 func (p pluginPlatform) ListByUserIDs(userIDs []string) ([]*model.User, error) {

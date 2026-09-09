@@ -3,39 +3,9 @@
 
 package progress
 
-import (
-	"net/http"
-	"strings"
+import "net/http"
 
-	"github.com/mattermost/mattermost/server/public/model"
-)
-
-// ServeAdminHTTP handles system-admin stats routes under /api/v1/admin/.
-func (h *Handler) ServeAdminHTTP(w http.ResponseWriter, r *http.Request) {
-	userID := userIDFromRequest(r)
-	if userID == "" {
-		writeError(w, http.StatusUnauthorized, "unauthorized")
-		return
-	}
-	if h.platform == nil || !h.platform.HasPermissionTo(userID, model.PermissionManageSystem) {
-		writeError(w, http.StatusForbidden, "forbidden")
-		return
-	}
-
-	path := strings.TrimPrefix(r.URL.Path, "/api/v1/admin/")
-	path = strings.Trim(path, "/")
-
-	switch {
-	case path == "stats/completions-over-time" && r.Method == http.MethodGet:
-		h.serveCompletionsOverTime(w, r)
-	case path == "stats/completions.csv" && r.Method == http.MethodGet:
-		h.serveCompletionsExport(w, r)
-	default:
-		writeError(w, http.StatusNotFound, "not found")
-	}
-}
-
-func (h *Handler) serveCompletionsOverTime(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) CompletionsOverTime(w http.ResponseWriter, r *http.Request) {
 	q, err := parseCompletionsQuery(r)
 	if err != nil {
 		writeError(w, http.StatusBadRequest, err.Error())

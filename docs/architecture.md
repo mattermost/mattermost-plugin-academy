@@ -110,10 +110,10 @@ Academy does **not** invent login. Browser calls `/plugins/com.mattermost.academ
 
 **Authorization layers:**
 
-- **Academy usage** — all users, or an allow-list of users and/or teams ([server/access.go](../server/access.go)). Denied users do not get progress APIs; the webapp also unregisters the product so entry points disappear. If settings fail to load, the UI **fails open** (shows Academy) — worth knowing for lockdown deployments.
+- **Academy usage** — all users, or an allow-list of users and/or teams ([server/user_access.go](../server/user_access.go)). Denied users do not get progress or peer-completion APIs; the webapp also unregisters the product so entry points disappear. If settings fail to load, the UI **fails open** (shows Academy) — worth knowing for lockdown deployments.
 - **Disabled guides** — PUT progress rejected for those IDs.
 - **Admin stats/CSV** — requires Mattermost `PermissionManageSystem`.
-- **Profile completions** — any logged-in user may read another user’s finished-guide list **if** profile badges are enabled (needed for popovers).
+- **Profile completions** — any logged-in Academy user may read another user’s finished-guide list **if** profile badges are enabled (needed for popovers).
 
 **Other hygiene:**
 
@@ -123,7 +123,7 @@ Academy does **not** invent login. Browser calls `/plugins/com.mattermost.academ
 - Guide/user IDs validated against a strict character set.
 - No application secrets in the plugin. Deploy tooling uses `MM_SERVICESETTINGS_SITEURL` plus admin user/password or token.
 
-No `SECURITY.md`; checks are inline on HTTP handlers, not a separate auth framework.
+Every route is registered in `buildRouter` ([server/plugin.go](../server/plugin.go)) with an explicit middleware wrapper from [server/access/](../server/access/): `RequireAuth`, `RequireAcademyAccess`, or `RequireSystemAdmin`. The `Mattermost-User-Id` header is read once by the middleware and passed to handlers via request context, so a new route cannot silently skip the auth check. No `SECURITY.md`.
 
 ---
 
@@ -133,7 +133,7 @@ Base: `/plugins/com.mattermost.academy`
 
 - `GET /api/v1/settings` — badges, access, disabled guides, admin/test flags
 - `GET /api/v1/progress` and `GET|PUT /api/v1/progress/{guideId}` — logged-in + Academy access
-- `GET /api/v1/users/{userId}/completions` — logged-in; badges must be on
+- `GET /api/v1/users/{userId}/completions` — logged-in + Academy access; badges must be on
 - `GET /api/v1/admin/stats/completions-over-time` — system admin
 - `GET /api/v1/admin/stats/completions.csv` — system admin
 
