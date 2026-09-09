@@ -12,11 +12,11 @@ describe('Academy profile badges', () => {
             cy.contains('.academy-card', 'Collaboration Basics').should('contain', 'Review');
 
             cy.apiEnsureTeam().then((team) => {
-                cy.request(`/api/v4/teams/${team.id}/channels/name/town-square`).then((ch) => {
-                    cy.request({
+                cy.apiRequest({url: `/api/v4/teams/${team.id}/channels/name/town-square`}).then((ch) => {
+                    cy.apiRequest({
                         method: 'POST',
                         url: '/api/v4/posts',
-                        body: {channel_id: ch.body.id, message: `badge check ${user.username}`},
+                        body: {channel_id: (ch.body as {id: string}).id, message: `badge check ${user.username}`},
                     });
                 });
                 cy.visit(`/${team.name}/channels/town-square`);

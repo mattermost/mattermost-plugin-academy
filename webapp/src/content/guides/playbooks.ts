@@ -192,7 +192,6 @@ const playbooks: Guide = {
                 {
                     title: 'Start from a template',
                     description: 'Open <strong>Product menu</strong> > <strong>Playbooks</strong> and create a playbook. Pick the template closest to your process — its checklists, actions, status update settings, and retrospective settings arrive pre-filled and fully editable — or start blank if your process is unusual.',
-                    tip: 'The <strong>Learn how to use playbooks</strong> template breaks down each component and lets you start a test run to see how the pieces fit together.',
                 },
                 {
                     title: 'Build the checklist first',
@@ -233,7 +232,6 @@ const playbooks: Guide = {
                         file: 'triggers-step1-9e6405dce4.svg',
                         alt: 'Channel Actions modal showing a keyword trigger with Prompt to run a playbook enabled',
                     },
-                    tip: 'The prompt is an offer, not an automatic start. Someone still confirms, which keeps a stray mention of the keyword from opening a run.',
                 },
                 {
                     title: 'Let connected systems supply the keyword',
@@ -268,7 +266,6 @@ const playbooks: Guide = {
                 {
                     title: 'Compare runs over time',
                     description: 'Published retrospectives feed the playbook dashboard, which reports each metric across runs: the average for all runs, the last ten-run average against the previous ten, the value range, the target, and a chart of the last ten runs. Use it to check whether a change to the process actually helped.',
-                    tip: 'Metric values only reach the dashboard once the retrospective is published, so publish even when the report is brief.',
                 },
             ],
         },

@@ -6,7 +6,7 @@ describe('Academy catalog and progress', () => {
         cy.apiCreateUserAndLogin();
         cy.visitAcademy();
 
-        cy.contains('h1', 'Mattermost Academy').should('be.visible');
+        cy.contains('.academy-header__title, h1', 'Mattermost Academy').should('be.visible');
         cy.contains('.academy-card__title', 'Collaboration Basics').click();
 
         cy.contains('h2', 'Channel Organization').should('be.visible');

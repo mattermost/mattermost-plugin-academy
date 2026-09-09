@@ -9,6 +9,8 @@ import './commands';
 Cypress.on('uncaught:exception', () => false);
 
 before(() => {
+    // Cypress 15 only applies Set-Cookie / cy.setCookie to the current origin.
+    cy.visit('/login', {failOnStatusCode: false});
     cy.apiLogin();
-    cy.apiEnsureTeam();
+    cy.visitTownSquare();
 });

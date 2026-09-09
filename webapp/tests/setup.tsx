@@ -3,3 +3,5 @@
 
 // Host webapp setup is not available in plugin unit tests.
 (globalThis as {IS_REACT_ACT_ENVIRONMENT?: boolean}).IS_REACT_ACT_ENVIRONMENT = true;
+
+export {};
