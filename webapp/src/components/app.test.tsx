@@ -52,7 +52,8 @@ describe('App access', () => {
         const view = await render(<App/>);
 
         expect(view.container.textContent).toContain('Academy is unavailable');
-        expect(view.container.textContent).not.toContain('Mattermost Academy');
+        expect(view.container.textContent).toContain('You do not have access to Mattermost Academy');
+        expect(view.container.textContent).not.toContain(GUIDE_LIST[0].title);
 
         await view.unmount();
     });
