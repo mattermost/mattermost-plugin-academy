@@ -1,7 +1,7 @@
 // Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
 
-import React, {useEffect, useId, useRef, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 
 import './outlined_filter_menu.scss';
 
@@ -39,7 +39,9 @@ type Props = {
  * Reuses Mattermost Input_* classes already present in System Console CSS.
  */
 export default function OutlinedFilterMenu(props: Props) {
-    const inputId = useId();
+    // Mattermost provides React as an external; 10.11 does not have useId.
+    const inputIdRef = useRef(`academy-filter-${props.label.replace(/\s+/g, '-').toLowerCase()}`);
+    const inputId = inputIdRef.current;
     const rootRef = useRef<HTMLDivElement>(null);
     const [open, setOpen] = useState(false);
 

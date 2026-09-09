@@ -17,8 +17,18 @@ type GuideCardProps = {
     compact?: boolean;
 };
 
+function progressPercent(everCompleted: boolean | undefined, done: number, moduleCount: number): number {
+    if (everCompleted) {
+        return 100;
+    }
+    if (!moduleCount) {
+        return 0;
+    }
+    return Math.round((done / moduleCount) * 100);
+}
+
 function GuideCardBody({guide, done, cta, everCompleted, compact}: GuideCardProps) {
-    const pct = everCompleted ? 100 : (guide.modules.length ? Math.round((done / guide.modules.length) * 100) : 0);
+    const pct = progressPercent(everCompleted, done, guide.modules.length);
     const iconSize = compact ? 22 : 32;
     const minutes = guideMinutes(guide);
 
