@@ -103,11 +103,11 @@ func (h *Handler) PutProgress(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	var req PutRequest
-	if err := json.Unmarshal(body, &req); err != nil {
+	if err = json.Unmarshal(body, &req); err != nil {
 		writeError(w, http.StatusBadRequest, "invalid json")
 		return
 	}
-	if err := validatePutRequest(req); err != nil {
+	if err = validatePutRequest(req); err != nil {
 		writeError(w, http.StatusBadRequest, err.Error())
 		return
 	}
