@@ -7,13 +7,13 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
-	"strings"
 	"sync"
 
 	"github.com/mattermost/mattermost/server/public/model"
 	"github.com/mattermost/mattermost/server/public/plugin"
 	"github.com/mattermost/mattermost/server/public/pluginapi"
 
+	"github.com/mattermost/mattermost-plugin-academy/server/access"
 	"github.com/mattermost/mattermost-plugin-academy/server/command"
 	"github.com/mattermost/mattermost-plugin-academy/server/progress"
 )
@@ -25,6 +25,7 @@ type Plugin struct {
 	client          *pluginapi.Client
 	commandClient   command.Command
 	progressHandler *progress.Handler
+	router          http.Handler
 
 	configurationLock sync.RWMutex
 	configuration     *configuration
@@ -39,7 +40,34 @@ func (p *Plugin) OnActivate() error {
 		return fmt.Errorf("failed to migrate progress indexes: %w", err)
 	}
 	p.progressHandler = progress.NewHandler(store, p, p.client)
+	p.router = p.buildRouter()
 	return nil
+}
+
+// buildRouter is the single source of truth for the plugin's authorization
+// surface. Every new route MUST be registered here with an explicit
+// middleware wrapper.
+func (p *Plugin) buildRouter() http.Handler {
+	auth := access.Checker{
+		IsSystemAdmin: p.userIsAdmin,
+		UserAllowed:   p.userHasAccess,
+	}
+
+	mux := http.NewServeMux()
+
+	// Settings must stay reachable for users blocked from Academy, because
+	// its response tells the webapp whether the caller has access.
+	mux.Handle("GET /api/v1/settings", auth.RequireAuth(http.HandlerFunc(p.serveSettings)))
+
+	mux.Handle("GET /api/v1/progress", auth.RequireAcademyAccess(http.HandlerFunc(p.progressHandler.List)))
+	mux.Handle("GET /api/v1/progress/{guideId}", auth.RequireAcademyAccess(http.HandlerFunc(p.progressHandler.Get)))
+	mux.Handle("PUT /api/v1/progress/{guideId}", auth.RequireAcademyAccess(http.HandlerFunc(p.progressHandler.Put)))
+	mux.Handle("GET /api/v1/users/{userId}/completions", auth.RequireAcademyAccess(http.HandlerFunc(p.progressHandler.UserCompletions)))
+
+	mux.Handle("GET /api/v1/admin/stats/completions-over-time", auth.RequireSystemAdmin(http.HandlerFunc(p.progressHandler.CompletionsOverTime)))
+	mux.Handle("GET /api/v1/admin/stats/completions.csv", auth.RequireSystemAdmin(http.HandlerFunc(p.progressHandler.CompletionsExport)))
+
+	return mux
 }
 
 // GuideEnabled implements progress.Policy.
@@ -61,47 +89,18 @@ func (p *Plugin) ExecuteCommand(_ *plugin.Context, args *model.CommandArgs) (*mo
 	return response, nil
 }
 
-// ServeHTTP handles plugin HTTP routes (progress API). Static public/ files are
-// served by the Mattermost server separately.
+// ServeHTTP dispatches plugin HTTP routes through buildRouter.
+// Static public/ files are served by the Mattermost server separately.
 func (p *Plugin) ServeHTTP(_ *plugin.Context, w http.ResponseWriter, r *http.Request) {
-	if r.URL.Path == "/api/v1/settings" {
-		p.serveSettings(w, r)
+	if p.router == nil {
+		http.NotFound(w, r)
 		return
 	}
-	if strings.HasPrefix(r.URL.Path, "/api/v1/admin/") {
-		p.progressHandler.ServeAdminHTTP(w, r)
-		return
-	}
-	if strings.HasPrefix(r.URL.Path, "/api/v1/progress") {
-		userID := r.Header.Get("Mattermost-User-Id")
-		if userID == "" {
-			http.Error(w, "unauthorized", http.StatusUnauthorized)
-			return
-		}
-		if !p.userHasAccess(userID) {
-			http.Error(w, "forbidden", http.StatusForbidden)
-			return
-		}
-		p.progressHandler.ServeHTTP(w, r)
-		return
-	}
-	if strings.HasPrefix(r.URL.Path, "/api/v1/users/") {
-		p.progressHandler.ServeHTTP(w, r)
-		return
-	}
-	http.NotFound(w, r)
+	p.router.ServeHTTP(w, r)
 }
 
 func (p *Plugin) serveSettings(w http.ResponseWriter, r *http.Request) {
-	if r.Method != http.MethodGet {
-		http.Error(w, "method not allowed", http.StatusMethodNotAllowed)
-		return
-	}
-	userID := r.Header.Get("Mattermost-User-Id")
-	if userID == "" {
-		http.Error(w, "unauthorized", http.StatusUnauthorized)
-		return
-	}
+	userID := access.UserFromContext(r.Context())
 
 	cfg := p.getConfiguration()
 	disabled := cfg.disabledGuideIDs()

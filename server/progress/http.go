@@ -6,19 +6,22 @@ package progress
 import (
 	"encoding/json"
 	"net/http"
-	"strings"
 
 	"github.com/mattermost/mattermost/server/public/pluginapi"
+
+	"github.com/mattermost/mattermost-plugin-academy/server/access"
 )
 
-// Policy exposes the plugin configuration decisions the handler must honour,
-// so this package does not need to reach into plugin configuration itself.
+// Policy exposes the plugin configuration decisions handlers honour, so this
+// package does not reach into plugin configuration itself.
 type Policy interface {
 	GuideEnabled(guideID string) bool
 	ProfileBadgesEnabled() bool
 }
 
-// Handler serves progress HTTP APIs under /api/v1/progress.
+// Handler serves progress HTTP APIs. Authentication and access gating are
+// performed by middleware in the access package before any method runs;
+// handlers read the validated caller from request context.
 type Handler struct {
 	store    *Store
 	policy   Policy
@@ -31,10 +34,6 @@ func NewHandler(store *Store, policy Policy, client *pluginapi.Client) *Handler 
 		h.platform = pluginPlatform{client: client}
 	}
 	return h
-}
-
-func userIDFromRequest(r *http.Request) string {
-	return r.Header.Get("Mattermost-User-Id")
 }
 
 func writeJSON(w http.ResponseWriter, status int, v any) {
@@ -53,108 +52,66 @@ func (h *Handler) logWarn(message string, keyValuePairs ...any) {
 	}
 }
 
-// ServeHTTP handles:
-//
-//	GET  /api/v1/progress
-//	GET  /api/v1/progress/{guideId}
-//	PUT  /api/v1/progress/{guideId}
-//	GET  /api/v1/users/{userId}/completions
-func (h *Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	userID := userIDFromRequest(r)
-	if userID == "" {
-		writeError(w, http.StatusUnauthorized, "unauthorized")
+func (h *Handler) List(w http.ResponseWriter, r *http.Request) {
+	records, err := h.store.ListForUser(access.UserFromContext(r.Context()))
+	if err != nil {
+		writeError(w, http.StatusInternalServerError, "failed to list progress")
 		return
 	}
-
-	if strings.HasPrefix(r.URL.Path, "/api/v1/users/") {
-		h.serveUserCompletions(w, r)
-		return
-	}
-
-	path := strings.TrimPrefix(r.URL.Path, "/api/v1/progress")
-	path = strings.Trim(path, "/")
-
-	switch {
-	case path == "" && r.Method == http.MethodGet:
-		records, err := h.store.ListForUser(userID)
-		if err != nil {
-			writeError(w, http.StatusInternalServerError, "failed to list progress")
-			return
-		}
-		writeJSON(w, http.StatusOK, map[string]any{"guides": records})
-		return
-
-	case path != "" && !strings.Contains(path, "/"):
-		guideID := path
-		if !validGuideID(guideID) {
-			writeError(w, http.StatusBadRequest, "invalid guide id")
-			return
-		}
-
-		switch r.Method {
-		case http.MethodGet:
-			rec, err := h.store.Get(userID, guideID)
-			if err != nil {
-				writeError(w, http.StatusInternalServerError, "failed to get progress")
-				return
-			}
-			writeJSON(w, http.StatusOK, rec)
-			return
-
-		case http.MethodPut:
-			// Reads of a guide disabled after the fact stay allowed so an
-			// open tab degrades quietly, but writes must not record progress
-			// for a guide an admin has turned off.
-			if !h.policy.GuideEnabled(guideID) {
-				writeError(w, http.StatusForbidden, "guide is not available")
-				return
-			}
-
-			var req PutRequest
-			if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-				writeError(w, http.StatusBadRequest, "invalid json")
-				return
-			}
-			rec, err := h.store.Put(userID, guideID, req)
-			if err != nil {
-				writeError(w, http.StatusInternalServerError, "failed to save progress")
-				return
-			}
-			writeJSON(w, http.StatusOK, rec)
-			return
-
-		default:
-			writeError(w, http.StatusMethodNotAllowed, "method not allowed")
-			return
-		}
-	}
-
-	writeError(w, http.StatusNotFound, "not found")
+	writeJSON(w, http.StatusOK, map[string]any{"guides": records})
 }
 
-// serveUserCompletions handles GET /api/v1/users/{userId}/completions.
-//
-// This reports another user's finished guides so profile popovers can show
-// badges, so turning badges off has to close the endpoint too. Otherwise the
-// setting only hides the UI while the data stays readable.
-func (h *Handler) serveUserCompletions(w http.ResponseWriter, r *http.Request) {
-	if r.Method != http.MethodGet {
-		writeError(w, http.StatusMethodNotAllowed, "method not allowed")
+func (h *Handler) Get(w http.ResponseWriter, r *http.Request) {
+	guideID := r.PathValue("guideId")
+	if !validGuideID(guideID) {
+		writeError(w, http.StatusBadRequest, "invalid guide id")
 		return
 	}
+
+	rec, err := h.store.Get(access.UserFromContext(r.Context()), guideID)
+	if err != nil {
+		writeError(w, http.StatusInternalServerError, "failed to get progress")
+		return
+	}
+	writeJSON(w, http.StatusOK, rec)
+}
+
+// Put handles PUT /api/v1/progress/{guideId}. Writes to a disabled guide
+// are refused; reads (Get/List) stay allowed so an open tab degrades quietly.
+func (h *Handler) Put(w http.ResponseWriter, r *http.Request) {
+	guideID := r.PathValue("guideId")
+	if !validGuideID(guideID) {
+		writeError(w, http.StatusBadRequest, "invalid guide id")
+		return
+	}
+	if !h.policy.GuideEnabled(guideID) {
+		writeError(w, http.StatusForbidden, "guide is not available")
+		return
+	}
+
+	var req PutRequest
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		writeError(w, http.StatusBadRequest, "invalid json")
+		return
+	}
+	rec, err := h.store.Put(access.UserFromContext(r.Context()), guideID, req)
+	if err != nil {
+		writeError(w, http.StatusInternalServerError, "failed to save progress")
+		return
+	}
+	writeJSON(w, http.StatusOK, rec)
+}
+
+// UserCompletions handles GET /api/v1/users/{userId}/completions.
+// Gated on ProfileBadgesEnabled so disabling badges closes the data too,
+// not just the UI.
+func (h *Handler) UserCompletions(w http.ResponseWriter, r *http.Request) {
 	if !h.policy.ProfileBadgesEnabled() {
 		writeError(w, http.StatusForbidden, "profile badges are disabled")
 		return
 	}
 
-	path := strings.TrimPrefix(r.URL.Path, "/api/v1/users/")
-	parts := strings.Split(strings.Trim(path, "/"), "/")
-	if len(parts) != 2 || parts[1] != "completions" {
-		writeError(w, http.StatusNotFound, "not found")
-		return
-	}
-
-	targetUserID := parts[0]
+	targetUserID := r.PathValue("userId")
 	if !validUserID(targetUserID) {
 		writeError(w, http.StatusBadRequest, "invalid user id")
 		return
