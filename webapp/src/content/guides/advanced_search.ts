@@ -38,7 +38,6 @@ const advancedSearch: Guide = {
                 {
                     title: 'Know what search matches',
                     description: 'A multi-word search returns only messages that contain <strong>all</strong> of your terms. Very common words such as <code>the</code> and <code>are</code>, along with one- and two-letter terms, are filtered out. URLs and IP addresses do not return results.',
-                    tip: 'You can search archived channels as long as you were a member of them. To drop archived channels from your results, leave the archived channel.',
                 },
                 {
                     title: 'Jump to a message in context',
@@ -61,7 +60,6 @@ const advancedSearch: Guide = {
                 {
                     title: 'Filter by person',
                     description: 'Add <code>from:</code> and a username to return only what that person posted. For example, <code>budget from:john.smith</code> returns messages containing "budget" that John Smith wrote.',
-                    tip: 'When you search across <strong>All Teams</strong>, type <code>from:</code> yourself. Autocomplete does not offer it in a cross-team search, but the modifier still works.',
                 },
                 {
                     title: 'Filter by channel',
@@ -104,7 +102,6 @@ const advancedSearch: Guide = {
                 {
                     title: 'Search hashtags',
                     description: 'Hashtags are searchable labels anyone can add to a message with <code>#</code>. Select a hashtag in an existing post, or type it including the pound symbol, to find every message tagged with it.',
-                    tip: 'Hashtags are not channel links. Selecting <code>#marketing</code> does not open the Marketing channel. To link a public channel, use the tilde symbol instead, as in <code>~marketing</code>.',
                 },
             ],
             commandGroups: [
@@ -170,7 +167,6 @@ const advancedSearch: Guide = {
                 {
                     title: 'Search the text inside documents',
                     description: 'File search matches on file name and, for supported document formats, on the text content inside the file. Supported formats include PDF, PPTX, DOCX, ODT, HTML, and plain text.',
-                    tip: 'Whether document contents are searchable depends on a server setting your system admin controls, and it can also depend on when the file was uploaded. If a file you know exists is not matching on its contents, ask your system admin whether document content search is enabled.',
                 },
                 {
                     title: 'Stack modifiers on file searches too',
@@ -209,7 +205,6 @@ const advancedSearch: Guide = {
                 {
                     title: 'Set messages aside and come back to them',
                     description: 'Select the <strong>Save</strong> icon next to any message to save it for yourself only — nobody else sees that you saved it. Select the <strong>Bookmark</strong> icon to the left of your profile picture to open your full list of saved messages in the right-hand pane.',
-                    tip: 'Saving is private to you. Pinning is the shared equivalent — a pinned message is visible to every member of the channel from the Pinned posts icon in the channel header.',
                 },
             ],
         },

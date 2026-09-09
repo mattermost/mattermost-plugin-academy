@@ -38,7 +38,6 @@ const updateGuide: Guide = {
                 {
                     title: 'The Extended Support Release track',
                     description: 'Extended Support Releases (ESRs) are released every 9 months and supported for 12 months. Security fixes and major bug fixes are backported to a supported ESR, but ESRs don\'t add product functionality or new features. Choose this track when stability matters more than new capability, or when every upgrade has to clear a long internal testing and certification process.',
-                    tip: 'ESRs ship every 9 months but stay supported for 12, so a new ESR and the outgoing one are supported at the same time for roughly three months. Treat that window as your certification time, and don\'t plan to spend all of it.',
                 },
                 {
                     title: 'Check where your version sits in the life cycle',
@@ -140,7 +139,6 @@ const updateGuide: Guide = {
                 {
                     title: 'Save a migration plan so the change is reversible',
                     description: 'Run the migration with <strong>mattermost db migrate --save-plan</strong>. The plan is stored in the file store and contains both the forward and the rollback SQL, which gives you a record of what was applied and a much simpler downgrade later.',
-                    tip: 'Combine --save-plan with --dry-run to review a plan before anything is applied.',
                 },
                 {
                     title: 'High availability clusters need every node upgraded',
@@ -166,7 +164,6 @@ const updateGuide: Guide = {
                         {
                             title: 'Remove the old application files',
                             description: 'The documented <strong>find</strong> command removes the old files while pruning <strong>config</strong>, <strong>logs</strong>, <strong>plugins</strong>, <strong>client/plugins</strong>, and <strong>data</strong>. Anything else you added, including TLS certificates and keys or a custom attachment directory, is not preserved unless you append its path to the command. Run the command without the deletion step first as a dry run, and read the output.',
-                            tip: 'Run ls on your install directory before you start so you know exactly which directories are yours rather than part of a default installation.',
                         },
                         {
                             title: 'Copy the new files in',
@@ -188,7 +185,6 @@ const updateGuide: Guide = {
                         {
                             title: 'Shut down the deployment',
                             description: 'From your <strong>mattermost/docker</strong> clone, bring the stack down with the same compose files you brought it up with, for example <strong>docker compose -f docker-compose.yml -f docker-compose.nginx.yml down</strong>, or the <strong>docker-compose.without-nginx.yml</strong> variant if you run your own proxy.',
-                            tip: 'Docker deployments don\'t support clustered or high availability configurations out of the box. If you need HA, deploy on Kubernetes instead.',
                         },
                         {
                             title: 'Pull repository changes and diff your environment file',
@@ -247,7 +243,6 @@ const updateGuide: Guide = {
                         {
                             title: 'Set the server version in your values file',
                             description: 'Update the image <strong>tag</strong> in <strong>values.yaml</strong> to the target Mattermost version, then apply it with <strong>helm upgrade mattermost mattermost/mattermost-operator -f values.yaml</strong>. Keep <strong>values.yaml</strong> and any secrets in version control so the change is reviewed and consistent across clusters.',
-                            tip: 'Because the change lives in a values file, this step fits cleanly into a GitOps pipeline such as Argo CD or Flux, with staging promotion before production.',
                         },
                     ],
                 },
@@ -276,7 +271,6 @@ const updateGuide: Guide = {
                 {
                     title: 'Watch the cluster for longer than you think you need to',
                     description: 'In a cluster, confirm the <strong>Config File MD5</strong> columns in the System Console read green. Then keep an eye on pod health and restarts, database replication health, and latency and error rates in your monitoring for a full business cycle before you call it done.',
-                    tip: 'If MD5 columns stay yellow, change a setting in the System Console and change it straight back, then select Save. That propagates the existing configuration to every node without altering it.',
                 },
                 {
                     title: 'Know the limits of a downgrade before you need one',
@@ -285,7 +279,6 @@ const updateGuide: Guide = {
                 {
                     title: 'Roll the schema back with the newer binary',
                     description: 'Check where you are with <strong>mattermost db version --all</strong>, then stop the service so nothing writes during the downgrade. Roll migrations back with <strong>mattermost db downgrade</strong>, passing either the saved plan file or comma-separated migration numbers, for example <strong>mattermost db downgrade 128,127,126</strong>. Use the <strong>newer</strong> binary to run the downgrade, because it is the one that contains the rollback SQL. Then swap in the target version\'s binary, revert <strong>config.json</strong> to what that version expects, and restart.',
-                    tip: 'This is the payoff for --save-plan. With a saved plan you can run mattermost db downgrade against the plan file instead of working out which migration numbers to reverse.',
                 },
                 {
                     title: 'On Kubernetes, roll back declaratively',

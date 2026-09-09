@@ -132,7 +132,6 @@ const boards: Guide = {
                 {
                     title: 'Pick a layout',
                     description: '<strong>Board</strong> is a kanban layout where cards sit in columns you can drag them between. <strong>Table</strong> gives you a row per card and a column per property, editable in place. <strong>Gallery</strong> shows the first image attached to each card. <strong>Calendar</strong> places cards on dates.',
-                    tip: 'Calendar view needs a <strong>Date</strong> property. Without one, cards fall back to their creation date and can\'t be moved around the calendar.',
                 },
                 {
                     title: 'Group cards',
@@ -177,12 +176,10 @@ const boards: Guide = {
                 {
                     title: 'Share a link to a board or a card',
                     description: 'Select <strong>Share</strong> > <strong>Copy link</strong> and paste it into a channel or direct message — only people with permission to the board can open it. For a single card, open the card\'s options menu and select <strong>Copy link</strong>. Pasting a card link into a channel renders a preview of the card.',
-                    tip: 'Publicly shared boards are turned off by default. If your System Admin has enabled them, board admins get a <strong>Publish</strong> tab in the Share dialog for a read-only public link.',
                 },
                 {
                     title: 'Export the board',
                     description: 'Select the options menu to the left of the <strong>New</strong> button at the top of the board. Choose <strong>Export to CSV</strong> for the cards and their property values, or <strong>Export board archive</strong> for a full copy including descriptions, comments, and image attachments. To bring an archive back in, select the gear icon next to your profile picture and choose <strong>Import archive</strong>.',
-                    tip: 'A filter or search active on the board narrows a CSV export. Clear both first if you want every card.',
                 },
             ],
         },
