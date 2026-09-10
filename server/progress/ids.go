@@ -3,6 +3,25 @@
 
 package progress
 
+import (
+	"errors"
+	"strings"
+)
+
+const (
+	// MaxRequestBodyBytes is a conservative global HTTP body cap. Academy
+	// has no file uploads and progress payloads are a few hundred bytes.
+	MaxRequestBodyBytes = 64 << 10
+	maxRequestModuleIDs = 256
+	maxStoredModuleIDs  = 1024
+)
+
+var (
+	errTooManyModuleIDs       = errors.New("too many module ids")
+	errInvalidModuleID        = errors.New("invalid module id")
+	errTooManyStoredModuleIDs = errors.New("too many completed modules")
+)
+
 func validGuideID(id string) bool {
 	if id == "" || len(id) > 128 {
 		return false
@@ -27,4 +46,23 @@ func validUserID(id string) bool {
 		return false
 	}
 	return true
+}
+
+func validateModuleIDs(ids []string) error {
+	if len(ids) > maxRequestModuleIDs {
+		return errTooManyModuleIDs
+	}
+	for _, id := range ids {
+		if !validGuideID(strings.TrimSpace(id)) {
+			return errInvalidModuleID
+		}
+	}
+	return nil
+}
+
+func validatePutRequest(req PutRequest) error {
+	if err := validateModuleIDs(req.CompletedModuleIDs); err != nil {
+		return err
+	}
+	return validateModuleIDs(req.ModuleIDs)
 }

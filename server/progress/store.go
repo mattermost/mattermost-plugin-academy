@@ -90,6 +90,10 @@ func (s *Store) Put(userID, guideID string, req PutRequest) (Record, error) {
 	key := progressKey(userID, guideID)
 	now := time.Now().Unix()
 
+	if err := validatePutRequest(req); err != nil {
+		return Record{}, err
+	}
+
 	completed := normalizeIDs(req.CompletedModuleIDs)
 	curriculum := normalizeIDs(req.ModuleIDs)
 
@@ -105,6 +109,9 @@ func (s *Store) Put(userID, guideID string, req PutRequest) (Record, error) {
 		}
 
 		merged := normalizeIDs(append(prev.CompletedModuleIDs, completed...))
+		if len(merged) > maxStoredModuleIDs {
+			return nil, errTooManyStoredModuleIDs
+		}
 		next = Record{
 			V:                  1,
 			GuideID:            guideID,

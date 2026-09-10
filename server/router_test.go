@@ -3,6 +3,7 @@ package main
 import (
 	"net/http"
 	"net/http/httptest"
+	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -100,4 +101,19 @@ func TestAcademyAllowListEnforcedOnEveryProgressRoute(t *testing.T) {
 			assert.Equal(t, http.StatusForbidden, w.Code, "route %s %s must enforce Academy allow-list", rt.method, rt.path)
 		})
 	}
+}
+
+func TestServeHTTPRejectsOversizedBody(t *testing.T) {
+	p := &Plugin{}
+	cfg := defaultUserAccessConfig()
+	p.setConfiguration(&configuration{UserAccessConfig: &cfg})
+	p.progressHandler = progress.NewHandler(nil, p, nil)
+	p.router = p.buildRouter()
+
+	r := httptest.NewRequest(http.MethodPut, "/api/v1/progress/ai-quick-start", strings.NewReader(strings.Repeat("a", progress.MaxRequestBodyBytes+1)))
+	r.Header.Set("Mattermost-User-Id", "user1")
+	w := httptest.NewRecorder()
+	p.ServeHTTP(nil, w, r)
+
+	assert.Equal(t, http.StatusRequestEntityTooLarge, w.Code)
 }

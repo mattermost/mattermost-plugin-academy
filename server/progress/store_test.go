@@ -4,6 +4,7 @@
 package progress
 
 import (
+	"strconv"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -28,6 +29,45 @@ func TestPutRequestCompleteness(t *testing.T) {
 
 	have = normalizeIDs(append(have, "ai-search"))
 	require.True(t, containsAll(have, need))
+}
+
+func TestPutRejectsInvalidRequestAndMergedCap(t *testing.T) {
+	s := newTestStore(newMemKV())
+
+	_, err := s.Put("user1", "ai-quick-start", PutRequest{
+		CompletedModuleIDs: []string{"../x"},
+		ModuleIDs:          []string{"chat"},
+	})
+	require.ErrorIs(t, err, errInvalidModuleID)
+
+	kv := newMemKV()
+	s = newTestStore(kv)
+	ids := make([]string, maxStoredModuleIDs)
+	for i := range ids {
+		ids[i] = "m" + strconv.Itoa(i)
+	}
+	require.NoError(t, kv.Set(progressKey("user1", "ai-quick-start"), Record{
+		V:                  1,
+		GuideID:            "ai-quick-start",
+		CompletedModuleIDs: ids,
+	}))
+
+	_, err = s.Put("user1", "ai-quick-start", PutRequest{
+		CompletedModuleIDs: []string{ids[0]},
+		ModuleIDs:          []string{ids[0]},
+	})
+	require.NoError(t, err)
+
+	_, err = s.Put("user1", "ai-quick-start", PutRequest{
+		CompletedModuleIDs: []string{"brand-new"},
+		ModuleIDs:          []string{"brand-new"},
+	})
+	require.ErrorIs(t, err, errTooManyStoredModuleIDs)
+
+	rec, err := s.Get("user1", "ai-quick-start")
+	require.NoError(t, err)
+	assert.Len(t, rec.CompletedModuleIDs, maxStoredModuleIDs)
+	assert.NotContains(t, rec.CompletedModuleIDs, "brand-new")
 }
 
 func TestGetEmptyRecord(t *testing.T) {
