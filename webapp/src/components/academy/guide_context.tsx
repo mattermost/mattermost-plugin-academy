@@ -65,9 +65,7 @@ export function GuideProvider({children}: {children: React.ReactNode}) {
             return;
         }
 
-        // Only the visible modules, so a user missing a plugin can still finish.
-        const moduleIds = guide.modules.map((m) => m.id);
-        const rec = await saveGuideProgress(guide.id, ids, moduleIds);
+        const rec = await saveGuideProgress(guide.id, ids);
         setCompleted(new Set(rec.completedModuleIds || ids));
     }, [guide]);
 
