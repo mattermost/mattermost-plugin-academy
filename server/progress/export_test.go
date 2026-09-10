@@ -87,6 +87,15 @@ func TestParseCompletionsQuery(t *testing.T) {
 	_, err = parseCompletionsQuery(tooMany)
 	require.EqualError(t, err, "range too large")
 
+	fromEpoch := httptest.NewRequest(http.MethodGet, "/api/v1/admin/stats/completions-over-time?from=0&bucket=day", nil)
+	_, err = parseCompletionsQuery(fromEpoch)
+	require.EqualError(t, err, "range too large")
+
+	recentFrom := time.Now().Add(-30 * 24 * time.Hour).Unix()
+	okFromOnly := httptest.NewRequest(http.MethodGet, fmt.Sprintf("/api/v1/admin/stats/completions-over-time?from=%d&bucket=day", recentFrom), nil)
+	_, err = parseCompletionsQuery(okFromOnly)
+	require.NoError(t, err)
+
 	huge := httptest.NewRequest(http.MethodGet, "/api/v1/admin/stats/completions-over-time?from=0&to=1000000000000000", nil)
 	_, err = parseCompletionsQuery(huge)
 	require.Error(t, err)

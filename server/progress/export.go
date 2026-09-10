@@ -70,12 +70,17 @@ func parseCompletionsQuery(r *http.Request) (CompletionsOverTimeQuery, error) {
 	if q.From != nil && q.To != nil && *q.From >= *q.To {
 		return q, fmt.Errorf("from must be before to")
 	}
-	if q.To != nil && *q.To > time.Now().Add(maxCompletionsToFuture).Unix() {
+
+	now := time.Now()
+	if q.To != nil && *q.To > now.Add(maxCompletionsToFuture).Unix() {
 		return q, fmt.Errorf("to is too far in the future")
 	}
-	if q.From != nil && q.To != nil {
-		secs := completionsBucketSeconds(q.Bucket)
-		if *q.To-*q.From > maxCompletionsOverTimePoints*secs {
+	if q.From != nil {
+		toUnix := now.Unix()
+		if q.To != nil {
+			toUnix = *q.To
+		}
+		if toUnix > *q.From && toUnix-*q.From > maxCompletionsOverTimePoints*completionsBucketSeconds(q.Bucket) {
 			return q, fmt.Errorf("range too large")
 		}
 	}
