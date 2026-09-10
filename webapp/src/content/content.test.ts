@@ -15,7 +15,10 @@ const CURRICULUM_PATH = path.resolve(__dirname, '../../../server/progress/curric
 /** Mirrors validGuideID in server/progress/ids.go. */
 const GUIDE_ID = /^[a-z0-9_-]+$/;
 
-type ServerCurriculum = Record<string, {modules: Array<{id: string; requiresPlugins?: string[]}>}>;
+type ServerCurriculum = Record<string, {
+    requiresPlugins?: string[];
+    modules: Array<{id: string; requiresPlugins?: string[]}>;
+}>;
 
 /**
  * Material icon ligatures leaked into copy when the guides were ported from
@@ -123,6 +126,7 @@ describe('guide registry', () => {
 
         GUIDE_LIST.forEach((guide) => {
             const spec = catalog[guide.id];
+            expect(spec.requiresPlugins ?? []).toEqual(guide.requiresPlugins ?? []);
             expect(spec.modules.map((mod) => mod.id)).toEqual(guide.modules.map((mod) => mod.id));
             guide.modules.forEach((mod, i) => {
                 expect(spec.modules[i].requiresPlugins ?? []).toEqual(mod.requiresPlugins ?? []);

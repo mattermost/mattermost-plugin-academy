@@ -88,8 +88,20 @@ func (h *Handler) GetProgress(w http.ResponseWriter, r *http.Request) {
 	writeJSON(w, http.StatusOK, rec)
 }
 
-// PutProgress handles PUT /api/v1/progress/{guideId}. Writes to a disabled
-// or unknown guide are refused; reads stay allowed so an open tab degrades quietly.
+// guidePluginsMet is false when the guide requires a plugin that is not
+// running. Test Mode skips that check so admins can still save progress.
+func (h *Handler) guidePluginsMet(guideID string) bool {
+	ignorePluginReqs := h.policy != nil && h.policy.TestMode()
+	var pluginEnabled func(string) bool
+	if h.policy != nil {
+		pluginEnabled = h.policy.PluginEnabled
+	}
+	return GuidePluginsMet(guideID, pluginEnabled, ignorePluginReqs)
+}
+
+// PutProgress handles PUT /api/v1/progress/{guideId}. Writes to a disabled,
+// plugin-unavailable, or unknown guide are refused; reads stay allowed so an
+// open tab degrades quietly.
 func (h *Handler) PutProgress(w http.ResponseWriter, r *http.Request) {
 	guideID := r.PathValue("guideId")
 	if !validGuideID(guideID) {
@@ -100,7 +112,8 @@ func (h *Handler) PutProgress(w http.ResponseWriter, r *http.Request) {
 		writeError(w, http.StatusNotFound, "unknown guide")
 		return
 	}
-	if !h.policy.GuideEnabled(guideID) {
+	// Same 403 as an admin-disabled guide: the API does not say why it is hidden.
+	if !h.policy.GuideEnabled(guideID) || !h.guidePluginsMet(guideID) {
 		writeError(w, http.StatusForbidden, "guide is not available")
 		return
 	}

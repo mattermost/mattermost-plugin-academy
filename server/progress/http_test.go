@@ -60,6 +60,41 @@ func TestPutRejectedForDisabledGuide(t *testing.T) {
 	assert.Contains(t, w.Body.String(), "guide is not available")
 }
 
+func TestPutRejectedWhenGuidePluginInactive(t *testing.T) {
+	store := newTestStore(newMemKV())
+	h := newTestHandler(store, stubPolicy{
+		guideEnabled: true,
+		plugins:      map[string]bool{"mattermost-ai": false},
+	})
+	body := `{"completedModuleIds":["ai-chat"]}`
+
+	put := call(h.PutProgress, http.MethodPut, "/api/v1/progress/ai-quick-start", body, "user1", map[string]string{"guideId": "ai-quick-start"})
+	assert.Equal(t, http.StatusForbidden, put.Code)
+	assert.Contains(t, put.Body.String(), "guide is not available")
+
+	get := call(h.GetProgress, http.MethodGet, "/api/v1/progress/ai-quick-start", "", "user1", map[string]string{"guideId": "ai-quick-start"})
+	require.Equal(t, http.StatusOK, get.Code)
+	var loaded Record
+	require.NoError(t, json.Unmarshal(get.Body.Bytes(), &loaded))
+	assert.Empty(t, loaded.CompletedModuleIDs)
+
+	boards := call(h.PutProgress, http.MethodPut, "/api/v1/progress/boards", `{"completedModuleIds":["opening-boards"]}`, "user1", map[string]string{"guideId": "boards"})
+	assert.Equal(t, http.StatusForbidden, boards.Code)
+}
+
+func TestPutAllowedInTestModeWhenGuidePluginInactive(t *testing.T) {
+	h := newTestHandler(newTestStore(newMemKV()), stubPolicy{
+		guideEnabled: true,
+		testMode:     true,
+		plugins:      map[string]bool{"mattermost-ai": false},
+	})
+	put := call(h.PutProgress, http.MethodPut, "/api/v1/progress/ai-quick-start", `{"completedModuleIds":["ai-chat"]}`, "user1", map[string]string{"guideId": "ai-quick-start"})
+	require.Equal(t, http.StatusOK, put.Code)
+	var saved Record
+	require.NoError(t, json.Unmarshal(put.Body.Bytes(), &saved))
+	assert.Equal(t, []string{"ai-chat"}, saved.CompletedModuleIDs)
+}
+
 func TestPutRejectedForUnknownGuide(t *testing.T) {
 	h := newTestHandler(newTestStore(newMemKV()), stubPolicy{guideEnabled: true})
 	body := `{"completedModuleIds":["x"],"moduleIds":["x"]}`
@@ -138,13 +173,42 @@ func TestPutIgnoresClientCurriculumAndDropsUnknownModules(t *testing.T) {
 	assert.Zero(t, saved.CompletedAt)
 }
 
+func TestPutDropsInactivePluginModuleSoItCannotCompleteLater(t *testing.T) {
+	store := newTestStore(newMemKV())
+	inactive := newTestHandler(store, stubPolicy{
+		guideEnabled:  true,
+		badgesEnabled: true,
+		plugins:       map[string]bool{"mattermost-ai": true, "com.mattermost.calls": false},
+	})
+	// All active AI modules except custom-agents, plus the gated Calls module.
+	body := `{"completedModuleIds":["ai-chat","summarize-threads","summarize-channels","summarize-calls","ai-search","rewrite-with-ai"]}`
+
+	put := call(inactive.PutProgress, http.MethodPut, "/api/v1/progress/ai-quick-start", body, "user1", map[string]string{"guideId": "ai-quick-start"})
+	require.Equal(t, http.StatusOK, put.Code)
+	var saved Record
+	require.NoError(t, json.Unmarshal(put.Body.Bytes(), &saved))
+	assert.NotContains(t, saved.CompletedModuleIDs, "summarize-calls")
+	assert.False(t, saved.EverCompleted)
+
+	active := newTestHandler(store, stubPolicy{
+		guideEnabled:  true,
+		badgesEnabled: true,
+		plugins:       map[string]bool{"mattermost-ai": true, "com.mattermost.calls": true},
+	})
+	put = call(active.PutProgress, http.MethodPut, "/api/v1/progress/ai-quick-start", `{"completedModuleIds":["custom-agents"]}`, "user1", map[string]string{"guideId": "ai-quick-start"})
+	require.Equal(t, http.StatusOK, put.Code)
+	require.NoError(t, json.Unmarshal(put.Body.Bytes(), &saved))
+	assert.NotContains(t, saved.CompletedModuleIDs, "summarize-calls")
+	assert.False(t, saved.EverCompleted)
+}
+
 func TestPutCompletesAgainstServerCurriculumMinusInactivePlugins(t *testing.T) {
 	body := `{"completedModuleIds":["ai-chat","summarize-threads","summarize-channels","ai-search","rewrite-with-ai","custom-agents"]}`
 
 	h := newTestHandler(newTestStore(newMemKV()), stubPolicy{
 		guideEnabled:  true,
 		badgesEnabled: true,
-		plugins:       map[string]bool{"com.mattermost.calls": false},
+		plugins:       map[string]bool{"mattermost-ai": true, "com.mattermost.calls": false},
 	})
 	put := call(h.PutProgress, http.MethodPut, "/api/v1/progress/ai-quick-start", body, "user1", map[string]string{"guideId": "ai-quick-start"})
 	require.Equal(t, http.StatusOK, put.Code)
@@ -156,7 +220,7 @@ func TestPutCompletesAgainstServerCurriculumMinusInactivePlugins(t *testing.T) {
 	h = newTestHandler(newTestStore(newMemKV()), stubPolicy{
 		guideEnabled:  true,
 		badgesEnabled: true,
-		plugins:       map[string]bool{"com.mattermost.calls": true},
+		plugins:       map[string]bool{"mattermost-ai": true, "com.mattermost.calls": true},
 	})
 	put = call(h.PutProgress, http.MethodPut, "/api/v1/progress/ai-quick-start", body, "user1", map[string]string{"guideId": "ai-quick-start"})
 	require.Equal(t, http.StatusOK, put.Code)

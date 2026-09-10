@@ -18,6 +18,7 @@
     ]
   },
   "ai-quick-start": {
+    "requiresPlugins": ["mattermost-ai"],
     "modules": [
       {"id": "ai-chat"},
       {"id": "summarize-threads"},
@@ -39,6 +40,7 @@
     ]
   },
   "boards": {
+    "requiresPlugins": ["focalboard"],
     "modules": [
       {"id": "opening-boards"},
       {"id": "create-a-board"},
@@ -48,6 +50,7 @@
     ]
   },
   "playbooks": {
+    "requiresPlugins": ["playbooks"],
     "modules": [
       {"id": "playbooks-and-runs"},
       {"id": "joining-a-run"},

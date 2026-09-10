@@ -112,8 +112,8 @@ Academy does **not** invent login. Browser calls `/plugins/com.mattermost.academ
 
 - **Academy usage** — all users, or an allow-list of users and/or teams ([server/user_access.go](../server/user_access.go)). Denied users do not get progress or peer-completion APIs; the webapp also unregisters the product so entry points disappear. If settings fail to load, the UI **fails open** (shows Academy) — worth knowing for lockdown deployments.
 - **Known guides** — PUT progress accepted only for IDs in the server catalog (positive list). Unknown IDs are rejected even if they pass the character-set check.
-- **Disabled guides** — PUT progress rejected for those IDs.
-- **Completion yardstick** — whether a guide is finished is computed against the server catalog (plugin-gated modules omitted unless that plugin is running, or Test Mode is on). Client-supplied module lists are ignored.
+- **Disabled or plugin-gated guides** — PUT progress rejected when an admin disabled the guide, or when a required plugin is not running (unless Test Mode is on). Reads stay allowed.
+- **Completion yardstick** — whether a guide is finished is computed against the server catalog (plugin-gated modules omitted unless that plugin is running, or Test Mode is on). Client-supplied module lists are ignored. Completed IDs that are not in that current yardstick are not stored.
 - **Admin stats/CSV** — requires Mattermost `PermissionManageSystem`.
 - **Profile completions** — any logged-in Academy user may read another user’s finished-guide list **if** profile badges are enabled (needed for popovers).
 

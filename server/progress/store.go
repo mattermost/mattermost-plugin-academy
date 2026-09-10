@@ -64,6 +64,23 @@ func containsAll(have []string, need []string) bool {
 	return true
 }
 
+// intersectIDs keeps IDs that are also in allowed. A plugin-gated module
+// submitted while that plugin is off must not be stored, or a later update
+// after the plugin starts could count it as a real completion.
+func intersectIDs(ids, allowed []string) []string {
+	set := make(map[string]struct{}, len(allowed))
+	for _, id := range allowed {
+		set[id] = struct{}{}
+	}
+	out := make([]string, 0, len(ids))
+	for _, id := range ids {
+		if _, ok := set[id]; ok {
+			out = append(out, id)
+		}
+	}
+	return normalizeIDs(out)
+}
+
 // Get returns progress for a user/guide, or an empty record if none exists.
 func (s *Store) Get(userID, guideID string) (Record, error) {
 	var rec Record
@@ -87,12 +104,13 @@ func (s *Store) Get(userID, guideID string) (Record, error) {
 
 // Put merges completed module IDs and updates ever-completed / indexes when appropriate.
 // curriculum is the server-known yardstick; client-supplied module lists are ignored.
+// Incoming IDs are kept only if they are in that current yardstick.
 func (s *Store) Put(userID, guideID string, completedModuleIDs, curriculum []string) (Record, error) {
 	key := progressKey(userID, guideID)
 	now := time.Now().Unix()
 
-	completed := filterKnownModules(guideID, completedModuleIDs)
 	curriculum = filterKnownModules(guideID, curriculum)
+	completed := intersectIDs(filterKnownModules(guideID, completedModuleIDs), curriculum)
 
 	var next Record
 	becameComplete := false

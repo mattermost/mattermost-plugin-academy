@@ -56,6 +56,23 @@ func TestEffectiveCurriculumOmitsInactivePlugins(t *testing.T) {
 	assert.False(t, ok)
 }
 
+func TestGuidePluginsMet(t *testing.T) {
+	assert.False(t, GuidePluginsMet("totally-fake", nil, false))
+	assert.True(t, GuidePluginsMet("mattermost-basics", nil, false))
+	assert.True(t, GuidePluginsMet("ai-quick-start", nil, false))
+
+	none := func(string) bool { return false }
+	assert.False(t, GuidePluginsMet("ai-quick-start", none, false))
+	assert.False(t, GuidePluginsMet("boards", none, false))
+	assert.False(t, GuidePluginsMet("playbooks", none, false))
+	assert.True(t, GuidePluginsMet("mattermost-basics", none, false))
+	assert.True(t, GuidePluginsMet("ai-quick-start", none, true))
+
+	agentsOn := func(id string) bool { return id == "mattermost-ai" }
+	assert.True(t, GuidePluginsMet("ai-quick-start", agentsOn, false))
+	assert.False(t, GuidePluginsMet("boards", agentsOn, false))
+}
+
 func TestFilterKnownModules(t *testing.T) {
 	assert.Equal(t, []string{"composing", "threads"}, filterKnownModules(
 		"mattermost-basics",

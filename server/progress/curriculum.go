@@ -12,12 +12,17 @@ import (
 var curriculumJSON []byte
 
 type curriculumModule struct {
-	ID              string   `json:"id"`
+	ID string `json:"id"`
+	// RequiresPlugins lists plugins that must all be running for this module
+	// to count toward completion (unless Test Mode is on).
 	RequiresPlugins []string `json:"requiresPlugins"`
 }
 
 type curriculumGuide struct {
-	Modules []curriculumModule `json:"modules"`
+	// RequiresPlugins lists plugins that must all be running for PUT progress
+	// on this guide (unless Test Mode is on). Matches webapp visibility.
+	RequiresPlugins []string           `json:"requiresPlugins"`
+	Modules         []curriculumModule `json:"modules"`
 }
 
 // catalog is the server-known set of guides and their modules. PUT progress
@@ -62,6 +67,20 @@ func filterKnownModules(guideID string, ids []string) []string {
 		}
 	}
 	return normalizeIDs(out)
+}
+
+// GuidePluginsMet reports whether the guide's required plugins are running.
+// Unknown guides are false. ignorePluginReqs (test mode) is always true.
+// A nil pluginEnabled callback matches the webapp fail-open.
+func GuidePluginsMet(guideID string, pluginEnabled func(string) bool, ignorePluginReqs bool) bool {
+	spec, ok := catalog[guideID]
+	if !ok {
+		return false
+	}
+	if ignorePluginReqs {
+		return true
+	}
+	return meetsPluginReqs(spec.RequiresPlugins, pluginEnabled)
 }
 
 // EffectiveCurriculum is the module IDs that count toward finishing a guide.

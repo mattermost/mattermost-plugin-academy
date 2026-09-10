@@ -21,6 +21,12 @@ func TestContainsAll(t *testing.T) {
 	assert.False(t, containsAll([]string{"a", "b"}, []string{"a", "c"}))
 }
 
+func TestIntersectIDs(t *testing.T) {
+	assert.Equal(t, []string{"a", "c"}, intersectIDs([]string{"c", "a", "x"}, []string{"a", "b", "c"}))
+	assert.Empty(t, intersectIDs([]string{"x"}, []string{"a"}))
+	assert.Empty(t, intersectIDs([]string{"a"}, nil))
+}
+
 func TestPutRequestCompleteness(t *testing.T) {
 	have := normalizeIDs([]string{"ai-chat", "summarize-threads"})
 	need := normalizeIDs([]string{"summarize-threads", "ai-chat", "ai-search"})
