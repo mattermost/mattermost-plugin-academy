@@ -82,6 +82,12 @@ func TestAdminCompletionsOverTime(t *testing.T) {
 	assert.Equal(t, int64(1), total)
 }
 
+func TestAdminCompletionsOverTimeRejectsHugeRange(t *testing.T) {
+	h := newAdminHandler(seedCompletedGuide(t), stubPlatform{})
+	w := serveAdmin(h.CompletionsOverTime, http.MethodGet, "/api/v1/admin/stats/completions-over-time?from=0&to=1000000000000000", "admin")
+	assert.Equal(t, http.StatusBadRequest, w.Code)
+}
+
 func TestAdminCompletionsExport(t *testing.T) {
 	store := seedCompletedGuide(t)
 
