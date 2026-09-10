@@ -21,17 +21,6 @@ const (
 	maxCompletionsToFuture       = 24 * time.Hour
 )
 
-func completionsBucketSeconds(bucket string) int64 {
-	switch normalizeBucket(bucket) {
-	case "week":
-		return 7 * 24 * 60 * 60
-	case "month":
-		return 28 * 24 * 60 * 60
-	default:
-		return 24 * 60 * 60
-	}
-}
-
 func parseCompletionsQuery(r *http.Request) (CompletionsOverTimeQuery, error) {
 	q := CompletionsOverTimeQuery{
 		Bucket: r.URL.Query().Get("bucket"),
@@ -73,11 +62,8 @@ func parseCompletionsQuery(r *http.Request) (CompletionsOverTimeQuery, error) {
 	if q.To != nil && *q.To > time.Now().Add(maxCompletionsToFuture).Unix() {
 		return q, fmt.Errorf("to is too far in the future")
 	}
-	if q.From != nil && q.To != nil {
-		secs := completionsBucketSeconds(q.Bucket)
-		if *q.To-*q.From > maxCompletionsOverTimePoints*secs {
-			return q, fmt.Errorf("range too large")
-		}
+	if q.From != nil && q.To != nil && alignedBucketCount(*q.From, *q.To, q.Bucket) > maxCompletionsOverTimePoints {
+		return q, fmt.Errorf("range too large")
 	}
 
 	return q, nil

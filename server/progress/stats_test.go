@@ -91,6 +91,28 @@ func TestNormalizeBucket(t *testing.T) {
 	assert.Equal(t, "month", normalizeBucket("month"))
 }
 
+func TestAlignedBucketCountMatchesAggregator(t *testing.T) {
+	now := time.Date(2026, 7, 20, 15, 0, 0, 0, time.UTC)
+	cases := []struct {
+		from   time.Time
+		to     time.Time
+		bucket string
+	}{
+		{time.Date(2026, 7, 14, 15, 0, 0, 0, time.UTC), time.Date(2026, 7, 20, 15, 0, 0, 0, time.UTC), "day"},
+		{time.Date(2026, 6, 3, 12, 0, 0, 0, time.UTC), time.Date(2026, 7, 20, 0, 0, 0, 0, time.UTC), "week"},
+		{time.Date(2025, 12, 15, 0, 0, 0, 0, time.UTC), time.Date(2026, 7, 1, 0, 0, 0, 0, time.UTC), "month"},
+	}
+	for _, tc := range cases {
+		from, to := tc.from.Unix(), tc.to.Unix()
+		result := AggregateCompletionsOverTime(nil, CompletionsOverTimeQuery{
+			From:   &from,
+			To:     &to,
+			Bucket: tc.bucket,
+		}, now)
+		assert.Equal(t, int64(len(result.Points)), alignedBucketCount(from, to, tc.bucket), tc.bucket)
+	}
+}
+
 func TestFilterCompletionEvents(t *testing.T) {
 	now := time.Date(2026, 7, 20, 12, 0, 0, 0, time.UTC)
 	from := time.Date(2026, 7, 18, 0, 0, 0, 0, time.UTC).Unix()

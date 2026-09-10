@@ -81,6 +81,28 @@ func nextBucket(t time.Time, bucket string) time.Time {
 	}
 }
 
+// alignedBucketCount is how many points AggregateCompletionsOverTime emits
+// for [from, to): from is aligned down, to-1 is aligned down, both included.
+func alignedBucketCount(from, to int64, bucket string) int64 {
+	if to <= from {
+		return 0
+	}
+	bucket = normalizeBucket(bucket)
+	start := bucketStart(time.Unix(from, 0), bucket)
+	end := bucketStart(time.Unix(to-1, 0), bucket)
+	if end.Before(start) {
+		return 0
+	}
+	switch bucket {
+	case "week":
+		return (end.Unix()-start.Unix())/(7*24*60*60) + 1
+	case "month":
+		return int64((end.Year()-start.Year())*12+int(end.Month())-int(start.Month())) + 1
+	default:
+		return (end.Unix()-start.Unix())/(24*60*60) + 1
+	}
+}
+
 func guideAllowed(guideID string, allow map[string]struct{}) bool {
 	if len(allow) == 0 {
 		return true
