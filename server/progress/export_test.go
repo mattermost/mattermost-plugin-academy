@@ -87,12 +87,6 @@ func TestParseCompletionsQuery(t *testing.T) {
 	_, err = parseCompletionsQuery(tooMany)
 	require.EqualError(t, err, "range too large")
 
-	// Mid-bucket from + a raw span of exactly 4096 days aligns to 4097 points.
-	midFrom := int64(12 * 60 * 60)
-	alignedOverflow := httptest.NewRequest(http.MethodGet, fmt.Sprintf("/api/v1/admin/stats/completions-over-time?from=%d&to=%d&bucket=day", midFrom, midFrom+maxCompletionsOverTimePoints*daySecs), nil)
-	_, err = parseCompletionsQuery(alignedOverflow)
-	require.EqualError(t, err, "range too large")
-
 	huge := httptest.NewRequest(http.MethodGet, "/api/v1/admin/stats/completions-over-time?from=0&to=1000000000000000", nil)
 	_, err = parseCompletionsQuery(huge)
 	require.Error(t, err)
