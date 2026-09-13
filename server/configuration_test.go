@@ -32,6 +32,16 @@ func TestLoadEnableProfileBadgesFromMattermostConfig(t *testing.T) {
 	assert.True(t, cfg.profileBadgesEnabled())
 }
 
+func TestPreInitDefaultSurvivesEmptyLoad(t *testing.T) {
+	cfg := &configuration{EnableProfileBadges: true}
+	require.NoError(t, json.Unmarshal([]byte(`{}`), cfg))
+	assert.True(t, cfg.profileBadgesEnabled())
+
+	cfg = &configuration{EnableProfileBadges: true}
+	require.NoError(t, json.Unmarshal([]byte(`{"enableprofilebadges":false}`), cfg))
+	assert.False(t, cfg.profileBadgesEnabled())
+}
+
 func TestUserAccessConfigDefaults(t *testing.T) {
 	assert.Equal(t, UserAccessLevelAll, (*configuration)(nil).userAccess().UserAccessLevel)
 	assert.Equal(t, UserAccessLevelAll, (&configuration{}).userAccess().UserAccessLevel)

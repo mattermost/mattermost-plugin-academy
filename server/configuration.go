@@ -92,7 +92,6 @@ func defaultUserAccessConfig() UserAccessConfig {
 // If you add non-reference types to your configuration struct, be sure to rewrite Clone as a deep
 // copy appropriate for your types.
 type configuration struct {
-	// EnableProfileBadges controls profile-popover badges. Default is set in plugin.json.
 	EnableProfileBadges bool
 	UserAccessConfig    *UserAccessConfig
 }
@@ -182,7 +181,10 @@ func (p *Plugin) setConfiguration(configuration *configuration) {
 
 // OnConfigurationChange is invoked when configuration changes may have been made.
 func (p *Plugin) OnConfigurationChange() error {
-	configuration := new(configuration)
+	// Seed defaults; plugin.json's schema default only pre-fills the System Console UI.
+	configuration := &configuration{
+		EnableProfileBadges: true,
+	}
 
 	// Load the public configuration fields from the Mattermost server configuration.
 	if err := p.API.LoadPluginConfiguration(configuration); err != nil {
