@@ -66,11 +66,23 @@ func (h *Handler) curriculumFor(guideID string) []string {
 	return ids
 }
 
+// withVisibleCompleted hides stored IDs that are outside the guide's current
+// effective curriculum, so a module gated behind a since-disabled plugin stops
+// counting toward progress. The stored record keeps them, so the progress
+// returns if that plugin comes back.
+func (h *Handler) withVisibleCompleted(rec Record, guideID string) Record {
+	rec.CompletedModuleIDs = intersectIDs(rec.CompletedModuleIDs, h.curriculumFor(guideID))
+	return rec
+}
+
 func (h *Handler) ListProgress(w http.ResponseWriter, r *http.Request) {
 	records, err := h.store.ListForUser(access.UserFromContext(r.Context()))
 	if err != nil {
 		writeError(w, http.StatusInternalServerError, "failed to list progress")
 		return
+	}
+	for guideID, rec := range records {
+		records[guideID] = h.withVisibleCompleted(rec, guideID)
 	}
 	writeJSON(w, http.StatusOK, map[string]any{"guides": records})
 }
@@ -87,7 +99,7 @@ func (h *Handler) GetProgress(w http.ResponseWriter, r *http.Request) {
 		writeError(w, http.StatusInternalServerError, "failed to get progress")
 		return
 	}
-	writeJSON(w, http.StatusOK, rec)
+	writeJSON(w, http.StatusOK, h.withVisibleCompleted(rec, guideID))
 }
 
 // guidePluginsMet is false when the guide requires a plugin that is not
@@ -149,7 +161,7 @@ func (h *Handler) PutProgress(w http.ResponseWriter, r *http.Request) {
 		writeError(w, http.StatusInternalServerError, "failed to save progress")
 		return
 	}
-	writeJSON(w, http.StatusOK, rec)
+	writeJSON(w, http.StatusOK, h.withVisibleCompleted(rec, guideID))
 }
 
 // ListUserCompletions handles GET /api/v1/users/{userId}/completions.

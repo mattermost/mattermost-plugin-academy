@@ -203,6 +203,55 @@ func TestPutDropsInactivePluginModuleSoItCannotCompleteLater(t *testing.T) {
 	assert.False(t, saved.EverCompleted)
 }
 
+func TestReadsHideModulesGatedBySinceDisabledPlugin(t *testing.T) {
+	store := newTestStore(newMemKV())
+	callsOn := stubPolicy{
+		guideEnabled:  true,
+		badgesEnabled: true,
+		plugins:       map[string]bool{"mattermost-ai": true, "com.mattermost.calls": true},
+	}
+	callsOff := callsOn
+	callsOff.plugins = map[string]bool{"mattermost-ai": true, "com.mattermost.calls": false}
+
+	put := call(newTestHandler(store, callsOn).PutProgress, http.MethodPut, "/api/v1/progress/ai-quick-start", `{"completedModuleIds":["ai-chat","summarize-calls"]}`, "user1", map[string]string{"guideId": "ai-quick-start"})
+	require.Equal(t, http.StatusOK, put.Code)
+
+	// With Calls off, summarize-calls is no longer part of the curriculum, so
+	// counting it would overstate progress against the modules still visible.
+	off := newTestHandler(store, callsOff)
+	get := call(off.GetProgress, http.MethodGet, "/api/v1/progress/ai-quick-start", "", "user1", map[string]string{"guideId": "ai-quick-start"})
+	require.Equal(t, http.StatusOK, get.Code)
+	var loaded Record
+	require.NoError(t, json.Unmarshal(get.Body.Bytes(), &loaded))
+	assert.Equal(t, []string{"ai-chat"}, loaded.CompletedModuleIDs)
+
+	list := call(off.ListProgress, http.MethodGet, "/api/v1/progress", "", "user1", nil)
+	require.Equal(t, http.StatusOK, list.Code)
+	var listed struct {
+		Guides map[string]Record `json:"guides"`
+	}
+	require.NoError(t, json.Unmarshal(list.Body.Bytes(), &listed))
+	assert.Equal(t, []string{"ai-chat"}, listed.Guides["ai-quick-start"].CompletedModuleIDs)
+
+	// The PUT response feeds the webapp's counter too, so it must not hand the
+	// hidden ID back after a merge.
+	put = call(off.PutProgress, http.MethodPut, "/api/v1/progress/ai-quick-start", `{"completedModuleIds":["ai-search"]}`, "user1", map[string]string{"guideId": "ai-quick-start"})
+	require.Equal(t, http.StatusOK, put.Code)
+	var saved Record
+	require.NoError(t, json.Unmarshal(put.Body.Bytes(), &saved))
+	assert.Equal(t, []string{"ai-chat", "ai-search"}, saved.CompletedModuleIDs)
+
+	// Hidden, not deleted: re-enabling Calls restores the earned module.
+	stored, err := store.Get("user1", "ai-quick-start")
+	require.NoError(t, err)
+	assert.Contains(t, stored.CompletedModuleIDs, "summarize-calls")
+
+	back := call(newTestHandler(store, callsOn).GetProgress, http.MethodGet, "/api/v1/progress/ai-quick-start", "", "user1", map[string]string{"guideId": "ai-quick-start"})
+	require.Equal(t, http.StatusOK, back.Code)
+	require.NoError(t, json.Unmarshal(back.Body.Bytes(), &loaded))
+	assert.Equal(t, []string{"ai-chat", "ai-search", "summarize-calls"}, loaded.CompletedModuleIDs)
+}
+
 func TestPutCompletesAgainstServerCurriculumMinusInactivePlugins(t *testing.T) {
 	body := `{"completedModuleIds":["ai-chat","summarize-threads","summarize-channels","ai-search","rewrite-with-ai","custom-agents"]}`
 
