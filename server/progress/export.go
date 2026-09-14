@@ -22,7 +22,11 @@ const (
 )
 
 func completionsBucketSeconds(bucket string) int64 {
-	switch normalizeBucket(bucket) {
+	normalized, err := normalizeBucket(bucket)
+	if err != nil {
+		normalized = "day"
+	}
+	switch normalized {
 	case "week":
 		return 7 * 24 * 60 * 60
 	case "month":
@@ -35,6 +39,9 @@ func completionsBucketSeconds(bucket string) int64 {
 func parseCompletionsQuery(r *http.Request) (CompletionsOverTimeQuery, error) {
 	q := CompletionsOverTimeQuery{
 		Bucket: r.URL.Query().Get("bucket"),
+	}
+	if _, err := normalizeBucket(q.Bucket); err != nil {
+		return q, err
 	}
 
 	if guides := strings.TrimSpace(r.URL.Query().Get("guides")); guides != "" {

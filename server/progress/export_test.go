@@ -78,14 +78,32 @@ func TestParseCompletionsQuery(t *testing.T) {
 	_, err = parseCompletionsQuery(badFrom)
 	require.Error(t, err)
 
+	badBucket := httptest.NewRequest(http.MethodGet, "/api/v1/admin/stats/completions-over-time?from=1&to=10&bucket=hour", nil)
+	_, err = parseCompletionsQuery(badBucket)
+	require.EqualError(t, err, "invalid bucket")
+
+	defaultBucket := httptest.NewRequest(http.MethodGet, "/api/v1/admin/stats/completions-over-time?from=1&to=10", nil)
+	q, err = parseCompletionsQuery(defaultBucket)
+	require.NoError(t, err)
+	assert.Equal(t, "", q.Bucket)
+
 	daySecs := int64(24 * 60 * 60)
 	okSpan := httptest.NewRequest(http.MethodGet, fmt.Sprintf("/api/v1/admin/stats/completions-over-time?from=0&to=%d&bucket=day", maxCompletionsOverTimePoints*daySecs), nil)
 	_, err = parseCompletionsQuery(okSpan)
 	require.NoError(t, err)
 
-	tooMany := httptest.NewRequest(http.MethodGet, fmt.Sprintf("/api/v1/admin/stats/completions-over-time?from=0&to=%d&bucket=day", maxCompletionsOverTimePoints*daySecs+1), nil)
+	tooManyDays := maxCompletionsOverTimePoints*daySecs + 1
+	tooMany := httptest.NewRequest(http.MethodGet, fmt.Sprintf("/api/v1/admin/stats/completions-over-time?from=0&to=%d&bucket=day", tooManyDays), nil)
 	_, err = parseCompletionsQuery(tooMany)
 	require.EqualError(t, err, "range too large")
+
+	okWeek := httptest.NewRequest(http.MethodGet, fmt.Sprintf("/api/v1/admin/stats/completions-over-time?from=0&to=%d&bucket=week", tooManyDays), nil)
+	_, err = parseCompletionsQuery(okWeek)
+	require.NoError(t, err)
+
+	okMonth := httptest.NewRequest(http.MethodGet, fmt.Sprintf("/api/v1/admin/stats/completions-over-time?from=0&to=%d&bucket=month", tooManyDays), nil)
+	_, err = parseCompletionsQuery(okMonth)
+	require.NoError(t, err)
 
 	fromEpoch := httptest.NewRequest(http.MethodGet, "/api/v1/admin/stats/completions-over-time?from=0&bucket=day", nil)
 	_, err = parseCompletionsQuery(fromEpoch)

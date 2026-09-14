@@ -4,6 +4,7 @@
 package progress
 
 import (
+	"errors"
 	"strings"
 	"time"
 )
@@ -41,14 +42,18 @@ type CompletionsOverTimeResult struct {
 	Points []TimeBucket `json:"points"`
 }
 
-func normalizeBucket(b string) string {
+var errInvalidBucket = errors.New("invalid bucket")
+
+func normalizeBucket(b string) (string, error) {
 	switch strings.ToLower(strings.TrimSpace(b)) {
+	case "", "day":
+		return "day", nil
 	case "week":
-		return "week"
+		return "week", nil
 	case "month":
-		return "month"
+		return "month", nil
 	default:
-		return "day"
+		return "", errInvalidBucket
 	}
 }
 
@@ -93,7 +98,10 @@ func guideAllowed(guideID string, allow map[string]struct{}) bool {
 // Pure function so ranges/buckets can be unit-tested without KV.
 func AggregateCompletionsOverTime(completions []CompletionEvent, q CompletionsOverTimeQuery, now time.Time) CompletionsOverTimeResult {
 	filtered := FilterCompletionEvents(completions, q, now)
-	bucket := normalizeBucket(q.Bucket)
+	bucket, err := normalizeBucket(q.Bucket)
+	if err != nil {
+		bucket = "day"
+	}
 
 	toUnix := now.UTC().Unix()
 	if q.To != nil {
@@ -150,6 +158,9 @@ func AggregateCompletionsOverTime(completions []CompletionEvent, q CompletionsOv
 			Start: start,
 			Count: counts[start],
 		})
+		if len(result.Points) >= maxCompletionsOverTimePoints {
+			break
+		}
 	}
 
 	return result
