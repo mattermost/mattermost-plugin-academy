@@ -20,9 +20,7 @@ func setupTest() *env {
 	driver := &plugintest.Driver{}
 	client := pluginapi.NewClient(api, driver)
 
-	api.On("UnregisterCommand", mock.Anything, mock.Anything).Return(nil)
 	api.On("RegisterCommand", mock.Anything).Return(nil)
-	api.On("LogDebug", mock.Anything).Maybe()
 	api.On("LogError", mock.Anything).Maybe()
 
 	return &env{
