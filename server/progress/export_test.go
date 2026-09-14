@@ -125,4 +125,9 @@ func TestParseCompletionsQuery(t *testing.T) {
 	nearFuture := httptest.NewRequest(http.MethodGet, fmt.Sprintf("/api/v1/admin/stats/completions-over-time?to=%d", time.Now().Add(time.Hour).Unix()), nil)
 	_, err = parseCompletionsQuery(nearFuture)
 	require.NoError(t, err)
+
+	autoBucket := httptest.NewRequest(http.MethodGet, fmt.Sprintf("/api/v1/admin/stats/completions-over-time?bucket=auto&to=%d", time.Now().Unix()), nil)
+	q, err = parseCompletionsQuery(autoBucket)
+	require.NoError(t, err)
+	assert.Equal(t, "auto", q.Bucket)
 }

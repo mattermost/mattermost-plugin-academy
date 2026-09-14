@@ -106,4 +106,54 @@ describe('AdminCompletionsChart', () => {
 
         await view.unmount();
     });
+
+    it('requests coarser buckets for longer duration presets', async () => {
+        const view = await render(<AdminCompletionsChart/>);
+
+        await waitFor(() => {
+            expect(global.fetch).toHaveBeenCalled();
+        });
+
+        const pickDuration = async (label: string) => {
+            const trigger = view.container.querySelector('[aria-label="Open menu to select duration"]') as HTMLElement;
+            expect(trigger).not.toBeNull();
+            await act(async () => {
+                trigger.click();
+            });
+            const item = Array.from(view.container.querySelectorAll('[role="menuitem"]')).find((el) => (
+                el.textContent?.includes(label)
+            ));
+            expect(item).toBeDefined();
+            await act(async () => {
+                (item as HTMLElement).click();
+            });
+        };
+
+        const lastChartURL = () => {
+            const calls = (global.fetch as jest.Mock).mock.calls as Array<[string]>;
+            const chartCalls = calls.filter(([url]) => String(url).includes('completions-over-time'));
+            return String(chartCalls[chartCalls.length - 1][0]);
+        };
+
+        expect(lastChartURL()).toContain('bucket=day');
+
+        await pickDuration('Last 6 months');
+        await waitFor(() => {
+            expect(lastChartURL()).toContain('bucket=week');
+        });
+
+        await pickDuration('Last year');
+        await waitFor(() => {
+            expect(lastChartURL()).toContain('bucket=month');
+        });
+
+        await pickDuration('All time');
+        await waitFor(() => {
+            const url = lastChartURL();
+            expect(url).toContain('bucket=auto');
+            expect(url).not.toMatch(/[?&]from=/);
+        });
+
+        await view.unmount();
+    });
 });

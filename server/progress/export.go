@@ -32,6 +32,7 @@ func completionsBucketSeconds(bucket string) int64 {
 	case "month":
 		return 28 * 24 * 60 * 60
 	default:
+		// day and auto (resolved later) use a daily ceiling.
 		return 24 * 60 * 60
 	}
 }

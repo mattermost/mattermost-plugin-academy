@@ -4,6 +4,7 @@
 import {
     appendRangeQuery,
     boundsForPreset,
+    bucketForPreset,
     DATE_RANGE_PRESETS,
     formatPresetSublabel,
     labelForPreset,
@@ -84,7 +85,7 @@ async function fetchCompletionsOverTime(
     if (guideIds.length > 0 && guideIds.length < ALL_GUIDE_IDS.length) {
         params.set('guides', guideIds.join(','));
     }
-    params.set('bucket', 'day');
+    params.set('bucket', bucketForPreset(preset));
     appendRangeQuery(params, boundsForPreset(preset));
 
     const res = await fetch(

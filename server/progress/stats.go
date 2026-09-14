@@ -25,7 +25,7 @@ type TimeBucket struct {
 //   - From: inclusive lower bound; nil means no lower bound (all time start)
 //   - To: exclusive upper bound; nil means "now" at query time
 //   - GuideIDs: empty means all guides; otherwise only listed IDs
-//   - Bucket: "day" (default), "week", or "month"
+//   - Bucket: "day" (default), "week", "month", or "auto" (resolved from span)
 type CompletionsOverTimeQuery struct {
 	GuideIDs []string
 	From     *int64
@@ -52,9 +52,60 @@ func normalizeBucket(b string) (string, error) {
 		return "week", nil
 	case "month":
 		return "month", nil
+	case "auto":
+		return "auto", nil
 	default:
 		return "", errInvalidBucket
 	}
+}
+
+// Auto bucket cutoffs match the admin duration presets: day through ~2 months,
+// week through ~9 months, month for a year or longer.
+const (
+	autoDayMaxSpan  = 60 * 24 * time.Hour
+	autoWeekMaxSpan = 270 * 24 * time.Hour
+)
+
+func bucketForSpan(span time.Duration) string {
+	switch {
+	case span < autoDayMaxSpan:
+		return "day"
+	case span < autoWeekMaxSpan:
+		return "week"
+	default:
+		return "month"
+	}
+}
+
+func spanStartUnix(from *int64, events []CompletionEvent) (int64, bool) {
+	if from != nil {
+		return *from, true
+	}
+	var min int64
+	var has bool
+	for _, e := range events {
+		if !has || e.CompletedAt < min {
+			min = e.CompletedAt
+			has = true
+		}
+	}
+	return min, has
+}
+
+func resolveBucket(requested string, from *int64, toUnix int64, events []CompletionEvent) string {
+	bucket, err := normalizeBucket(requested)
+	if err != nil {
+		return "day"
+	}
+	if bucket != "auto" {
+		return bucket
+	}
+
+	startUnix, ok := spanStartUnix(from, events)
+	if !ok || toUnix <= startUnix {
+		return "day"
+	}
+	return bucketForSpan(time.Duration(toUnix-startUnix) * time.Second)
 }
 
 func bucketStart(t time.Time, bucket string) time.Time {
@@ -98,15 +149,12 @@ func guideAllowed(guideID string, allow map[string]struct{}) bool {
 // Pure function so ranges/buckets can be unit-tested without KV.
 func AggregateCompletionsOverTime(completions []CompletionEvent, q CompletionsOverTimeQuery, now time.Time) CompletionsOverTimeResult {
 	filtered := FilterCompletionEvents(completions, q, now)
-	bucket, err := normalizeBucket(q.Bucket)
-	if err != nil {
-		bucket = "day"
-	}
 
 	toUnix := now.UTC().Unix()
 	if q.To != nil {
 		toUnix = *q.To
 	}
+	bucket := resolveBucket(q.Bucket, q.From, toUnix, filtered)
 
 	counts := map[int64]int64{}
 	var minStart int64

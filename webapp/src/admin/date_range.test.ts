@@ -4,6 +4,7 @@
 import {
     boundsForInclusiveLocalDays,
     boundsForPreset,
+    bucketForPreset,
     formatLocalDay,
     formatLocalMonthYear,
     formatPresetSublabel,
@@ -72,6 +73,16 @@ describe('localDayWindowForPreset', () => {
         expect(formatPresetSublabel(year)).toBe(
             `${formatLocalMonthYear(new Date(2025, 6, 20))} - ${formatLocalDay(new Date(2026, 6, 20))}`,
         );
+    });
+});
+
+describe('bucketForPreset', () => {
+    it('scales with duration so long ranges stay readable', () => {
+        expect(bucketForPreset('last_30_days')).toBe('day');
+        expect(bucketForPreset('previous_month')).toBe('day');
+        expect(bucketForPreset('last_6_months')).toBe('week');
+        expect(bucketForPreset('last_year')).toBe('month');
+        expect(bucketForPreset('all_time')).toBe('auto');
     });
 });
 
