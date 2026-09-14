@@ -32,7 +32,7 @@
                         "display_name": "Show Academy badges on profiles:",
                         "type": "bool",
                         "help_text": "When enabled, completed guide badges appear on user profile popovers.",
-                        "default": "true"
+                        "default": true
                     }
                 ]
             },
