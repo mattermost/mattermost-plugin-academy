@@ -92,29 +92,8 @@ func defaultUserAccessConfig() UserAccessConfig {
 // If you add non-reference types to your configuration struct, be sure to rewrite Clone as a deep
 // copy appropriate for your types.
 type configuration struct {
-	// EnableProfileBadges controls profile-popover badges. Nil means unset → default on.
-	// Uses Truthy because Mattermost plugin defaults are JSON strings ("true"/"false").
-	EnableProfileBadges *Truthy
+	EnableProfileBadges bool
 	UserAccessConfig    *UserAccessConfig
-}
-
-// Truthy unmarshals Mattermost plugin bools from either a JSON boolean or "true"/"false" string.
-type Truthy bool
-
-func (t *Truthy) UnmarshalJSON(data []byte) error {
-	switch strings.ToLower(strings.Trim(string(data), `"`)) {
-	case "true", "1":
-		*t = true
-	case "false", "0", "null", "":
-		*t = false
-	default:
-		return errors.Errorf("invalid bool value %s", string(data))
-	}
-	return nil
-}
-
-func (t Truthy) MarshalJSON() ([]byte, error) {
-	return json.Marshal(bool(t))
 }
 
 // Clone deep-copies configuration reference fields.
@@ -123,10 +102,6 @@ func (c *configuration) Clone() *configuration {
 		return &configuration{}
 	}
 	clone := *c
-	if c.EnableProfileBadges != nil {
-		v := *c.EnableProfileBadges
-		clone.EnableProfileBadges = &v
-	}
 	if c.UserAccessConfig != nil {
 		ua := *c.UserAccessConfig
 		ua.UserIDs = append([]string(nil), c.UserAccessConfig.UserIDs...)
@@ -138,10 +113,10 @@ func (c *configuration) Clone() *configuration {
 }
 
 func (c *configuration) profileBadgesEnabled() bool {
-	if c == nil || c.EnableProfileBadges == nil {
-		return true
+	if c == nil {
+		return false
 	}
-	return bool(*c.EnableProfileBadges)
+	return c.EnableProfileBadges
 }
 
 func (c *configuration) testModeEnabled() bool {
@@ -206,7 +181,10 @@ func (p *Plugin) setConfiguration(configuration *configuration) {
 
 // OnConfigurationChange is invoked when configuration changes may have been made.
 func (p *Plugin) OnConfigurationChange() error {
-	configuration := new(configuration)
+	// Seed defaults; plugin.json's schema default only pre-fills the System Console UI.
+	configuration := &configuration{
+		EnableProfileBadges: true,
+	}
 
 	// Load the public configuration fields from the Mattermost server configuration.
 	if err := p.API.LoadPluginConfiguration(configuration); err != nil {
