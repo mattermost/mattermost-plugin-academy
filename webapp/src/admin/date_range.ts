@@ -188,3 +188,23 @@ export function appendRangeQuery(
 export function labelForPreset(preset: DateRangePresetId): string {
     return DATE_RANGE_PRESETS.find((p) => p.id === preset)?.label ?? 'All time';
 }
+
+/** Chart series granularity sent with completions-over-time. */
+export type ChartBucket = 'day' | 'week' | 'month' | 'auto';
+
+/**
+ * Bucket the chart should request for a duration preset.
+ * All time is `auto` so the server can pick from the actual data span.
+ */
+export function bucketForPreset(preset: DateRangePresetId): ChartBucket {
+    switch (preset) {
+    case 'last_6_months':
+        return 'week';
+    case 'last_year':
+        return 'month';
+    case 'all_time':
+        return 'auto';
+    default:
+        return 'day';
+    }
+}

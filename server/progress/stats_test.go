@@ -114,8 +114,104 @@ func TestNormalizeBucket(t *testing.T) {
 	require.NoError(t, err)
 	assert.Equal(t, "month", month)
 
+	auto, err := normalizeBucket("AUTO")
+	require.NoError(t, err)
+	assert.Equal(t, "auto", auto)
+
 	_, err = normalizeBucket("hour")
 	require.EqualError(t, err, "invalid bucket")
+}
+
+func TestBucketForSpan(t *testing.T) {
+	assert.Equal(t, "day", bucketForSpan(30*24*time.Hour))
+	assert.Equal(t, "day", bucketForSpan(45*24*time.Hour))
+	assert.Equal(t, "week", bucketForSpan(180*24*time.Hour))
+	assert.Equal(t, "month", bucketForSpan(365*24*time.Hour))
+}
+
+func TestAggregateCompletionsOverTimeAutoBucket(t *testing.T) {
+	now := time.Date(2026, 7, 20, 12, 0, 0, 0, time.UTC)
+
+	t.Run("short all-time span uses day", func(t *testing.T) {
+		completions := []CompletionEvent{
+			{UserID: "u1", GuideID: "ai-quick-start", CompletedAt: time.Date(2026, 7, 10, 8, 0, 0, 0, time.UTC).Unix()},
+			{UserID: "u2", GuideID: "ai-quick-start", CompletedAt: time.Date(2026, 7, 12, 8, 0, 0, 0, time.UTC).Unix()},
+		}
+		result := AggregateCompletionsOverTime(completions, CompletionsOverTimeQuery{Bucket: "auto"}, now)
+		assert.Equal(t, "day", result.Bucket)
+		require.Len(t, result.Points, 11)
+	})
+
+	t.Run("six-month span uses week", func(t *testing.T) {
+		from := time.Date(2026, 1, 20, 0, 0, 0, 0, time.UTC).Unix()
+		completions := []CompletionEvent{
+			{UserID: "u1", GuideID: "ai-quick-start", CompletedAt: time.Date(2026, 1, 25, 8, 0, 0, 0, time.UTC).Unix()},
+			{UserID: "u2", GuideID: "ai-quick-start", CompletedAt: time.Date(2026, 7, 15, 8, 0, 0, 0, time.UTC).Unix()},
+		}
+		result := AggregateCompletionsOverTime(completions, CompletionsOverTimeQuery{
+			From:   &from,
+			Bucket: "auto",
+		}, now)
+		assert.Equal(t, "week", result.Bucket)
+		assert.Greater(t, len(result.Points), 1)
+		assert.Less(t, len(result.Points), 40)
+	})
+
+	t.Run("year span uses month", func(t *testing.T) {
+		from := time.Date(2025, 7, 20, 0, 0, 0, 0, time.UTC).Unix()
+		completions := []CompletionEvent{
+			{UserID: "u1", GuideID: "ai-quick-start", CompletedAt: time.Date(2025, 8, 1, 8, 0, 0, 0, time.UTC).Unix()},
+			{UserID: "u2", GuideID: "ai-quick-start", CompletedAt: time.Date(2026, 6, 1, 8, 0, 0, 0, time.UTC).Unix()},
+		}
+		result := AggregateCompletionsOverTime(completions, CompletionsOverTimeQuery{
+			From:   &from,
+			Bucket: "auto",
+		}, now)
+		assert.Equal(t, "month", result.Bucket)
+		require.Len(t, result.Points, 13)
+		assert.Equal(t, int64(0), result.Points[0].Count)
+		assert.Equal(t, int64(1), result.Points[1].Count)
+		assert.Equal(t, int64(1), result.Points[11].Count)
+	})
+
+	t.Run("all-time six-month history uses week", func(t *testing.T) {
+		completions := []CompletionEvent{
+			{UserID: "u1", GuideID: "ai-quick-start", CompletedAt: time.Date(2026, 1, 25, 8, 0, 0, 0, time.UTC).Unix()},
+			{UserID: "u2", GuideID: "ai-quick-start", CompletedAt: time.Date(2026, 7, 15, 8, 0, 0, 0, time.UTC).Unix()},
+		}
+		result := AggregateCompletionsOverTime(completions, CompletionsOverTimeQuery{Bucket: "auto"}, now)
+		assert.Equal(t, "week", result.Bucket)
+		assert.Greater(t, len(result.Points), 1)
+		assert.Less(t, len(result.Points), 40)
+	})
+
+	t.Run("all-time year of history uses month", func(t *testing.T) {
+		completions := []CompletionEvent{
+			{UserID: "u1", GuideID: "ai-quick-start", CompletedAt: time.Date(2025, 8, 1, 8, 0, 0, 0, time.UTC).Unix()},
+			{UserID: "u2", GuideID: "ai-quick-start", CompletedAt: time.Date(2026, 6, 1, 8, 0, 0, 0, time.UTC).Unix()},
+		}
+		result := AggregateCompletionsOverTime(completions, CompletionsOverTimeQuery{Bucket: "auto"}, now)
+		assert.Equal(t, "month", result.Bucket)
+		require.Len(t, result.Points, 12)
+		assert.Equal(t, int64(1), result.Points[0].Count)
+		assert.Equal(t, int64(1), result.Points[10].Count)
+	})
+
+	t.Run("empty auto stays day", func(t *testing.T) {
+		result := AggregateCompletionsOverTime(nil, CompletionsOverTimeQuery{Bucket: "auto"}, now)
+		assert.Equal(t, "day", result.Bucket)
+		assert.Empty(t, result.Points)
+	})
+
+	t.Run("explicit day is kept on a long span", func(t *testing.T) {
+		from := time.Date(2025, 7, 20, 0, 0, 0, 0, time.UTC).Unix()
+		result := AggregateCompletionsOverTime(nil, CompletionsOverTimeQuery{
+			From:   &from,
+			Bucket: "day",
+		}, now)
+		assert.Equal(t, "day", result.Bucket)
+		assert.Greater(t, len(result.Points), 300)
+	})
 }
 
 func TestFilterCompletionEvents(t *testing.T) {
