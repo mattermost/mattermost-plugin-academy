@@ -4,6 +4,7 @@
 package progress
 
 import (
+	"strconv"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -43,6 +44,36 @@ func TestPutUnknownGuideNeverCompletes(t *testing.T) {
 	assert.False(t, rec.EverCompleted)
 	assert.Empty(t, rec.CompletedModuleIDs)
 	assert.Zero(t, rec.CompletedAt)
+}
+
+func TestPutRejectsInvalidRequestAndMergedCap(t *testing.T) {
+	s := newTestStore(newMemKV())
+
+	_, err := s.Put("user1", "ai-quick-start", []string{"../x"}, []string{"ai-chat"})
+	require.ErrorIs(t, err, errInvalidModuleID)
+
+	kv := newMemKV()
+	s = newTestStore(kv)
+	ids := make([]string, maxStoredModuleIDs)
+	for i := range ids {
+		ids[i] = "m" + strconv.Itoa(i)
+	}
+	require.NoError(t, kv.Set(progressKey("user1", "ai-quick-start"), Record{
+		V:                  1,
+		GuideID:            "ai-quick-start",
+		CompletedModuleIDs: ids,
+	}))
+
+	_, err = s.Put("user1", "ai-quick-start", []string{ids[0]}, []string{"ai-chat"})
+	require.NoError(t, err)
+
+	_, err = s.Put("user1", "ai-quick-start", []string{"ai-chat"}, []string{"ai-chat"})
+	require.ErrorIs(t, err, errTooManyStoredModuleIDs)
+
+	rec, err := s.Get("user1", "ai-quick-start")
+	require.NoError(t, err)
+	assert.Len(t, rec.CompletedModuleIDs, maxStoredModuleIDs)
+	assert.NotContains(t, rec.CompletedModuleIDs, "ai-chat")
 }
 
 func TestGetEmptyRecord(t *testing.T) {

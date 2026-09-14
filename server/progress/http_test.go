@@ -7,6 +7,7 @@ import (
 	"encoding/json"
 	"net/http"
 	"net/http/httptest"
+	"strconv"
 	"strings"
 	"testing"
 
@@ -236,4 +237,57 @@ func TestPutInvalidJSONAndGuideID(t *testing.T) {
 
 	badID := call(h.PutProgress, http.MethodPut, "/api/v1/progress/Not-Valid", `{}`, "user1", map[string]string{"guideId": "Not-Valid"})
 	assert.Equal(t, http.StatusBadRequest, badID.Code)
+}
+
+func TestPutRejectsOversizedBody(t *testing.T) {
+	h := newTestHandler(newTestStore(newMemKV()), stubPolicy{guideEnabled: true})
+	body := strings.Repeat("a", MaxRequestBodyBytes+1)
+
+	w := call(h.PutProgress, http.MethodPut, "/api/v1/progress/ai-quick-start", body, "user1", map[string]string{"guideId": "ai-quick-start"})
+	assert.Equal(t, http.StatusRequestEntityTooLarge, w.Code)
+	assert.Contains(t, w.Body.String(), "request body too large")
+}
+
+func TestPutRejectsInvalidAndTooManyModuleIDs(t *testing.T) {
+	h := newTestHandler(newTestStore(newMemKV()), stubPolicy{guideEnabled: true})
+
+	invalid := call(h.PutProgress, http.MethodPut, "/api/v1/progress/ai-quick-start", `{"completedModuleIds":["../x"]}`, "user1", map[string]string{"guideId": "ai-quick-start"})
+	assert.Equal(t, http.StatusBadRequest, invalid.Code)
+	assert.Contains(t, invalid.Body.String(), "invalid module id")
+
+	tooMany := make([]string, maxRequestModuleIDs+1)
+	for i := range tooMany {
+		tooMany[i] = "m" + strconv.Itoa(i)
+	}
+	body, err := json.Marshal(PutRequest{CompletedModuleIDs: tooMany})
+	require.NoError(t, err)
+
+	w := call(h.PutProgress, http.MethodPut, "/api/v1/progress/ai-quick-start", string(body), "user1", map[string]string{"guideId": "ai-quick-start"})
+	assert.Equal(t, http.StatusBadRequest, w.Code)
+	assert.Contains(t, w.Body.String(), "too many module ids")
+}
+
+func TestPutRejectsWhenMergedRecordWouldExceedCap(t *testing.T) {
+	kv := newMemKV()
+	s := newTestStore(kv)
+	ids := make([]string, maxStoredModuleIDs)
+	for i := range ids {
+		ids[i] = "m" + strconv.Itoa(i)
+	}
+	require.NoError(t, kv.Set(progressKey("user1", "ai-quick-start"), Record{
+		V:                  1,
+		GuideID:            "ai-quick-start",
+		CompletedModuleIDs: ids,
+	}))
+
+	h := newTestHandler(s, stubPolicy{guideEnabled: true})
+	// ai-chat is a catalog module, so it is not filtered out before the merge cap.
+	w := call(h.PutProgress, http.MethodPut, "/api/v1/progress/ai-quick-start", `{"completedModuleIds":["ai-chat"]}`, "user1", map[string]string{"guideId": "ai-quick-start"})
+	assert.Equal(t, http.StatusBadRequest, w.Code)
+	assert.Contains(t, w.Body.String(), "too many completed modules")
+
+	rec, err := s.Get("user1", "ai-quick-start")
+	require.NoError(t, err)
+	assert.Len(t, rec.CompletedModuleIDs, maxStoredModuleIDs)
+	assert.NotContains(t, rec.CompletedModuleIDs, "ai-chat")
 }

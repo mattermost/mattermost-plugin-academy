@@ -109,6 +109,10 @@ func (s *Store) Put(userID, guideID string, completedModuleIDs, curriculum []str
 	key := progressKey(userID, guideID)
 	now := time.Now().Unix()
 
+	if err := validateModuleIDs(completedModuleIDs); err != nil {
+		return Record{}, err
+	}
+
 	curriculum = filterKnownModules(guideID, curriculum)
 	completed := intersectIDs(filterKnownModules(guideID, completedModuleIDs), curriculum)
 
@@ -124,6 +128,9 @@ func (s *Store) Put(userID, guideID string, completedModuleIDs, curriculum []str
 		}
 
 		merged := normalizeIDs(append(prev.CompletedModuleIDs, completed...))
+		if len(merged) > maxStoredModuleIDs {
+			return nil, errTooManyStoredModuleIDs
+		}
 		next = Record{
 			V:                  1,
 			GuideID:            guideID,

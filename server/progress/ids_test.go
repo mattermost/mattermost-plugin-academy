@@ -4,6 +4,7 @@
 package progress
 
 import (
+	"strconv"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -23,4 +24,28 @@ func TestValidUserID(t *testing.T) {
 	assert.False(t, validUserID(""))
 	assert.False(t, validUserID("user-id"))
 	assert.False(t, validUserID("../x"))
+}
+
+func TestValidatePutRequest(t *testing.T) {
+	assert.NoError(t, validatePutRequest(PutRequest{
+		CompletedModuleIDs: []string{"chat"},
+	}))
+	assert.ErrorIs(t, validatePutRequest(PutRequest{
+		CompletedModuleIDs: []string{"../x"},
+	}), errInvalidModuleID)
+	assert.ErrorIs(t, validatePutRequest(PutRequest{
+		CompletedModuleIDs: []string{"AI"},
+	}), errInvalidModuleID)
+	assert.ErrorIs(t, validatePutRequest(PutRequest{
+		CompletedModuleIDs: []string{""},
+	}), errInvalidModuleID)
+
+	tooMany := make([]string, maxRequestModuleIDs+1)
+	for i := range tooMany {
+		tooMany[i] = "m" + strconv.Itoa(i)
+	}
+	assert.ErrorIs(t, validatePutRequest(PutRequest{CompletedModuleIDs: tooMany}), errTooManyModuleIDs)
+
+	atCap := tooMany[:maxRequestModuleIDs]
+	assert.NoError(t, validatePutRequest(PutRequest{CompletedModuleIDs: atCap}))
 }
