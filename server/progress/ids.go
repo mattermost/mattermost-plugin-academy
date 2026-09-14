@@ -5,7 +5,6 @@ package progress
 
 import (
 	"errors"
-	"strings"
 )
 
 const (
@@ -52,8 +51,10 @@ func validateModuleIDs(ids []string) error {
 	if len(ids) > maxRequestModuleIDs {
 		return errTooManyModuleIDs
 	}
+	// Compared as sent: the catalog lookup in filterKnownModules does not
+	// trim, so an ID accepted here must match a catalog key exactly.
 	for _, id := range ids {
-		if !validGuideID(strings.TrimSpace(id)) {
+		if !validGuideID(id) {
 			return errInvalidModuleID
 		}
 	}

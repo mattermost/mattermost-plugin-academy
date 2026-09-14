@@ -36,6 +36,14 @@ func TestValidatePutRequest(t *testing.T) {
 	assert.ErrorIs(t, validatePutRequest(PutRequest{
 		CompletedModuleIDs: []string{"AI"},
 	}), errInvalidModuleID)
+	// Whitespace must be refused, not trimmed: the catalog lookup matches the
+	// ID exactly, so a trimmed-but-accepted ID would save 200 with no module.
+	assert.ErrorIs(t, validatePutRequest(PutRequest{
+		CompletedModuleIDs: []string{" chat "},
+	}), errInvalidModuleID)
+	assert.ErrorIs(t, validatePutRequest(PutRequest{
+		CompletedModuleIDs: []string{"chat\n"},
+	}), errInvalidModuleID)
 	assert.ErrorIs(t, validatePutRequest(PutRequest{
 		CompletedModuleIDs: []string{""},
 	}), errInvalidModuleID)

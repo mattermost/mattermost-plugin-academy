@@ -255,6 +255,12 @@ func TestPutRejectsInvalidAndTooManyModuleIDs(t *testing.T) {
 	assert.Equal(t, http.StatusBadRequest, invalid.Code)
 	assert.Contains(t, invalid.Body.String(), "invalid module id")
 
+	// A padded ID would pass a trimming validator and then miss the catalog,
+	// saving 200 with the module silently absent. It must 400 instead.
+	padded := call(h.PutProgress, http.MethodPut, "/api/v1/progress/ai-quick-start", `{"completedModuleIds":[" ai-chat "]}`, "user1", map[string]string{"guideId": "ai-quick-start"})
+	assert.Equal(t, http.StatusBadRequest, padded.Code)
+	assert.Contains(t, padded.Body.String(), "invalid module id")
+
 	tooMany := make([]string, maxRequestModuleIDs+1)
 	for i := range tooMany {
 		tooMany[i] = "m" + strconv.Itoa(i)
