@@ -11,32 +11,6 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestTruthyUnmarshal(t *testing.T) {
-	cases := []struct {
-		raw     string
-		want    Truthy
-		wantErr bool
-	}{
-		{`true`, true, false},
-		{`false`, false, false},
-		{`"true"`, true, false},
-		{`"false"`, false, false},
-		{`"TRUE"`, true, false},
-		{`""`, false, false},
-		{`"nope"`, false, true},
-	}
-	for _, tc := range cases {
-		var got Truthy
-		err := json.Unmarshal([]byte(tc.raw), &got)
-		if tc.wantErr {
-			require.Error(t, err, tc.raw)
-			continue
-		}
-		require.NoError(t, err, tc.raw)
-		assert.Equal(t, tc.want, got, tc.raw)
-	}
-}
-
 func TestTestModeEnabledDefaults(t *testing.T) {
 	assert.False(t, (*configuration)(nil).testModeEnabled())
 	assert.False(t, (&configuration{}).testModeEnabled())
@@ -44,22 +18,28 @@ func TestTestModeEnabledDefaults(t *testing.T) {
 }
 
 func TestProfileBadgesEnabledDefaults(t *testing.T) {
-	assert.True(t, (*configuration)(nil).profileBadgesEnabled())
-	assert.True(t, (&configuration{}).profileBadgesEnabled())
-
-	on := Truthy(true)
-	off := Truthy(false)
-	assert.True(t, (&configuration{EnableProfileBadges: &on}).profileBadgesEnabled())
-	assert.False(t, (&configuration{EnableProfileBadges: &off}).profileBadgesEnabled())
+	assert.False(t, (*configuration)(nil).profileBadgesEnabled())
+	assert.False(t, (&configuration{}).profileBadgesEnabled())
+	assert.True(t, (&configuration{EnableProfileBadges: true}).profileBadgesEnabled())
+	assert.False(t, (&configuration{EnableProfileBadges: false}).profileBadgesEnabled())
 }
 
-func TestLoadEnableProfileBadgesFromMattermostDefaultString(t *testing.T) {
-	// Mattermost LoadPluginConfiguration lowercases keys and uses schema default strings.
-	raw := `{"enableprofilebadges":"true"}`
+func TestLoadEnableProfileBadgesFromMattermostConfig(t *testing.T) {
+	// Mattermost LoadPluginConfiguration lowercases keys.
+	raw := `{"enableprofilebadges":true}`
 	cfg := new(configuration)
 	require.NoError(t, json.Unmarshal([]byte(raw), cfg))
-	require.NotNil(t, cfg.EnableProfileBadges)
 	assert.True(t, cfg.profileBadgesEnabled())
+}
+
+func TestPreInitDefaultSurvivesEmptyLoad(t *testing.T) {
+	cfg := &configuration{EnableProfileBadges: true}
+	require.NoError(t, json.Unmarshal([]byte(`{}`), cfg))
+	assert.True(t, cfg.profileBadgesEnabled())
+
+	cfg = &configuration{EnableProfileBadges: true}
+	require.NoError(t, json.Unmarshal([]byte(`{"enableprofilebadges":false}`), cfg))
+	assert.False(t, cfg.profileBadgesEnabled())
 }
 
 func TestUserAccessConfigDefaults(t *testing.T) {
