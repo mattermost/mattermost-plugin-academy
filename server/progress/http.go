@@ -5,6 +5,8 @@ package progress
 
 import (
 	"encoding/json"
+	"errors"
+	"io"
 	"net/http"
 
 	"github.com/mattermost/mattermost/server/public/pluginapi"
@@ -17,6 +19,8 @@ import (
 type Policy interface {
 	GuideEnabled(guideID string) bool
 	ProfileBadgesEnabled() bool
+	TestMode() bool
+	PluginEnabled(pluginID string) bool
 }
 
 // Handler serves progress HTTP APIs. Authentication and access gating are
@@ -52,11 +56,33 @@ func (h *Handler) logWarn(message string, keyValuePairs ...any) {
 	}
 }
 
+func (h *Handler) curriculumFor(guideID string) []string {
+	ignorePluginReqs := h.policy != nil && h.policy.TestMode()
+	var pluginEnabled func(string) bool
+	if h.policy != nil {
+		pluginEnabled = h.policy.PluginEnabled
+	}
+	ids, _ := EffectiveCurriculum(guideID, pluginEnabled, ignorePluginReqs)
+	return ids
+}
+
+// withVisibleCompleted hides stored IDs that are outside the guide's current
+// effective curriculum, so a module gated behind a since-disabled plugin stops
+// counting toward progress. The stored record keeps them, so the progress
+// returns if that plugin comes back.
+func (h *Handler) withVisibleCompleted(rec Record, guideID string) Record {
+	rec.CompletedModuleIDs = intersectIDs(rec.CompletedModuleIDs, h.curriculumFor(guideID))
+	return rec
+}
+
 func (h *Handler) ListProgress(w http.ResponseWriter, r *http.Request) {
 	records, err := h.store.ListForUser(access.UserFromContext(r.Context()))
 	if err != nil {
 		writeError(w, http.StatusInternalServerError, "failed to list progress")
 		return
+	}
+	for guideID, rec := range records {
+		records[guideID] = h.withVisibleCompleted(rec, guideID)
 	}
 	writeJSON(w, http.StatusOK, map[string]any{"guides": records})
 }
@@ -73,33 +99,69 @@ func (h *Handler) GetProgress(w http.ResponseWriter, r *http.Request) {
 		writeError(w, http.StatusInternalServerError, "failed to get progress")
 		return
 	}
-	writeJSON(w, http.StatusOK, rec)
+	writeJSON(w, http.StatusOK, h.withVisibleCompleted(rec, guideID))
 }
 
-// PutProgress handles PUT /api/v1/progress/{guideId}. Writes to a disabled
-// guide are refused; reads stay allowed so an open tab degrades quietly.
+// guidePluginsMet is false when the guide requires a plugin that is not
+// running. Test Mode skips that check so admins can still save progress.
+func (h *Handler) guidePluginsMet(guideID string) bool {
+	ignorePluginReqs := h.policy != nil && h.policy.TestMode()
+	var pluginEnabled func(string) bool
+	if h.policy != nil {
+		pluginEnabled = h.policy.PluginEnabled
+	}
+	return GuidePluginsMet(guideID, pluginEnabled, ignorePluginReqs)
+}
+
+// PutProgress handles PUT /api/v1/progress/{guideId}. Writes to a disabled,
+// plugin-unavailable, or unknown guide are refused; reads stay allowed so an
+// open tab degrades quietly.
 func (h *Handler) PutProgress(w http.ResponseWriter, r *http.Request) {
 	guideID := r.PathValue("guideId")
 	if !validGuideID(guideID) {
 		writeError(w, http.StatusBadRequest, "invalid guide id")
 		return
 	}
-	if !h.policy.GuideEnabled(guideID) {
+	if !KnownGuide(guideID) {
+		writeError(w, http.StatusNotFound, "unknown guide")
+		return
+	}
+	// Same 403 as an admin-disabled guide: the API does not say why it is hidden.
+	if !h.policy.GuideEnabled(guideID) || !h.guidePluginsMet(guideID) {
 		writeError(w, http.StatusForbidden, "guide is not available")
 		return
 	}
 
-	var req PutRequest
-	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+	r.Body = http.MaxBytesReader(w, r.Body, MaxRequestBodyBytes)
+	body, err := io.ReadAll(r.Body)
+	if err != nil {
+		var maxBytesErr *http.MaxBytesError
+		if errors.As(err, &maxBytesErr) {
+			writeError(w, http.StatusRequestEntityTooLarge, "request body too large")
+			return
+		}
 		writeError(w, http.StatusBadRequest, "invalid json")
 		return
 	}
-	rec, err := h.store.Put(access.UserFromContext(r.Context()), guideID, req)
+	var req PutRequest
+	if err = json.Unmarshal(body, &req); err != nil {
+		writeError(w, http.StatusBadRequest, "invalid json")
+		return
+	}
+	if err = validatePutRequest(req); err != nil {
+		writeError(w, http.StatusBadRequest, err.Error())
+		return
+	}
+	rec, err := h.store.Put(access.UserFromContext(r.Context()), guideID, req.CompletedModuleIDs, h.curriculumFor(guideID))
 	if err != nil {
+		if errors.Is(err, errTooManyStoredModuleIDs) {
+			writeError(w, http.StatusBadRequest, err.Error())
+			return
+		}
 		writeError(w, http.StatusInternalServerError, "failed to save progress")
 		return
 	}
-	writeJSON(w, http.StatusOK, rec)
+	writeJSON(w, http.StatusOK, h.withVisibleCompleted(rec, guideID))
 }
 
 // ListUserCompletions handles GET /api/v1/users/{userId}/completions.

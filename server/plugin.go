@@ -81,6 +81,23 @@ func (p *Plugin) ProfileBadgesEnabled() bool {
 	return p.getConfiguration().profileBadgesEnabled()
 }
 
+// TestMode implements progress.Policy.
+func (p *Plugin) TestMode() bool {
+	return p.getConfiguration().testModeEnabled()
+}
+
+// PluginEnabled implements progress.Policy.
+func (p *Plugin) PluginEnabled(pluginID string) bool {
+	if p.client == nil {
+		return false
+	}
+	status, err := p.client.Plugin.GetPluginStatus(pluginID)
+	if err != nil || status == nil {
+		return false
+	}
+	return status.State == model.PluginStateRunning
+}
+
 // ExecuteCommand runs registered slash commands (currently /academy).
 func (p *Plugin) ExecuteCommand(_ *plugin.Context, args *model.CommandArgs) (*model.CommandResponse, *model.AppError) {
 	if args != nil && !p.userHasAccess(args.UserId) {
@@ -106,6 +123,7 @@ func (p *Plugin) ServeHTTP(_ *plugin.Context, w http.ResponseWriter, r *http.Req
 		http.NotFound(w, r)
 		return
 	}
+	r.Body = http.MaxBytesReader(w, r.Body, progress.MaxRequestBodyBytes)
 	p.router.ServeHTTP(w, r)
 }
 
