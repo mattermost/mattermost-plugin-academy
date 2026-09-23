@@ -122,7 +122,7 @@ Academy does **not** invent login. Browser calls `/plugins/com.mattermost.academ
 - CSRF: clients send `X-Requested-With: XMLHttpRequest` (Mattermost’s usual plugin pattern).
 - XSS: lesson rich text is parsed, not dumped as HTML; only `<strong>` and `https://` or site-root links.
 - CSV export sanitizes formula-like cells.
-- Guide/user IDs validated against a strict character set, then against the catalog.
+- Guide IDs validated against a strict character set, then against the catalog. User IDs use Mattermost's `model.IsValidId` everywhere, both on the way in over HTTP and when read back out of KV keys.
 - HTTP bodies capped at 64 KiB for every plugin route (413), since Mattermost's own payload limit covers the main REST API and not `/plugins/` URLs. Progress PUTs reject more than 256 `completedModuleIds`, or IDs failing those character rules, via `PutRequest.IsValid()` in the handler (400).
 - No application secrets in the plugin. Deploy tooling uses `MM_SERVICESETTINGS_SITEURL` plus admin user/password or token.
 

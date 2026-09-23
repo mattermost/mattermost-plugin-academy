@@ -15,7 +15,16 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
+	"github.com/mattermost/mattermost/server/public/model"
+
 	"github.com/mattermost/mattermost-plugin-academy/server/access"
+)
+
+// Fixtures store and read back real Mattermost IDs, so they have to satisfy
+// model.IsValidId rather than being readable placeholders.
+var (
+	testUserID      = model.NewId()
+	testOtherUserID = model.NewId()
 )
 
 type stubPolicy struct {
@@ -63,10 +72,18 @@ func TestPutRejectedForDisabledGuide(t *testing.T) {
 
 func TestCompletionsRejectedWhenBadgesDisabled(t *testing.T) {
 	h := newTestHandler(nil, stubPolicy{badgesEnabled: false})
-	w := call(h.ListUserCompletions, http.MethodGet, "/api/v1/users/abc123/completions", "", "user1", map[string]string{"userId": "abc123"})
+	w := call(h.ListUserCompletions, http.MethodGet, "/api/v1/users/"+testUserID+"/completions", "", "user1", map[string]string{"userId": testUserID})
 
 	assert.Equal(t, http.StatusForbidden, w.Code)
 	assert.Contains(t, w.Body.String(), "profile badges are disabled")
+}
+
+func TestCompletionsRejectsMalformedUserID(t *testing.T) {
+	h := newTestHandler(nil, stubPolicy{badgesEnabled: true})
+	w := call(h.ListUserCompletions, http.MethodGet, "/api/v1/users/user1/completions", "", "viewer", map[string]string{"userId": "user1"})
+
+	assert.Equal(t, http.StatusBadRequest, w.Code)
+	assert.Contains(t, w.Body.String(), "invalid user id")
 }
 
 func TestPutThenGetProgress(t *testing.T) {
@@ -92,10 +109,10 @@ func TestListProgressAndCompletionsAfterFinish(t *testing.T) {
 	h := newTestHandler(newTestStore(newMemKV()), stubPolicy{guideEnabled: true, badgesEnabled: true})
 	body := `{"completedModuleIds":["channels-and-sidebar","composing","formatting","threads"]}`
 
-	put := call(h.PutProgress, http.MethodPut, "/api/v1/progress/mattermost-basics", body, "user1", map[string]string{"guideId": "mattermost-basics"})
+	put := call(h.PutProgress, http.MethodPut, "/api/v1/progress/mattermost-basics", body, testUserID, map[string]string{"guideId": "mattermost-basics"})
 	require.Equal(t, http.StatusOK, put.Code)
 
-	list := call(h.ListProgress, http.MethodGet, "/api/v1/progress", "", "user1", nil)
+	list := call(h.ListProgress, http.MethodGet, "/api/v1/progress", "", testUserID, nil)
 	require.Equal(t, http.StatusOK, list.Code)
 	var listed struct {
 		Guides map[string]Record `json:"guides"`
@@ -104,7 +121,7 @@ func TestListProgressAndCompletionsAfterFinish(t *testing.T) {
 	require.Contains(t, listed.Guides, "mattermost-basics")
 	assert.True(t, listed.Guides["mattermost-basics"].EverCompleted)
 
-	completions := call(h.ListUserCompletions, http.MethodGet, "/api/v1/users/user1/completions", "", "viewer", map[string]string{"userId": "user1"})
+	completions := call(h.ListUserCompletions, http.MethodGet, "/api/v1/users/"+testUserID+"/completions", "", "viewer", map[string]string{"userId": testUserID})
 	require.Equal(t, http.StatusOK, completions.Code)
 	var payload struct {
 		Completions []Completion `json:"completions"`

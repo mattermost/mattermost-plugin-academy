@@ -8,6 +8,8 @@ import (
 	"slices"
 	"sort"
 	"strings"
+
+	"github.com/mattermost/mattermost/server/public/model"
 )
 
 const (
@@ -34,7 +36,7 @@ func parseProgressKey(key string) (userID, guideID string, ok bool) {
 	if len(parts) != 2 || parts[0] == "" || parts[1] == "" {
 		return "", "", false
 	}
-	if !validUserID(parts[0]) || !validGuideID(parts[1]) {
+	if !model.IsValidId(parts[0]) || !validGuideID(parts[1]) {
 		return "", "", false
 	}
 	return parts[0], parts[1], true
@@ -265,7 +267,7 @@ func (s *Store) ListAllCompletions() ([]CompletionEvent, error) {
 
 	out := make([]CompletionEvent, 0)
 	for _, userID := range userIDs {
-		if !validUserID(userID) {
+		if !model.IsValidId(userID) {
 			continue
 		}
 		completions, err := s.ListCompletionsForUser(userID)

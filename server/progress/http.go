@@ -8,6 +8,7 @@ import (
 	"errors"
 	"net/http"
 
+	"github.com/mattermost/mattermost/server/public/model"
 	"github.com/mattermost/mattermost/server/public/pluginapi"
 
 	"github.com/mattermost/mattermost-plugin-academy/server/access"
@@ -161,7 +162,7 @@ func (h *Handler) ListUserCompletions(w http.ResponseWriter, r *http.Request) {
 	}
 
 	targetUserID := r.PathValue("userId")
-	if !validUserID(targetUserID) {
+	if !model.IsValidId(targetUserID) {
 		writeError(w, http.StatusBadRequest, "invalid user id")
 		return
 	}
