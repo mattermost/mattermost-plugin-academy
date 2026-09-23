@@ -5,12 +5,18 @@ package progress
 
 import (
 	"encoding/json"
+	"errors"
 	"net/http"
 
 	"github.com/mattermost/mattermost/server/public/pluginapi"
 
 	"github.com/mattermost/mattermost-plugin-academy/server/access"
 )
+
+// MaxRequestBodyBytes is a conservative cap for every plugin route. Academy
+// has no uploads and progress payloads are a few hundred bytes. Mattermost's
+// own MaximumPayloadSizeBytes covers the main REST API, not /plugins/ URLs.
+const MaxRequestBodyBytes = 64 << 10
 
 // Policy exposes the plugin configuration decisions handlers honour, so this
 // package does not reach into plugin configuration itself.
@@ -120,11 +126,23 @@ func (h *Handler) PutProgress(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// ServeHTTP already wrapped the body in a MaxBytesReader, so an oversized
+	// request surfaces here as a MaxBytesError rather than malformed JSON.
 	var req PutRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		var maxBytesErr *http.MaxBytesError
+		if errors.As(err, &maxBytesErr) {
+			writeError(w, http.StatusRequestEntityTooLarge, "request body too large")
+			return
+		}
 		writeError(w, http.StatusBadRequest, "invalid json")
 		return
 	}
+	if err := req.IsValid(); err != nil {
+		writeError(w, http.StatusBadRequest, err.Error())
+		return
+	}
+
 	rec, err := h.store.Put(access.UserFromContext(r.Context()), guideID, req.CompletedModuleIDs, h.curriculumFor(guideID))
 	if err != nil {
 		writeError(w, http.StatusInternalServerError, "failed to save progress")

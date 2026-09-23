@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"slices"
+	"strconv"
 	"strings"
 	"testing"
 
@@ -121,6 +122,30 @@ func TestPutInvalidJSONAndGuideID(t *testing.T) {
 
 	badID := call(h.PutProgress, http.MethodPut, "/api/v1/progress/Not-Valid", `{}`, "user1", map[string]string{"guideId": "Not-Valid"})
 	assert.Equal(t, http.StatusBadRequest, badID.Code)
+}
+
+func TestPutRejectsInvalidAndTooManyModuleIDs(t *testing.T) {
+	h := newTestHandler(newTestStore(newMemKV()), stubPolicy{guideEnabled: true})
+
+	bad := call(h.PutProgress, http.MethodPut, "/api/v1/progress/mattermost-basics", `{"completedModuleIds":["../x"]}`, "user1", map[string]string{"guideId": "mattermost-basics"})
+	assert.Equal(t, http.StatusBadRequest, bad.Code)
+	assert.Contains(t, bad.Body.String(), "invalid module id")
+
+	// Untrimmed IDs would never match a catalog key, so they are rejected
+	// rather than silently normalised into one.
+	padded := call(h.PutProgress, http.MethodPut, "/api/v1/progress/mattermost-basics", `{"completedModuleIds":[" composing "]}`, "user1", map[string]string{"guideId": "mattermost-basics"})
+	assert.Equal(t, http.StatusBadRequest, padded.Code)
+
+	ids := make([]string, maxRequestModuleIDs+1)
+	for i := range ids {
+		ids[i] = "m" + strconv.Itoa(i)
+	}
+	body, err := json.Marshal(PutRequest{CompletedModuleIDs: ids})
+	require.NoError(t, err)
+
+	tooMany := call(h.PutProgress, http.MethodPut, "/api/v1/progress/mattermost-basics", string(body), "user1", map[string]string{"guideId": "mattermost-basics"})
+	assert.Equal(t, http.StatusBadRequest, tooMany.Code)
+	assert.Contains(t, tooMany.Body.String(), "too many module ids")
 }
 
 // The MM-70621 attack: a caller claims completion with a module list it made

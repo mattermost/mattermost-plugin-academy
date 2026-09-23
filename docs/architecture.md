@@ -123,6 +123,7 @@ Academy does **not** invent login. Browser calls `/plugins/com.mattermost.academ
 - XSS: lesson rich text is parsed, not dumped as HTML; only `<strong>` and `https://` or site-root links.
 - CSV export sanitizes formula-like cells.
 - Guide/user IDs validated against a strict character set, then against the catalog.
+- HTTP bodies capped at 64 KiB for every plugin route (413), since Mattermost's own payload limit covers the main REST API and not `/plugins/` URLs. Progress PUTs reject more than 256 `completedModuleIds`, or IDs failing those character rules, via `PutRequest.IsValid()` in the handler (400).
 - No application secrets in the plugin. Deploy tooling uses `MM_SERVICESETTINGS_SITEURL` plus admin user/password or token.
 
 Every route is registered in `buildRouter` ([server/plugin.go](../server/plugin.go)) with an explicit middleware wrapper from [server/access/](../server/access/): `RequireAuth`, `RequireAcademyAccess`, or `RequireSystemAdmin`. The `Mattermost-User-Id` header is read once by the middleware and passed to handlers via request context, so a new route cannot silently skip the auth check. No `SECURITY.md`.

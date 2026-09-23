@@ -3,6 +3,8 @@
 
 package progress
 
+import "errors"
+
 // Record is one user's progress for a single guide.
 // Completed modules are stored by stable string IDs (not indexes) so guides
 // can add, remove, or reorder modules without invalidating saved progress.
@@ -24,6 +26,28 @@ type Record struct {
 // the server catalog, not against any client-supplied module list.
 type PutRequest struct {
 	CompletedModuleIDs []string `json:"completedModuleIds"`
+}
+
+const maxRequestModuleIDs = 256
+
+var (
+	errTooManyModuleIDs = errors.New("too many module ids")
+	errInvalidModuleID  = errors.New("invalid module id")
+)
+
+// IsValid checks the request shape at the API layer, before the store sees it.
+// IDs are checked as sent, because the catalog lookup does not trim: an ID
+// accepted here has to match a catalog key exactly.
+func (r *PutRequest) IsValid() error {
+	if len(r.CompletedModuleIDs) > maxRequestModuleIDs {
+		return errTooManyModuleIDs
+	}
+	for _, id := range r.CompletedModuleIDs {
+		if !validGuideID(id) {
+			return errInvalidModuleID
+		}
+	}
+	return nil
 }
 
 // Completion is a public summary of a finished guide (no module-level detail).
