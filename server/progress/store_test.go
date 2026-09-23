@@ -48,17 +48,16 @@ func TestPutIndexesWithoutScanning(t *testing.T) {
 	kv := newMemKV()
 	s := newTestStore(kv)
 
-	_, err := s.Put("user1", "ai-quick-start", PutRequest{
-		CompletedModuleIDs: []string{"chat"},
-		ModuleIDs:          []string{"chat", "search"},
-	})
+	curriculum := []string{"ai-chat", "ai-search"}
+
+	_, err := s.Put("user1", "ai-quick-start", []string{"ai-chat"}, curriculum)
 	require.NoError(t, err)
 
 	listCallsBefore := kv.listCalls
 	records, err := s.ListForUser("user1")
 	require.NoError(t, err)
 	require.Contains(t, records, "ai-quick-start")
-	assert.Equal(t, []string{"chat"}, records["ai-quick-start"].CompletedModuleIDs)
+	assert.Equal(t, []string{"ai-chat"}, records["ai-quick-start"].CompletedModuleIDs)
 	assert.False(t, records["ai-quick-start"].EverCompleted)
 	assert.Equal(t, listCallsBefore, kv.listCalls)
 
@@ -66,10 +65,7 @@ func TestPutIndexesWithoutScanning(t *testing.T) {
 	require.NoError(t, err)
 	assert.Empty(t, completions)
 
-	_, err = s.Put("user1", "ai-quick-start", PutRequest{
-		CompletedModuleIDs: []string{"search"},
-		ModuleIDs:          []string{"chat", "search"},
-	})
+	_, err = s.Put("user1", "ai-quick-start", []string{"ai-search"}, curriculum)
 	require.NoError(t, err)
 
 	completions, err = s.ListCompletionsForUser("user1")
