@@ -3,6 +3,7 @@ package main
 import (
 	"net/http"
 	"net/http/httptest"
+	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -100,4 +101,22 @@ func TestAcademyAllowListEnforcedOnEveryProgressRoute(t *testing.T) {
 			assert.Equal(t, http.StatusForbidden, w.Code, "route %s %s must enforce Academy allow-list", rt.method, rt.path)
 		})
 	}
+}
+
+// The cap belongs to ServeHTTP rather than one handler, so every plugin route
+// gets it. Mattermost's own payload limit does not cover /plugins/ URLs.
+func TestServeHTTPCapsRequestBody(t *testing.T) {
+	p := &Plugin{}
+	cfg := defaultUserAccessConfig()
+	p.setConfiguration(&configuration{UserAccessConfig: &cfg})
+	p.progressHandler = progress.NewHandler(nil, p, nil)
+	p.router = p.buildRouter()
+
+	body := `{"completedModuleIds":["` + strings.Repeat("a", progress.MaxRequestBodyBytes) + `"]}`
+	r := httptest.NewRequest(http.MethodPut, "/api/v1/progress/mattermost-basics", strings.NewReader(body))
+	r.Header.Set("Mattermost-User-Id", "user1")
+	w := httptest.NewRecorder()
+	p.ServeHTTP(nil, w, r)
+
+	assert.Equal(t, http.StatusRequestEntityTooLarge, w.Code)
 }

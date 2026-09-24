@@ -55,7 +55,7 @@ func seedCompletedGuide(t *testing.T) *Store {
 	t.Helper()
 	kv := newMemKV()
 	store := newTestStore(kv)
-	require.NoError(t, kv.Set(progressKey("user1", "ai-quick-start"), Record{
+	require.NoError(t, kv.Set(progressKey(testUserID, "ai-quick-start"), Record{
 		V:                  1,
 		GuideID:            "ai-quick-start",
 		CompletedModuleIDs: []string{"chat"},
@@ -87,7 +87,7 @@ func TestAdminCompletionsExport(t *testing.T) {
 
 	h := newAdminHandler(store, stubPlatform{
 		users: map[string]*model.User{
-			"user1": {Id: "user1", Username: "=cmd", Email: "a@example.com", FirstName: "Ada", LastName: "Lovelace"},
+			testUserID: {Id: testUserID, Username: "=cmd", Email: "a@example.com", FirstName: "Ada", LastName: "Lovelace"},
 		},
 	})
 	w := serveAdmin(h.CompletionsExport, http.MethodGet, "/api/v1/admin/stats/completions.csv", "admin")

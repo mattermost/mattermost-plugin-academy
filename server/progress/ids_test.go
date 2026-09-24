@@ -16,11 +16,3 @@ func TestValidGuideID(t *testing.T) {
 	assert.False(t, validGuideID("../x"))
 	assert.False(t, validGuideID("AI"))
 }
-
-func TestValidUserID(t *testing.T) {
-	assert.True(t, validUserID("abcdefghijklmnopqrstuvwxyz"))
-	assert.True(t, validUserID("UserID123"))
-	assert.False(t, validUserID(""))
-	assert.False(t, validUserID("user-id"))
-	assert.False(t, validUserID("../x"))
-}

@@ -32,7 +32,7 @@ func TestPutRequestCompleteness(t *testing.T) {
 
 func TestGetEmptyRecord(t *testing.T) {
 	s := newTestStore(newMemKV())
-	rec, err := s.Get("user1", "boards")
+	rec, err := s.Get(testUserID, "boards")
 	require.NoError(t, err)
 	assert.Equal(t, 1, rec.V)
 	assert.Equal(t, "boards", rec.GuideID)
@@ -48,31 +48,27 @@ func TestPutIndexesWithoutScanning(t *testing.T) {
 	kv := newMemKV()
 	s := newTestStore(kv)
 
-	_, err := s.Put("user1", "ai-quick-start", PutRequest{
-		CompletedModuleIDs: []string{"chat"},
-		ModuleIDs:          []string{"chat", "search"},
-	})
+	curriculum := []string{"ai-chat", "ai-search"}
+
+	_, err := s.Put(testUserID, "ai-quick-start", []string{"ai-chat"}, curriculum)
 	require.NoError(t, err)
 
 	listCallsBefore := kv.listCalls
-	records, err := s.ListForUser("user1")
+	records, err := s.ListForUser(testUserID)
 	require.NoError(t, err)
 	require.Contains(t, records, "ai-quick-start")
-	assert.Equal(t, []string{"chat"}, records["ai-quick-start"].CompletedModuleIDs)
+	assert.Equal(t, []string{"ai-chat"}, records["ai-quick-start"].CompletedModuleIDs)
 	assert.False(t, records["ai-quick-start"].EverCompleted)
 	assert.Equal(t, listCallsBefore, kv.listCalls)
 
-	completions, err := s.ListCompletionsForUser("user1")
+	completions, err := s.ListCompletionsForUser(testUserID)
 	require.NoError(t, err)
 	assert.Empty(t, completions)
 
-	_, err = s.Put("user1", "ai-quick-start", PutRequest{
-		CompletedModuleIDs: []string{"search"},
-		ModuleIDs:          []string{"chat", "search"},
-	})
+	_, err = s.Put(testUserID, "ai-quick-start", []string{"ai-search"}, curriculum)
 	require.NoError(t, err)
 
-	completions, err = s.ListCompletionsForUser("user1")
+	completions, err = s.ListCompletionsForUser(testUserID)
 	require.NoError(t, err)
 	require.Len(t, completions, 1)
 	assert.Equal(t, "ai-quick-start", completions[0].GuideID)
@@ -81,7 +77,7 @@ func TestPutIndexesWithoutScanning(t *testing.T) {
 	events, err := s.ListAllCompletions()
 	require.NoError(t, err)
 	require.Len(t, events, 1)
-	assert.Equal(t, "user1", events[0].UserID)
+	assert.Equal(t, testUserID, events[0].UserID)
 	assert.Equal(t, listCallsBefore, kv.listCalls)
 }
 
@@ -89,17 +85,17 @@ func TestEnsureIndexesBackfillsAndSkipsRescan(t *testing.T) {
 	kv := newMemKV()
 	s := newTestStore(kv)
 
-	require.NoError(t, kv.Set(progressKey("userA", "boards"), Record{
+	require.NoError(t, kv.Set(progressKey(testUserID, "boards"), Record{
 		V:             1,
 		GuideID:       "boards",
 		EverCompleted: true,
 		CompletedAt:   100,
 	}))
-	require.NoError(t, kv.Set(progressKey("userA", "playbooks"), Record{
+	require.NoError(t, kv.Set(progressKey(testUserID, "playbooks"), Record{
 		V:       1,
 		GuideID: "playbooks",
 	}))
-	require.NoError(t, kv.Set(progressKey("userB", "boards"), Record{
+	require.NoError(t, kv.Set(progressKey(testOtherUserID, "boards"), Record{
 		V:             1,
 		GuideID:       "boards",
 		EverCompleted: true,
@@ -115,12 +111,12 @@ func TestEnsureIndexesBackfillsAndSkipsRescan(t *testing.T) {
 	assert.Equal(t, int64(0), leftover)
 
 	listCalls := kv.listCalls
-	records, err := s.ListForUser("userA")
+	records, err := s.ListForUser(testUserID)
 	require.NoError(t, err)
 	assert.Len(t, records, 2)
 	assert.True(t, records["boards"].EverCompleted)
 
-	completions, err := s.ListCompletionsForUser("userA")
+	completions, err := s.ListCompletionsForUser(testUserID)
 	require.NoError(t, err)
 	require.Len(t, completions, 1)
 	assert.Equal(t, "boards", completions[0].GuideID)
@@ -132,14 +128,17 @@ func TestEnsureIndexesBackfillsAndSkipsRescan(t *testing.T) {
 }
 
 func TestParseProgressKey(t *testing.T) {
-	userID, guideID, ok := parseProgressKey("progress:user1:ai-quick-start")
+	userID, guideID, ok := parseProgressKey(progressKey(testUserID, "ai-quick-start"))
 	assert.True(t, ok)
-	assert.Equal(t, "user1", userID)
+	assert.Equal(t, testUserID, userID)
 	assert.Equal(t, "ai-quick-start", guideID)
 
-	_, _, ok = parseProgressKey("completions:user1")
+	_, _, ok = parseProgressKey(completionsKey(testUserID))
 	assert.False(t, ok)
 	_, _, ok = parseProgressKey("progress:")
+	assert.False(t, ok)
+	// A key that is not a Mattermost user id is not one this plugin wrote.
+	_, _, ok = parseProgressKey("progress:user1:ai-quick-start")
 	assert.False(t, ok)
 }
 

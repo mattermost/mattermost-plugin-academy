@@ -5,18 +5,27 @@ package progress
 
 import (
 	"encoding/json"
+	"errors"
 	"net/http"
 
+	"github.com/mattermost/mattermost/server/public/model"
 	"github.com/mattermost/mattermost/server/public/pluginapi"
 
 	"github.com/mattermost/mattermost-plugin-academy/server/access"
 )
+
+// MaxRequestBodyBytes is a conservative cap for every plugin route. Academy
+// has no uploads and progress payloads are a few hundred bytes. Mattermost's
+// own MaximumPayloadSizeBytes covers the main REST API, not /plugins/ URLs.
+const MaxRequestBodyBytes = 64 << 10
 
 // Policy exposes the plugin configuration decisions handlers honour, so this
 // package does not reach into plugin configuration itself.
 type Policy interface {
 	GuideEnabled(guideID string) bool
 	ProfileBadgesEnabled() bool
+	TestMode() bool
+	PluginEnabled(pluginID string) bool
 }
 
 // Handler serves progress HTTP APIs. Authentication and access gating are
@@ -52,6 +61,29 @@ func (h *Handler) logWarn(message string, keyValuePairs ...any) {
 	}
 }
 
+// pluginGate returns the inputs both curriculum lookups need: how to ask
+// whether a plugin is running, and whether Test Mode waives that question.
+func (h *Handler) pluginGate() (pluginEnabled func(string) bool, ignorePluginReqs bool) {
+	if h.policy == nil {
+		return nil, false
+	}
+	return h.policy.PluginEnabled, h.policy.TestMode()
+}
+
+// curriculumFor is the server's yardstick for finishing a guide.
+func (h *Handler) curriculumFor(guideID string) []string {
+	pluginEnabled, ignorePluginReqs := h.pluginGate()
+	ids, _ := EffectiveCurriculum(guideID, pluginEnabled, ignorePluginReqs)
+	return ids
+}
+
+// guidePluginsMet is false when the guide requires a plugin that is not
+// running. Test Mode skips that check so admins can still save progress.
+func (h *Handler) guidePluginsMet(guideID string) bool {
+	pluginEnabled, ignorePluginReqs := h.pluginGate()
+	return GuidePluginsMet(guideID, pluginEnabled, ignorePluginReqs)
+}
+
 func (h *Handler) ListProgress(w http.ResponseWriter, r *http.Request) {
 	records, err := h.store.ListForUser(access.UserFromContext(r.Context()))
 	if err != nil {
@@ -76,25 +108,43 @@ func (h *Handler) GetProgress(w http.ResponseWriter, r *http.Request) {
 	writeJSON(w, http.StatusOK, rec)
 }
 
-// PutProgress handles PUT /api/v1/progress/{guideId}. Writes to a disabled
-// guide are refused; reads stay allowed so an open tab degrades quietly.
+// PutProgress handles PUT /api/v1/progress/{guideId}. Writes to a disabled,
+// plugin-unavailable, or unknown guide are refused; reads stay allowed so an
+// open tab degrades quietly.
 func (h *Handler) PutProgress(w http.ResponseWriter, r *http.Request) {
 	guideID := r.PathValue("guideId")
 	if !validGuideID(guideID) {
 		writeError(w, http.StatusBadRequest, "invalid guide id")
 		return
 	}
-	if !h.policy.GuideEnabled(guideID) {
+	if !KnownGuide(guideID) {
+		writeError(w, http.StatusNotFound, "unknown guide")
+		return
+	}
+	// Same 403 as an admin-disabled guide: the API does not say why it is hidden.
+	if !h.policy.GuideEnabled(guideID) || !h.guidePluginsMet(guideID) {
 		writeError(w, http.StatusForbidden, "guide is not available")
 		return
 	}
 
+	// ServeHTTP already wrapped the body in a MaxBytesReader, so an oversized
+	// request surfaces here as a MaxBytesError rather than malformed JSON.
 	var req PutRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		var maxBytesErr *http.MaxBytesError
+		if errors.As(err, &maxBytesErr) {
+			writeError(w, http.StatusRequestEntityTooLarge, "request body too large")
+			return
+		}
 		writeError(w, http.StatusBadRequest, "invalid json")
 		return
 	}
-	rec, err := h.store.Put(access.UserFromContext(r.Context()), guideID, req)
+	if err := req.IsValid(); err != nil {
+		writeError(w, http.StatusBadRequest, err.Error())
+		return
+	}
+
+	rec, err := h.store.Put(access.UserFromContext(r.Context()), guideID, req.CompletedModuleIDs, h.curriculumFor(guideID))
 	if err != nil {
 		writeError(w, http.StatusInternalServerError, "failed to save progress")
 		return
@@ -112,7 +162,7 @@ func (h *Handler) ListUserCompletions(w http.ResponseWriter, r *http.Request) {
 	}
 
 	targetUserID := r.PathValue("userId")
-	if !validUserID(targetUserID) {
+	if !model.IsValidId(targetUserID) {
 		writeError(w, http.StatusBadRequest, "invalid user id")
 		return
 	}

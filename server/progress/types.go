@@ -3,6 +3,8 @@
 
 package progress
 
+import "errors"
+
 // Record is one user's progress for a single guide.
 // Completed modules are stored by stable string IDs (not indexes) so guides
 // can add, remove, or reorder modules without invalidating saved progress.
@@ -15,17 +17,37 @@ type Record struct {
 	CompletedModuleIDs []string `json:"completedModuleIds"`
 	UpdatedAt          int64    `json:"updatedAt"`
 	// EverCompleted is set the first time the user completes every module in
-	// the curriculum they sent. Kept for reporting even if modules are added later.
+	// the server-known curriculum. Kept for reporting even if modules are added later.
 	EverCompleted bool  `json:"everCompleted"`
 	CompletedAt   int64 `json:"completedAt,omitempty"`
 }
 
-// PutRequest is the body for saving progress.
-// ModuleIDs is the guide's current curriculum (stable IDs) used only to decide
-// whether the guide is fully complete right now.
+// PutRequest is the body for saving progress. Completion is decided against
+// the server catalog, not against any client-supplied module list.
 type PutRequest struct {
 	CompletedModuleIDs []string `json:"completedModuleIds"`
-	ModuleIDs          []string `json:"moduleIds"`
+}
+
+const maxRequestModuleIDs = 256
+
+var (
+	errTooManyModuleIDs = errors.New("too many module ids")
+	errInvalidModuleID  = errors.New("invalid module id")
+)
+
+// IsValid checks the request shape at the API layer, before the store sees it.
+// IDs are checked as sent, because the catalog lookup does not trim: an ID
+// accepted here has to match a catalog key exactly.
+func (r *PutRequest) IsValid() error {
+	if len(r.CompletedModuleIDs) > maxRequestModuleIDs {
+		return errTooManyModuleIDs
+	}
+	for _, id := range r.CompletedModuleIDs {
+		if !validGuideID(id) {
+			return errInvalidModuleID
+		}
+	}
+	return nil
 }
 
 // Completion is a public summary of a finished guide (no module-level detail).

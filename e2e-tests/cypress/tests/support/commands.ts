@@ -171,7 +171,7 @@ Cypress.Commands.add('apiCompleteGuide', (guideId: string, moduleIds: string[] =
     cy.apiRequest({
         method: 'PUT',
         url: `/plugins/${PLUGIN_ID}/api/v1/progress/${encodeURIComponent(guideId)}`,
-        body: {completedModuleIds: moduleIds, moduleIds},
+        body: {completedModuleIds: moduleIds},
     }).then((res) => {
         expect(res.status).to.eq(200);
         expect(res.body.everCompleted).to.eq(true);
