@@ -85,7 +85,7 @@ func TestAggregateCompletionsOverTimeEmpty(t *testing.T) {
 	assert.Empty(t, result.Points)
 }
 
-func TestAggregateCompletionsOverTimeCapsPoints(t *testing.T) {
+func TestAggregateCompletionsOverTimeCapsPointsToNewest(t *testing.T) {
 	now := time.Date(2026, 7, 20, 12, 0, 0, 0, time.UTC)
 	from := int64(0)
 	to := int64(1_000_000_000_000_000)
@@ -95,6 +95,10 @@ func TestAggregateCompletionsOverTimeCapsPoints(t *testing.T) {
 		Bucket: "day",
 	}, now)
 	require.Len(t, result.Points, maxCompletionsOverTimePoints)
+
+	// The cap drops the oldest buckets, so the series still ends at to.
+	last := result.Points[len(result.Points)-1]
+	assert.Equal(t, bucketStart(time.Unix(to-1, 0), "day").Unix(), last.Start)
 }
 
 func TestNormalizeBucket(t *testing.T) {

@@ -56,7 +56,7 @@ func TestSanitizeCSVCell(t *testing.T) {
 }
 
 func TestParseCompletionsQuery(t *testing.T) {
-	ok := httptest.NewRequest(http.MethodGet, "/api/v1/admin/stats/completions-over-time?guides=ai-quick-start&from=1&to=10&bucket=week", nil)
+	ok := httptest.NewRequest(http.MethodGet, "/api/v1/admin/stats/completions.csv?guides=ai-quick-start&from=1&to=10&bucket=week", nil)
 	q, err := parseCompletionsQuery(ok)
 	require.NoError(t, err)
 	assert.Equal(t, []string{"ai-quick-start"}, q.GuideIDs)
@@ -66,63 +66,66 @@ func TestParseCompletionsQuery(t *testing.T) {
 	assert.Equal(t, int64(10), *q.To)
 	assert.Equal(t, "week", q.Bucket)
 
-	badGuide := httptest.NewRequest(http.MethodGet, "/api/v1/admin/stats/completions-over-time?guides=Nope", nil)
+	badGuide := httptest.NewRequest(http.MethodGet, "/api/v1/admin/stats/completions.csv?guides=Nope", nil)
 	_, err = parseCompletionsQuery(badGuide)
 	require.Error(t, err)
 
-	badRange := httptest.NewRequest(http.MethodGet, "/api/v1/admin/stats/completions-over-time?from=10&to=10", nil)
+	badRange := httptest.NewRequest(http.MethodGet, "/api/v1/admin/stats/completions.csv?from=10&to=10", nil)
 	_, err = parseCompletionsQuery(badRange)
 	require.Error(t, err)
 
-	badFrom := httptest.NewRequest(http.MethodGet, "/api/v1/admin/stats/completions-over-time?from=nope", nil)
+	badFrom := httptest.NewRequest(http.MethodGet, "/api/v1/admin/stats/completions.csv?from=nope", nil)
 	_, err = parseCompletionsQuery(badFrom)
 	require.Error(t, err)
 
-	badBucket := httptest.NewRequest(http.MethodGet, "/api/v1/admin/stats/completions-over-time?from=1&to=10&bucket=hour", nil)
+	badBucket := httptest.NewRequest(http.MethodGet, "/api/v1/admin/stats/completions.csv?from=1&to=10&bucket=hour", nil)
 	_, err = parseCompletionsQuery(badBucket)
 	require.EqualError(t, err, "invalid bucket")
 
-	defaultBucket := httptest.NewRequest(http.MethodGet, "/api/v1/admin/stats/completions-over-time?from=1&to=10", nil)
+	defaultBucket := httptest.NewRequest(http.MethodGet, "/api/v1/admin/stats/completions.csv?from=1&to=10", nil)
 	q, err = parseCompletionsQuery(defaultBucket)
 	require.NoError(t, err)
-	assert.Equal(t, "", q.Bucket)
+	assert.Equal(t, "day", q.Bucket)
 
+	futureTo := httptest.NewRequest(http.MethodGet, "/api/v1/admin/stats/completions.csv?to=1000000000000000", nil)
+	_, err = parseCompletionsQuery(futureTo)
+	require.EqualError(t, err, "to is too far in the future")
+
+	nearFuture := httptest.NewRequest(http.MethodGet, fmt.Sprintf("/api/v1/admin/stats/completions.csv?to=%d", time.Now().Add(time.Hour).Unix()), nil)
+	_, err = parseCompletionsQuery(nearFuture)
+	require.NoError(t, err)
+}
+
+func TestParseCompletionsChartQuery(t *testing.T) {
 	daySecs := int64(24 * 60 * 60)
+
 	okSpan := httptest.NewRequest(http.MethodGet, fmt.Sprintf("/api/v1/admin/stats/completions-over-time?from=0&to=%d&bucket=day", maxCompletionsOverTimePoints*daySecs), nil)
-	_, err = parseCompletionsQuery(okSpan)
+	_, err := parseCompletionsChartQuery(okSpan)
 	require.NoError(t, err)
 
 	tooManyDays := maxCompletionsOverTimePoints*daySecs + 1
 	tooMany := httptest.NewRequest(http.MethodGet, fmt.Sprintf("/api/v1/admin/stats/completions-over-time?from=0&to=%d&bucket=day", tooManyDays), nil)
-	_, err = parseCompletionsQuery(tooMany)
+	_, err = parseCompletionsChartQuery(tooMany)
 	require.EqualError(t, err, "range too large")
 
 	okWeek := httptest.NewRequest(http.MethodGet, fmt.Sprintf("/api/v1/admin/stats/completions-over-time?from=0&to=%d&bucket=week", tooManyDays), nil)
-	_, err = parseCompletionsQuery(okWeek)
+	_, err = parseCompletionsChartQuery(okWeek)
 	require.NoError(t, err)
 
 	okMonth := httptest.NewRequest(http.MethodGet, fmt.Sprintf("/api/v1/admin/stats/completions-over-time?from=0&to=%d&bucket=month", tooManyDays), nil)
-	_, err = parseCompletionsQuery(okMonth)
+	_, err = parseCompletionsChartQuery(okMonth)
 	require.NoError(t, err)
 
 	fromEpoch := httptest.NewRequest(http.MethodGet, "/api/v1/admin/stats/completions-over-time?from=0&bucket=day", nil)
-	_, err = parseCompletionsQuery(fromEpoch)
+	_, err = parseCompletionsChartQuery(fromEpoch)
 	require.EqualError(t, err, "range too large")
 
 	recentFrom := time.Now().Add(-30 * 24 * time.Hour).Unix()
 	okFromOnly := httptest.NewRequest(http.MethodGet, fmt.Sprintf("/api/v1/admin/stats/completions-over-time?from=%d&bucket=day", recentFrom), nil)
-	_, err = parseCompletionsQuery(okFromOnly)
+	_, err = parseCompletionsChartQuery(okFromOnly)
 	require.NoError(t, err)
 
 	huge := httptest.NewRequest(http.MethodGet, "/api/v1/admin/stats/completions-over-time?from=0&to=1000000000000000", nil)
-	_, err = parseCompletionsQuery(huge)
+	_, err = parseCompletionsChartQuery(huge)
 	require.Error(t, err)
-
-	futureTo := httptest.NewRequest(http.MethodGet, "/api/v1/admin/stats/completions-over-time?to=1000000000000000", nil)
-	_, err = parseCompletionsQuery(futureTo)
-	require.EqualError(t, err, "to is too far in the future")
-
-	nearFuture := httptest.NewRequest(http.MethodGet, fmt.Sprintf("/api/v1/admin/stats/completions-over-time?to=%d", time.Now().Add(time.Hour).Unix()), nil)
-	_, err = parseCompletionsQuery(nearFuture)
-	require.NoError(t, err)
 }

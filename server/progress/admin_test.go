@@ -103,3 +103,10 @@ func TestAdminCompletionsExport(t *testing.T) {
 	assert.Contains(t, w.Body.String(), "ai-quick-start")
 	assert.NotContains(t, w.Body.String(), ",=cmd,")
 }
+
+func TestAdminCompletionsExportAllowsFullHistory(t *testing.T) {
+	h := newAdminHandler(seedCompletedGuide(t), stubPlatform{})
+	w := serveAdmin(h.CompletionsExport, http.MethodGet, "/api/v1/admin/stats/completions.csv?from=0", "admin")
+	require.Equal(t, http.StatusOK, w.Code)
+	assert.Contains(t, w.Body.String(), "ai-quick-start")
+}

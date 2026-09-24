@@ -6,7 +6,7 @@ package progress
 import "net/http"
 
 func (h *Handler) CompletionsOverTime(w http.ResponseWriter, r *http.Request) {
-	q, err := parseCompletionsQuery(r)
+	q, err := parseCompletionsChartQuery(r)
 	if err != nil {
 		writeError(w, http.StatusBadRequest, err.Error())
 		return
