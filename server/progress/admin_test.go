@@ -82,6 +82,12 @@ func TestAdminCompletionsOverTime(t *testing.T) {
 	assert.Equal(t, int64(1), total)
 }
 
+func TestAdminCompletionsOverTimeRejectsHugeRange(t *testing.T) {
+	h := newAdminHandler(seedCompletedGuide(t), stubPlatform{})
+	w := serveAdmin(h.CompletionsOverTime, http.MethodGet, "/api/v1/admin/stats/completions-over-time?from=0&to=1000000000000000", "admin")
+	assert.Equal(t, http.StatusBadRequest, w.Code)
+}
+
 func TestAdminCompletionsExport(t *testing.T) {
 	store := seedCompletedGuide(t)
 
@@ -96,4 +102,11 @@ func TestAdminCompletionsExport(t *testing.T) {
 	assert.Contains(t, w.Body.String(), "'=cmd")
 	assert.Contains(t, w.Body.String(), "ai-quick-start")
 	assert.NotContains(t, w.Body.String(), ",=cmd,")
+}
+
+func TestAdminCompletionsExportAllowsFullHistory(t *testing.T) {
+	h := newAdminHandler(seedCompletedGuide(t), stubPlatform{})
+	w := serveAdmin(h.CompletionsExport, http.MethodGet, "/api/v1/admin/stats/completions.csv?from=0", "admin")
+	require.Equal(t, http.StatusOK, w.Code)
+	assert.Contains(t, w.Body.String(), "ai-quick-start")
 }

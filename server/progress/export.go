@@ -16,19 +16,38 @@ import (
 	"github.com/mattermost/mattermost/server/public/model"
 )
 
-func parseCompletionsQuery(r *http.Request) (CompletionsOverTimeQuery, error) {
-	q := CompletionsOverTimeQuery{
-		Bucket: r.URL.Query().Get("bucket"),
+const (
+	maxCompletionsOverTimePoints = 4096
+	maxCompletionsToFuture       = 24 * time.Hour
+)
+
+// completionsBucketSeconds is the shortest a bucket can be. A month counts as
+// 28 days so the range cap never over-estimates how many buckets fit.
+func completionsBucketSeconds(bucket string) int64 {
+	switch bucket {
+	case "week":
+		return 7 * 24 * 60 * 60
+	case "month":
+		return 28 * 24 * 60 * 60
+	default:
+		return 24 * 60 * 60
 	}
+}
+
+// readCompletionsParams pulls the filters off the URL without judging them.
+// Validation lives on CompletionsOverTimeQuery.
+func readCompletionsParams(r *http.Request) (CompletionsOverTimeQuery, error) {
+	bucket, bucketErr := normalizeBucket(r.URL.Query().Get("bucket"))
+	if bucketErr != nil {
+		return CompletionsOverTimeQuery{}, bucketErr
+	}
+	q := CompletionsOverTimeQuery{Bucket: bucket}
 
 	if guides := strings.TrimSpace(r.URL.Query().Get("guides")); guides != "" {
 		for id := range strings.SplitSeq(guides, ",") {
 			id = strings.TrimSpace(id)
 			if id == "" {
 				continue
-			}
-			if !validGuideID(id) {
-				return q, fmt.Errorf("invalid guide id")
 			}
 			q.GuideIDs = append(q.GuideIDs, id)
 		}
@@ -51,11 +70,26 @@ func parseCompletionsQuery(r *http.Request) (CompletionsOverTimeQuery, error) {
 		}
 		q.To = &to
 	}
-	if q.From != nil && q.To != nil && *q.From >= *q.To {
-		return q, fmt.Errorf("from must be before to")
-	}
 
 	return q, nil
+}
+
+// parseCompletionsQuery reads the filters the CSV export understands.
+func parseCompletionsQuery(r *http.Request) (CompletionsOverTimeQuery, error) {
+	q, err := readCompletionsParams(r)
+	if err != nil {
+		return q, err
+	}
+	return q, q.IsValid(time.Now())
+}
+
+// parseCompletionsChartQuery also enforces the bucketed-series cap.
+func parseCompletionsChartQuery(r *http.Request) (CompletionsOverTimeQuery, error) {
+	q, err := readCompletionsParams(r)
+	if err != nil {
+		return q, err
+	}
+	return q, q.IsValidForChart(time.Now())
 }
 
 // sanitizeCSVCell prefixes formula-like values so Excel will not execute them.

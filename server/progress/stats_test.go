@@ -85,10 +85,41 @@ func TestAggregateCompletionsOverTimeEmpty(t *testing.T) {
 	assert.Empty(t, result.Points)
 }
 
+func TestAggregateCompletionsOverTimeCapsPointsToNewest(t *testing.T) {
+	now := time.Date(2026, 7, 20, 12, 0, 0, 0, time.UTC)
+	from := int64(0)
+	to := int64(1_000_000_000_000_000)
+	result := AggregateCompletionsOverTime(nil, CompletionsOverTimeQuery{
+		From:   &from,
+		To:     &to,
+		Bucket: "day",
+	}, now)
+	require.Len(t, result.Points, maxCompletionsOverTimePoints)
+
+	// The cap drops the oldest buckets, so the series still ends at to.
+	last := result.Points[len(result.Points)-1]
+	assert.Equal(t, bucketStart(time.Unix(to-1, 0), "day").Unix(), last.Start)
+}
+
 func TestNormalizeBucket(t *testing.T) {
-	assert.Equal(t, "day", normalizeBucket(""))
-	assert.Equal(t, "week", normalizeBucket("WEEK"))
-	assert.Equal(t, "month", normalizeBucket("month"))
+	day, err := normalizeBucket("")
+	require.NoError(t, err)
+	assert.Equal(t, "day", day)
+
+	explicitDay, err := normalizeBucket("day")
+	require.NoError(t, err)
+	assert.Equal(t, "day", explicitDay)
+
+	week, err := normalizeBucket("WEEK")
+	require.NoError(t, err)
+	assert.Equal(t, "week", week)
+
+	month, err := normalizeBucket("month")
+	require.NoError(t, err)
+	assert.Equal(t, "month", month)
+
+	_, err = normalizeBucket("hour")
+	require.EqualError(t, err, "invalid bucket")
 }
 
 func TestFilterCompletionEvents(t *testing.T) {

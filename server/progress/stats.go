@@ -4,6 +4,8 @@
 package progress
 
 import (
+	"errors"
+	"slices"
 	"strings"
 	"time"
 )
@@ -41,14 +43,58 @@ type CompletionsOverTimeResult struct {
 	Points []TimeBucket `json:"points"`
 }
 
-func normalizeBucket(b string) string {
+var errInvalidBucket = errors.New("invalid bucket")
+
+// IsValid reports whether the query is safe to run. The chart and the CSV
+// export share these rules.
+func (q CompletionsOverTimeQuery) IsValid(now time.Time) error {
+	if _, err := normalizeBucket(q.Bucket); err != nil {
+		return err
+	}
+	for _, id := range q.GuideIDs {
+		if !validGuideID(strings.TrimSpace(id)) {
+			return errors.New("invalid guide id")
+		}
+	}
+	if q.From != nil && q.To != nil && *q.From >= *q.To {
+		return errors.New("from must be before to")
+	}
+	if q.To != nil && *q.To > now.Add(maxCompletionsToFuture).Unix() {
+		return errors.New("to is too far in the future")
+	}
+	return nil
+}
+
+// IsValidForChart adds the series-size cap to IsValid. Only the bucketed chart
+// needs it: the CSV export emits one row per completion and has no buckets.
+func (q CompletionsOverTimeQuery) IsValidForChart(now time.Time) error {
+	if err := q.IsValid(now); err != nil {
+		return err
+	}
+	if q.From == nil {
+		return nil
+	}
+
+	toUnix := now.Unix()
+	if q.To != nil {
+		toUnix = *q.To
+	}
+	if toUnix > *q.From && toUnix-*q.From > maxCompletionsOverTimePoints*completionsBucketSeconds(q.Bucket) {
+		return errors.New("range too large")
+	}
+	return nil
+}
+
+func normalizeBucket(b string) (string, error) {
 	switch strings.ToLower(strings.TrimSpace(b)) {
+	case "", "day":
+		return "day", nil
 	case "week":
-		return "week"
+		return "week", nil
 	case "month":
-		return "month"
+		return "month", nil
 	default:
-		return "day"
+		return "", errInvalidBucket
 	}
 }
 
@@ -70,14 +116,16 @@ func bucketStart(t time.Time, bucket string) time.Time {
 	}
 }
 
-func nextBucket(t time.Time, bucket string) time.Time {
+// prevBucket steps one bucket back. Inputs are aligned by bucketStart, so the
+// calendar arithmetic always lands on another bucket boundary.
+func prevBucket(t time.Time, bucket string) time.Time {
 	switch bucket {
 	case "week":
-		return t.AddDate(0, 0, 7)
+		return t.AddDate(0, 0, -7)
 	case "month":
-		return t.AddDate(0, 1, 0)
+		return t.AddDate(0, -1, 0)
 	default:
-		return t.AddDate(0, 0, 1)
+		return t.AddDate(0, 0, -1)
 	}
 }
 
@@ -93,7 +141,12 @@ func guideAllowed(guideID string, allow map[string]struct{}) bool {
 // Pure function so ranges/buckets can be unit-tested without KV.
 func AggregateCompletionsOverTime(completions []CompletionEvent, q CompletionsOverTimeQuery, now time.Time) CompletionsOverTimeResult {
 	filtered := FilterCompletionEvents(completions, q, now)
-	bucket := normalizeBucket(q.Bucket)
+
+	// Validated by IsValid; the zero value means the default day bucket.
+	bucket := q.Bucket
+	if bucket == "" {
+		bucket = "day"
+	}
 
 	toUnix := now.UTC().Unix()
 	if q.To != nil {
@@ -144,13 +197,19 @@ func AggregateCompletionsOverTime(completions []CompletionEvent, q CompletionsOv
 		return result
 	}
 
-	for t := seriesStart; !t.After(seriesEnd); t = nextBucket(t, bucket) {
+	// Walk newest to oldest so a series past the cap keeps the recent buckets
+	// admins actually look at.
+	for t := seriesEnd; !t.Before(seriesStart); t = prevBucket(t, bucket) {
 		start := t.Unix()
 		result.Points = append(result.Points, TimeBucket{
 			Start: start,
 			Count: counts[start],
 		})
+		if len(result.Points) >= maxCompletionsOverTimePoints {
+			break
+		}
 	}
+	slices.Reverse(result.Points)
 
 	return result
 }
