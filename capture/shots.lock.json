@@ -1,0 +1,742 @@
+{
+    "capturedAt": "2026-10-02T15:36:49.021Z",
+    "serverVersion": "11.5.0.22670928926.2aca1410987985a79ed5cd6e3f40a72653fb2004e0790df20508ce1ce836b22f.true",
+    "activePlugins": [
+        "com.mattermost.academy",
+        "com.mattermost.calls",
+        "focalboard",
+        "jira",
+        "mattermost-ai",
+        "playbooks"
+    ],
+    "remoteHost": "revive-trial-journey.test.mattermost.cloud",
+    "browser": "chromium 131.0.6778.33",
+    "theme": "denim",
+    "viewport": {
+        "width": 1440,
+        "height": 900
+    },
+    "deviceScaleFactor": 2,
+    "shots": {
+        "browse-channels": {
+            "guide": "mattermost-basics",
+            "file": "browse-channels.webp",
+            "width": 900,
+            "height": 648,
+            "bytes": 29922,
+            "server": "local",
+            "serverVersion": "11.11.0.dev.5fcbefedd869cb3ec6e8599de2283bfd58a3a4ac84b7c721096c41a12268c703.false"
+        },
+        "category-menu": {
+            "guide": "mattermost-basics",
+            "file": "category-menu.webp",
+            "width": 902,
+            "height": 666,
+            "bytes": 36838,
+            "server": "local",
+            "serverVersion": "11.11.0.dev.5fcbefedd869cb3ec6e8599de2283bfd58a3a4ac84b7c721096c41a12268c703.false"
+        },
+        "unreads-filter": {
+            "guide": "mattermost-basics",
+            "file": "unreads-filter.webp",
+            "width": 528,
+            "height": 764,
+            "bytes": 28546,
+            "server": "local",
+            "serverVersion": "11.11.0.dev.5fcbefedd869cb3ec6e8599de2283bfd58a3a4ac84b7c721096c41a12268c703.false"
+        },
+        "channel-types": {
+            "guide": "mattermost-basics",
+            "file": "channel-types.webp",
+            "width": 528,
+            "height": 704,
+            "bytes": 25902,
+            "server": "local",
+            "serverVersion": "11.11.0.dev.5fcbefedd869cb3ec6e8599de2283bfd58a3a4ac84b7c721096c41a12268c703.false"
+        },
+        "create-category": {
+            "guide": "mattermost-basics",
+            "file": "create-category.webp",
+            "width": 900,
+            "height": 381,
+            "bytes": 11874,
+            "server": "local",
+            "serverVersion": "11.11.0.dev.5fcbefedd869cb3ec6e8599de2283bfd58a3a4ac84b7c721096c41a12268c703.false"
+        },
+        "thread-reply": {
+            "guide": "mattermost-basics",
+            "file": "thread-reply.webp",
+            "width": 1642,
+            "height": 198,
+            "bytes": 11256,
+            "server": "local",
+            "serverVersion": "11.11.0.dev.5fcbefedd869cb3ec6e8599de2283bfd58a3a4ac84b7c721096c41a12268c703.false"
+        },
+        "threads-view": {
+            "guide": "mattermost-basics",
+            "file": "threads-view.webp",
+            "width": 800,
+            "height": 800,
+            "bytes": 33876,
+            "server": "local",
+            "serverVersion": "11.11.0.dev.5fcbefedd869cb3ec6e8599de2283bfd58a3a4ac84b7c721096c41a12268c703.false"
+        },
+        "thread-follow": {
+            "guide": "mattermost-basics",
+            "file": "thread-follow.webp",
+            "width": 1120,
+            "height": 180,
+            "bytes": 11766,
+            "server": "local",
+            "serverVersion": "11.11.0.dev.5fcbefedd869cb3ec6e8599de2283bfd58a3a4ac84b7c721096c41a12268c703.false"
+        },
+        "notification-settings": {
+            "guide": "productivity-tips",
+            "file": "notification-settings.webp",
+            "width": 1200,
+            "height": 513,
+            "bytes": 27432,
+            "server": "local",
+            "serverVersion": "11.11.0.dev.5fcbefedd869cb3ec6e8599de2283bfd58a3a4ac84b7c721096c41a12268c703.false"
+        },
+        "notification-keywords": {
+            "guide": "productivity-tips",
+            "file": "notification-keywords.webp",
+            "width": 996,
+            "height": 832,
+            "bytes": 49878,
+            "server": "local",
+            "serverVersion": "11.11.0.dev.5fcbefedd869cb3ec6e8599de2283bfd58a3a4ac84b7c721096c41a12268c703.false"
+        },
+        "channel-notification-preferences": {
+            "guide": "productivity-tips",
+            "file": "channel-notification-preferences.webp",
+            "width": 900,
+            "height": 803,
+            "bytes": 38244,
+            "server": "local",
+            "serverVersion": "11.11.0.dev.5fcbefedd869cb3ec6e8599de2283bfd58a3a4ac84b7c721096c41a12268c703.false"
+        },
+        "status-menu": {
+            "guide": "productivity-tips",
+            "file": "status-menu.webp",
+            "width": 528,
+            "height": 816,
+            "bytes": 18694,
+            "server": "local",
+            "serverVersion": "11.11.0.dev.5fcbefedd869cb3ec6e8599de2283bfd58a3a4ac84b7c721096c41a12268c703.false"
+        },
+        "drafts-view": {
+            "guide": "mattermost-basics",
+            "file": "drafts-view.webp",
+            "width": 1610,
+            "height": 400,
+            "bytes": 17618,
+            "server": "local",
+            "serverVersion": "11.11.0.dev.5fcbefedd869cb3ec6e8599de2283bfd58a3a4ac84b7c721096c41a12268c703.false"
+        },
+        "message-priority": {
+            "guide": "productivity-tips",
+            "file": "message-priority.webp",
+            "width": 388,
+            "height": 362,
+            "bytes": 7812,
+            "server": "local",
+            "serverVersion": "11.11.0.dev.5fcbefedd869cb3ec6e8599de2283bfd58a3a4ac84b7c721096c41a12268c703.false"
+        },
+        "formatting-toolbar": {
+            "guide": "mattermost-basics",
+            "file": "formatting-toolbar.webp",
+            "width": 1610,
+            "height": 322,
+            "bytes": 18354,
+            "server": "local",
+            "serverVersion": "11.11.0.dev.5fcbefedd869cb3ec6e8599de2283bfd58a3a4ac84b7c721096c41a12268c703.false"
+        },
+        "saved-messages": {
+            "guide": "productivity-tips",
+            "file": "saved-messages.webp",
+            "width": 800,
+            "height": 520,
+            "bytes": 15896,
+            "server": "local",
+            "serverVersion": "11.11.0.dev.5fcbefedd869cb3ec6e8599de2283bfd58a3a4ac84b7c721096c41a12268c703.false"
+        },
+        "message-actions-menu": {
+            "guide": "productivity-tips",
+            "file": "message-actions-menu.webp",
+            "width": 528,
+            "height": 730,
+            "bytes": 17392,
+            "server": "local",
+            "serverVersion": "11.11.0.dev.5fcbefedd869cb3ec6e8599de2283bfd58a3a4ac84b7c721096c41a12268c703.false"
+        },
+        "remind-menu": {
+            "guide": "productivity-tips",
+            "file": "remind-menu.webp",
+            "width": 950,
+            "height": 855,
+            "bytes": 24698,
+            "server": "local",
+            "serverVersion": "11.11.0.dev.5fcbefedd869cb3ec6e8599de2283bfd58a3a4ac84b7c721096c41a12268c703.false"
+        },
+        "quick-switcher": {
+            "guide": "productivity-tips",
+            "file": "quick-switcher.webp",
+            "width": 900,
+            "height": 683,
+            "bytes": 23892,
+            "server": "local",
+            "serverVersion": "11.11.0.dev.5fcbefedd869cb3ec6e8599de2283bfd58a3a4ac84b7c721096c41a12268c703.false"
+        },
+        "recent-mentions": {
+            "guide": "productivity-tips",
+            "file": "recent-mentions.webp",
+            "width": 800,
+            "height": 470,
+            "bytes": 17264,
+            "server": "local",
+            "serverVersion": "11.11.0.dev.5fcbefedd869cb3ec6e8599de2283bfd58a3a4ac84b7c721096c41a12268c703.false"
+        },
+        "emoji-reaction": {
+            "guide": "mattermost-basics",
+            "file": "emoji-reaction.webp",
+            "width": 1040,
+            "height": 168,
+            "bytes": 8988,
+            "server": "local",
+            "serverVersion": "11.11.0.dev.5fcbefedd869cb3ec6e8599de2283bfd58a3a4ac84b7c721096c41a12268c703.false"
+        },
+        "search-results-tabs": {
+            "guide": "advanced-search",
+            "file": "search-results-tabs.webp",
+            "width": 798,
+            "height": 940,
+            "bytes": 33092,
+            "server": "local",
+            "serverVersion": "11.11.0.dev.5fcbefedd869cb3ec6e8599de2283bfd58a3a4ac84b7c721096c41a12268c703.false"
+        },
+        "search-from-autocomplete": {
+            "guide": "advanced-search",
+            "file": "search-from-autocomplete.webp",
+            "width": 900,
+            "height": 483,
+            "bytes": 14324,
+            "server": "local",
+            "serverVersion": "11.11.0.dev.5fcbefedd869cb3ec6e8599de2283bfd58a3a4ac84b7c721096c41a12268c703.false"
+        },
+        "search-in-autocomplete": {
+            "guide": "advanced-search",
+            "file": "search-in-autocomplete.webp",
+            "width": 900,
+            "height": 483,
+            "bytes": 15072,
+            "server": "local",
+            "serverVersion": "11.11.0.dev.5fcbefedd869cb3ec6e8599de2283bfd58a3a4ac84b7c721096c41a12268c703.false"
+        },
+        "search-modifiers-combined": {
+            "guide": "advanced-search",
+            "file": "search-modifiers-combined.webp",
+            "width": 900,
+            "height": 483,
+            "bytes": 18164,
+            "server": "local",
+            "serverVersion": "11.11.0.dev.5fcbefedd869cb3ec6e8599de2283bfd58a3a4ac84b7c721096c41a12268c703.false"
+        },
+        "search-date-picker": {
+            "guide": "advanced-search",
+            "file": "search-date-picker.webp",
+            "width": 900,
+            "height": 705,
+            "bytes": 18406,
+            "server": "local",
+            "serverVersion": "11.11.0.dev.5fcbefedd869cb3ec6e8599de2283bfd58a3a4ac84b7c721096c41a12268c703.false"
+        },
+        "search-exact-phrase": {
+            "guide": "advanced-search",
+            "file": "search-exact-phrase.webp",
+            "width": 900,
+            "height": 272,
+            "bytes": 8590,
+            "server": "local",
+            "serverVersion": "11.11.0.dev.5fcbefedd869cb3ec6e8599de2283bfd58a3a4ac84b7c721096c41a12268c703.false"
+        },
+        "search-hashtag": {
+            "guide": "advanced-search",
+            "file": "search-hashtag.webp",
+            "width": 798,
+            "height": 860,
+            "bytes": 34724,
+            "server": "local",
+            "serverVersion": "11.11.0.dev.5fcbefedd869cb3ec6e8599de2283bfd58a3a4ac84b7c721096c41a12268c703.false"
+        },
+        "search-files-tab": {
+            "guide": "advanced-search",
+            "file": "search-files-tab.webp",
+            "width": 798,
+            "height": 530,
+            "bytes": 15650,
+            "server": "local",
+            "serverVersion": "11.11.0.dev.5fcbefedd869cb3ec6e8599de2283bfd58a3a4ac84b7c721096c41a12268c703.false"
+        },
+        "search-file-extension": {
+            "guide": "advanced-search",
+            "file": "search-file-extension.webp",
+            "width": 900,
+            "height": 423,
+            "bytes": 9482,
+            "server": "local",
+            "serverVersion": "11.11.0.dev.5fcbefedd869cb3ec6e8599de2283bfd58a3a4ac84b7c721096c41a12268c703.false"
+        },
+        "search-recent-mentions": {
+            "guide": "advanced-search",
+            "file": "search-recent-mentions.webp",
+            "width": 800,
+            "height": 470,
+            "bytes": 17264,
+            "server": "local",
+            "serverVersion": "11.11.0.dev.5fcbefedd869cb3ec6e8599de2283bfd58a3a4ac84b7c721096c41a12268c703.false"
+        },
+        "search-saved-messages": {
+            "guide": "advanced-search",
+            "file": "search-saved-messages.webp",
+            "width": 1642,
+            "height": 198,
+            "bytes": 12260,
+            "server": "local",
+            "serverVersion": "11.11.0.dev.5fcbefedd869cb3ec6e8599de2283bfd58a3a4ac84b7c721096c41a12268c703.false"
+        },
+        "boards-kanban": {
+            "guide": "boards",
+            "file": "boards-kanban.webp",
+            "width": 1680,
+            "height": 1040,
+            "bytes": 57526,
+            "server": "local",
+            "serverVersion": "11.11.0.dev.5fcbefedd869cb3ec6e8599de2283bfd58a3a4ac84b7c721096c41a12268c703.false"
+        },
+        "boards-sidebar": {
+            "guide": "boards",
+            "file": "boards-sidebar.webp",
+            "width": 480,
+            "height": 904,
+            "bytes": 25480,
+            "server": "local",
+            "serverVersion": "11.11.0.dev.5fcbefedd869cb3ec6e8599de2283bfd58a3a4ac84b7c721096c41a12268c703.false"
+        },
+        "boards-card-detail": {
+            "guide": "boards",
+            "file": "boards-card-detail.webp",
+            "width": 1574,
+            "height": 622,
+            "bytes": 36628,
+            "server": "local",
+            "serverVersion": "11.11.0.dev.5fcbefedd869cb3ec6e8599de2283bfd58a3a4ac84b7c721096c41a12268c703.false"
+        },
+        "boards-share-dialog": {
+            "guide": "boards",
+            "file": "boards-share-dialog.webp",
+            "width": 900,
+            "height": 417,
+            "bytes": 14894,
+            "server": "local",
+            "serverVersion": "11.11.0.dev.5fcbefedd869cb3ec6e8599de2283bfd58a3a4ac84b7c721096c41a12268c703.false"
+        },
+        "slash-command-picker": {
+            "guide": "productivity-tips",
+            "file": "slash-command-picker.webp",
+            "width": 1642,
+            "height": 850,
+            "bytes": 29586,
+            "server": "local",
+            "serverVersion": "11.11.0.dev.5fcbefedd869cb3ec6e8599de2283bfd58a3a4ac84b7c721096c41a12268c703.false"
+        },
+        "slash-command-filtered": {
+            "guide": "productivity-tips",
+            "file": "slash-command-filtered.webp",
+            "width": 1642,
+            "height": 586,
+            "bytes": 22840,
+            "server": "local",
+            "serverVersion": "11.11.0.dev.5fcbefedd869cb3ec6e8599de2283bfd58a3a4ac84b7c721096c41a12268c703.false"
+        },
+        "about-mattermost": {
+            "guide": "update-guide",
+            "file": "about-mattermost.webp",
+            "width": 900,
+            "height": 425,
+            "bytes": 24156,
+            "server": "local",
+            "serverVersion": "11.11.0.dev.5fcbefedd869cb3ec6e8599de2283bfd58a3a4ac84b7c721096c41a12268c703.false"
+        },
+        "ai-agents-pane": {
+            "guide": "ai-quick-start",
+            "file": "ai-agents-pane.webp",
+            "width": 800,
+            "height": 840,
+            "bytes": 26402,
+            "server": "local",
+            "serverVersion": "11.11.0.dev.5fcbefedd869cb3ec6e8599de2283bfd58a3a4ac84b7c721096c41a12268c703.false"
+        },
+        "ai-agents-reply": {
+            "guide": "ai-quick-start",
+            "file": "ai-agents-reply.webp",
+            "width": 800,
+            "height": 1000,
+            "bytes": 45834,
+            "server": "local",
+            "serverVersion": "11.11.0.dev.5fcbefedd869cb3ec6e8599de2283bfd58a3a4ac84b7c721096c41a12268c703.false"
+        },
+        "ai-rewrite-menu": {
+            "guide": "ai-quick-start",
+            "file": "ai-rewrite-menu.webp",
+            "width": 1362,
+            "height": 790,
+            "bytes": 26574,
+            "server": "local",
+            "serverVersion": "11.11.0.dev.5fcbefedd869cb3ec6e8599de2283bfd58a3a4ac84b7c721096c41a12268c703.false"
+        },
+        "ai-agents-page": {
+            "guide": "ai-quick-start",
+            "file": "ai-agents-page.webp",
+            "width": 1952,
+            "height": 660,
+            "bytes": 28264,
+            "server": "local",
+            "serverVersion": "11.11.0.dev.5fcbefedd869cb3ec6e8599de2283bfd58a3a4ac84b7c721096c41a12268c703.false"
+        },
+        "sidebar-favorites": {
+            "guide": "mattermost-basics",
+            "file": "sidebar-favorites.webp",
+            "width": 528,
+            "height": 256,
+            "bytes": 7008,
+            "server": "local",
+            "serverVersion": "11.11.0.dev.5fcbefedd869cb3ec6e8599de2283bfd58a3a4ac84b7c721096c41a12268c703.false"
+        },
+        "attach-files": {
+            "guide": "mattermost-basics",
+            "file": "attach-files.webp",
+            "width": 1610,
+            "height": 404,
+            "bytes": 20702,
+            "server": "local",
+            "serverVersion": "11.11.0.dev.5fcbefedd869cb3ec6e8599de2283bfd58a3a4ac84b7c721096c41a12268c703.false"
+        },
+        "threads-item-menu": {
+            "guide": "mattermost-basics",
+            "file": "threads-item-menu.webp",
+            "width": 1206,
+            "height": 800,
+            "bytes": 47634,
+            "server": "local",
+            "serverVersion": "11.11.0.dev.5fcbefedd869cb3ec6e8599de2283bfd58a3a4ac84b7c721096c41a12268c703.false"
+        },
+        "emoji-picker": {
+            "guide": "mattermost-basics",
+            "file": "emoji-picker.webp",
+            "width": 940,
+            "height": 1124,
+            "bytes": 76642,
+            "server": "local",
+            "serverVersion": "11.11.0.dev.5fcbefedd869cb3ec6e8599de2283bfd58a3a4ac84b7c721096c41a12268c703.false"
+        },
+        "ai-post-actions": {
+            "guide": "ai-quick-start",
+            "file": "ai-post-actions.webp",
+            "width": 1610,
+            "height": 180,
+            "bytes": 15928,
+            "server": "local",
+            "serverVersion": "11.11.0.dev.5fcbefedd869cb3ec6e8599de2283bfd58a3a4ac84b7c721096c41a12268c703.false"
+        },
+        "ai-thread-menu": {
+            "guide": "ai-quick-start",
+            "file": "ai-thread-menu.webp",
+            "width": 669,
+            "height": 738,
+            "bytes": 23000,
+            "server": "local",
+            "serverVersion": "11.11.0.dev.5fcbefedd869cb3ec6e8599de2283bfd58a3a4ac84b7c721096c41a12268c703.false"
+        },
+        "ai-thread-summary": {
+            "guide": "ai-quick-start",
+            "file": "ai-thread-summary.webp",
+            "width": 800,
+            "height": 660,
+            "bytes": 40992,
+            "server": "local",
+            "serverVersion": "11.11.0.dev.5fcbefedd869cb3ec6e8599de2283bfd58a3a4ac84b7c721096c41a12268c703.false"
+        },
+        "ai-channel-menu": {
+            "guide": "ai-quick-start",
+            "file": "ai-channel-menu.webp",
+            "width": 1400,
+            "height": 660,
+            "bytes": 23610,
+            "server": "local",
+            "serverVersion": "11.11.0.dev.5fcbefedd869cb3ec6e8599de2283bfd58a3a4ac84b7c721096c41a12268c703.false"
+        },
+        "ai-create-agent": {
+            "guide": "ai-quick-start",
+            "file": "ai-create-agent.webp",
+            "width": 1920,
+            "height": 1060,
+            "bytes": 57386,
+            "server": "local",
+            "serverVersion": "11.11.0.dev.5fcbefedd869cb3ec6e8599de2283bfd58a3a4ac84b7c721096c41a12268c703.false"
+        },
+        "ai-new-messages": {
+            "guide": "ai-quick-start",
+            "file": "ai-new-messages.webp",
+            "width": 1610,
+            "height": 640,
+            "bytes": 58898,
+            "server": "local",
+            "serverVersion": "11.11.0.dev.5fcbefedd869cb3ec6e8599de2283bfd58a3a4ac84b7c721096c41a12268c703.false"
+        },
+        "pb-playbooks-list": {
+            "guide": "playbooks",
+            "file": "pb-playbooks-list.webp",
+            "width": 1746,
+            "height": 768,
+            "bytes": 38986,
+            "server": "revive-trial-journey.test.mattermost.cloud",
+            "serverVersion": "11.5.0.22670928926.2aca1410987985a79ed5cd6e3f40a72653fb2004e0790df20508ce1ce836b22f.true"
+        },
+        "pb-run-overview": {
+            "guide": "playbooks",
+            "file": "pb-run-overview.webp",
+            "width": 1466,
+            "height": 936,
+            "bytes": 58908,
+            "server": "revive-trial-journey.test.mattermost.cloud",
+            "serverVersion": "11.5.0.22670928926.2aca1410987985a79ed5cd6e3f40a72653fb2004e0790df20508ce1ce836b22f.true"
+        },
+        "pb-checklist": {
+            "guide": "playbooks",
+            "file": "pb-checklist.webp",
+            "width": 1386,
+            "height": 1106,
+            "bytes": 72720,
+            "server": "revive-trial-journey.test.mattermost.cloud",
+            "serverVersion": "11.5.0.22670928926.2aca1410987985a79ed5cd6e3f40a72653fb2004e0790df20508ce1ce836b22f.true"
+        },
+        "pb-post-update-dialog": {
+            "guide": "playbooks",
+            "file": "pb-post-update-dialog.webp",
+            "width": 900,
+            "height": 705,
+            "bytes": 46374,
+            "server": "revive-trial-journey.test.mattermost.cloud",
+            "serverVersion": "11.5.0.22670928926.2aca1410987985a79ed5cd6e3f40a72653fb2004e0790df20508ce1ce836b22f.true"
+        },
+        "pb-run-info-pane": {
+            "guide": "playbooks",
+            "file": "pb-run-info-pane.webp",
+            "width": 816,
+            "height": 472,
+            "bytes": 30622,
+            "server": "revive-trial-journey.test.mattermost.cloud",
+            "serverVersion": "11.5.0.22670928926.2aca1410987985a79ed5cd6e3f40a72653fb2004e0790df20508ce1ce836b22f.true"
+        },
+        "pb-timeline": {
+            "guide": "playbooks",
+            "file": "pb-timeline.webp",
+            "width": 798,
+            "height": 730,
+            "bytes": 35442,
+            "server": "revive-trial-journey.test.mattermost.cloud",
+            "serverVersion": "11.5.0.22670928926.2aca1410987985a79ed5cd6e3f40a72653fb2004e0790df20508ce1ce836b22f.true"
+        },
+        "pb-retrospective": {
+            "guide": "playbooks",
+            "file": "pb-retrospective.webp",
+            "width": 1386,
+            "height": 940,
+            "bytes": 45844,
+            "server": "revive-trial-journey.test.mattermost.cloud",
+            "serverVersion": "11.5.0.22670928926.2aca1410987985a79ed5cd6e3f40a72653fb2004e0790df20508ce1ce836b22f.true"
+        },
+        "pb-run-channel": {
+            "guide": "playbooks",
+            "file": "pb-run-channel.webp",
+            "width": 1610,
+            "height": 940,
+            "bytes": 118196,
+            "server": "revive-trial-journey.test.mattermost.cloud",
+            "serverVersion": "11.5.0.22670928926.2aca1410987985a79ed5cd6e3f40a72653fb2004e0790df20508ce1ce836b22f.true"
+        },
+        "pb-playbook-editor": {
+            "guide": "playbooks",
+            "file": "pb-playbook-editor.webp",
+            "width": 1652,
+            "height": 826,
+            "bytes": 40062,
+            "server": "revive-trial-journey.test.mattermost.cloud",
+            "serverVersion": "11.5.0.22670928926.2aca1410987985a79ed5cd6e3f40a72653fb2004e0790df20508ce1ce836b22f.true"
+        },
+        "pb-finish-run": {
+            "guide": "playbooks",
+            "file": "pb-finish-run.webp",
+            "width": 1386,
+            "height": 112,
+            "bytes": 4030,
+            "server": "revive-trial-journey.test.mattermost.cloud",
+            "serverVersion": "11.5.0.22670928926.2aca1410987985a79ed5cd6e3f40a72653fb2004e0790df20508ce1ce836b22f.true"
+        },
+        "search-jump": {
+            "guide": "advanced-search",
+            "file": "search-jump.webp",
+            "width": 798,
+            "height": 518,
+            "bytes": 22236,
+            "server": "local",
+            "serverVersion": "11.11.0.dev.5fcbefedd869cb3ec6e8599de2283bfd58a3a4ac84b7c721096c41a12268c703.false"
+        },
+        "search-file-type-filter": {
+            "guide": "advanced-search",
+            "file": "search-file-type-filter.webp",
+            "width": 798,
+            "height": 910,
+            "bytes": 25568,
+            "server": "local",
+            "serverVersion": "11.11.0.dev.5fcbefedd869cb3ec6e8599de2283bfd58a3a4ac84b7c721096c41a12268c703.false"
+        },
+        "search-channel-files": {
+            "guide": "advanced-search",
+            "file": "search-channel-files.webp",
+            "width": 800,
+            "height": 620,
+            "bytes": 14998,
+            "server": "local",
+            "serverVersion": "11.11.0.dev.5fcbefedd869cb3ec6e8599de2283bfd58a3a4ac84b7c721096c41a12268c703.false"
+        },
+        "search-team-picker": {
+            "guide": "advanced-search",
+            "file": "search-team-picker.webp",
+            "width": 924,
+            "height": 332,
+            "bytes": 12006,
+            "server": "local",
+            "serverVersion": "11.11.0.dev.5fcbefedd869cb3ec6e8599de2283bfd58a3a4ac84b7c721096c41a12268c703.false"
+        },
+        "boards-card-properties": {
+            "guide": "boards",
+            "file": "boards-card-properties.webp",
+            "width": 1200,
+            "height": 820,
+            "bytes": 26154,
+            "server": "local",
+            "serverVersion": "11.11.0.dev.5fcbefedd869cb3ec6e8599de2283bfd58a3a4ac84b7c721096c41a12268c703.false"
+        },
+        "boards-view-menu": {
+            "guide": "boards",
+            "file": "boards-view-menu.webp",
+            "width": 1366,
+            "height": 756,
+            "bytes": 18842,
+            "server": "local",
+            "serverVersion": "11.11.0.dev.5fcbefedd869cb3ec6e8599de2283bfd58a3a4ac84b7c721096c41a12268c703.false"
+        },
+        "boards-view-table": {
+            "guide": "boards",
+            "file": "boards-view-table.webp",
+            "width": 1680,
+            "height": 840,
+            "bytes": 70470,
+            "server": "local",
+            "serverVersion": "11.11.0.dev.5fcbefedd869cb3ec6e8599de2283bfd58a3a4ac84b7c721096c41a12268c703.false"
+        },
+        "boards-view-gallery": {
+            "guide": "boards",
+            "file": "boards-view-gallery.webp",
+            "width": 1680,
+            "height": 660,
+            "bytes": 48180,
+            "server": "local",
+            "serverVersion": "11.11.0.dev.5fcbefedd869cb3ec6e8599de2283bfd58a3a4ac84b7c721096c41a12268c703.false"
+        },
+        "boards-view-calendar": {
+            "guide": "boards",
+            "file": "boards-view-calendar.webp",
+            "width": 1680,
+            "height": 840,
+            "bytes": 30810,
+            "server": "local",
+            "serverVersion": "11.11.0.dev.5fcbefedd869cb3ec6e8599de2283bfd58a3a4ac84b7c721096c41a12268c703.false"
+        },
+        "boards-card-link": {
+            "guide": "boards",
+            "file": "boards-card-link.webp",
+            "width": 1120,
+            "height": 710,
+            "bytes": 47600,
+            "server": "local",
+            "serverVersion": "11.11.0.dev.5fcbefedd869cb3ec6e8599de2283bfd58a3a4ac84b7c721096c41a12268c703.false"
+        },
+        "boards-product-menu": {
+            "guide": "boards",
+            "file": "boards-product-menu.webp",
+            "width": 572,
+            "height": 434,
+            "bytes": 13434,
+            "server": "local",
+            "serverVersion": "11.11.0.dev.5fcbefedd869cb3ec6e8599de2283bfd58a3a4ac84b7c721096c41a12268c703.false"
+        },
+        "boards-find-boards": {
+            "guide": "boards",
+            "file": "boards-find-boards.webp",
+            "width": 900,
+            "height": 414,
+            "bytes": 13272,
+            "server": "local",
+            "serverVersion": "11.11.0.dev.5fcbefedd869cb3ec6e8599de2283bfd58a3a4ac84b7c721096c41a12268c703.false"
+        },
+        "boards-template-picker": {
+            "guide": "boards",
+            "file": "boards-template-picker.webp",
+            "width": 1140,
+            "height": 990,
+            "bytes": 68502,
+            "server": "local",
+            "serverVersion": "11.11.0.dev.5fcbefedd869cb3ec6e8599de2283bfd58a3a4ac84b7c721096c41a12268c703.false"
+        },
+        "boards-template-from-board": {
+            "guide": "boards",
+            "file": "boards-template-from-board.webp",
+            "width": 914,
+            "height": 938,
+            "bytes": 31466,
+            "server": "local",
+            "serverVersion": "11.11.0.dev.5fcbefedd869cb3ec6e8599de2283bfd58a3a4ac84b7c721096c41a12268c703.false"
+        },
+        "scheduled-message-menu": {
+            "guide": "productivity-tips",
+            "file": "scheduled-message-menu.webp",
+            "width": 1610,
+            "height": 420,
+            "bytes": 19338,
+            "server": "revive-trial-journey.test.mattermost.cloud",
+            "serverVersion": "11.5.0.22670928926.2aca1410987985a79ed5cd6e3f40a72653fb2004e0790df20508ce1ce836b22f.true"
+        },
+        "message-priority-ack": {
+            "guide": "productivity-tips",
+            "file": "message-priority-ack.webp",
+            "width": 644,
+            "height": 654,
+            "bytes": 20270,
+            "server": "revive-trial-journey.test.mattermost.cloud",
+            "serverVersion": "11.5.0.22670928926.2aca1410987985a79ed5cd6e3f40a72653fb2004e0790df20508ce1ce836b22f.true"
+        },
+        "message-priority-persistent": {
+            "guide": "productivity-tips",
+            "file": "message-priority-persistent.webp",
+            "width": 644,
+            "height": 814,
+            "bytes": 30722,
+            "server": "revive-trial-journey.test.mattermost.cloud",
+            "serverVersion": "11.5.0.22670928926.2aca1410987985a79ed5cd6e3f40a72653fb2004e0790df20508ce1ce836b22f.true"
+        }
+    }
+}
