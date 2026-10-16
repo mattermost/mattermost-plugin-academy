@@ -64,7 +64,9 @@
     z-index: 1;
     margin-top: -5px;
     display: inline-flex;
-    color: var(--away-indicator);
+
+    // On the badge's face, which is the theme's button colour; see AcademyBadgeSeal.
+    color: var(--button-color);
     line-height: 1;
     user-select: none;
     pointer-events: none;

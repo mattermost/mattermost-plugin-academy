@@ -145,7 +145,7 @@ const aiQuickStart: Guide = {
                 {
                     title: 'Refine and then post the summary',
                     description: 'Refine your summary by typing in the Agents pane. When ready, select <strong>Post summary</strong> to share the refined summary with all users in the original call thread.',
-                    tip: 'Recording and transcription must be enabled by your System Admin to use this feature.',
+                    callout: {type: 'info', text: 'Recording and transcription must be enabled by your System Admin to use this feature.'},
                 },
             ],
         },

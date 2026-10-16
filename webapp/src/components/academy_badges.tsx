@@ -3,7 +3,6 @@
 
 /* eslint-disable no-restricted-imports -- plugins cannot import host OverlayTrigger */
 import {fetchPluginSettings} from 'client/settings';
-import {badgeSealURL} from 'content';
 import {GUIDES} from 'guides';
 import manifest from 'manifest';
 import {navigateToGuide} from 'navigation';
@@ -13,6 +12,7 @@ import {OverlayTrigger} from 'react-bootstrap';
 
 import type {UserProfile} from '@mattermost/types/users';
 
+import AcademyBadgeSeal from 'components/academy_badge_seal';
 import {AcademyBadgeTooltip, formatBadgeEarnedAt} from 'components/academy_badge_tooltip';
 import {AcademyIcon} from 'components/icons';
 
@@ -27,8 +27,6 @@ type Props = {
     user?: UserProfile;
     hide?: () => void;
 };
-
-const BADGE_SEAL_URL = badgeSealURL();
 
 /**
  * Profile popover attributes: one icon per completed Academy guide.
@@ -133,12 +131,7 @@ export default function AcademyBadges(props: Props) {
                         navigateToGuide(c.guideId);
                     }}
                 >
-                    <img
-                        className='AcademyBadges__seal'
-                        src={BADGE_SEAL_URL}
-                        alt=''
-                        draggable={false}
-                    />
+                    <AcademyBadgeSeal className='AcademyBadges__seal'/>
                     <span
                         className='AcademyBadges__icon'
                         aria-hidden={true}

@@ -46,12 +46,12 @@ function proseOf(guide: Guide): Array<{where: string; text: string}> {
         mod.steps.forEach((step, i) => {
             add(`${mod.id} step ${i} title`, step.title);
             add(`${mod.id} step ${i} description`, step.description);
-            add(`${mod.id} step ${i} tip`, step.tip);
+            add(`${mod.id} step ${i} callout`, step.callout?.text);
         });
         mod.variants?.forEach((variant) => {
             variant.steps.forEach((step, i) => {
                 add(`${mod.id} ${variant.label} step ${i} description`, step.description);
-                add(`${mod.id} ${variant.label} step ${i} tip`, step.tip);
+                add(`${mod.id} ${variant.label} step ${i} callout`, step.callout?.text);
             });
         });
         mod.tiers?.forEach((tier) => {

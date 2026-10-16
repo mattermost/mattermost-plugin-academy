@@ -152,7 +152,7 @@ const mattermostBasics: Guide = {
                 {
                     title: 'Type markdown directly',
                     description: 'Once the syntax is in your fingers it\'s faster than the toolbar. The table below is a reference you can come back to. Select any item to copy it.',
-                    tip: 'Mattermost also supports in-line images and LaTeX math formulas. See the <a href="https://docs.mattermost.com/end-user-guide/collaborate/format-messages.html">message formatting documentation</a> for the full list.',
+                    callout: {type: 'tip', text: 'Mattermost also supports in-line images and LaTeX math formulas. See the <a href="https://docs.mattermost.com/end-user-guide/collaborate/format-messages.html">message formatting documentation</a> for the full list.'},
                 },
             ],
             commandHeaders: {

@@ -110,10 +110,6 @@ export function mediaOf(step: Step): StepMedia[] {
     return Array.isArray(step.media) ? step.media : [step.media];
 }
 
-export function badgeSealURL() {
-    return `/plugins/${manifest.id}/public/Badge.svg`;
-}
-
 /** Absolute browser URL path (for window.location / markdown links). */
 export function academyPath(path = '') {
     if (!path || path === '/') {

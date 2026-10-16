@@ -32,6 +32,11 @@
         padding: 20px;
     }
 
+    // The audience chips, above the guide list as they sit above the catalog's grid.
+    &__filters {
+        margin-bottom: 16px;
+    }
+
     &__list {
         display: flex;
         flex-direction: column;

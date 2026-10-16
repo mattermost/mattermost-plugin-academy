@@ -42,7 +42,7 @@ const productivityTips: Guide = {
                 {
                     title: 'Learn a handful of shortcuts',
                     description: '<strong>Ctrl ⇧ K</strong> opens the direct messages dialog, <strong>Ctrl ⇧ A</strong> opens Settings, and <strong>Ctrl ⇧ M</strong> opens recent mentions. <strong>Alt ↑</strong> and <strong>Alt ↓</strong> step through the sidebar; add <strong>Shift</strong> to move only between channels with unread messages. On Mac, use <strong>⌘</strong> and <strong>⌥</strong> in place of Ctrl and Alt.',
-                    tip: 'Type <strong>/shortcuts</strong> in any message box for the full list, or see the <a href="https://docs.mattermost.com/end-user-guide/collaborate/keyboard-shortcuts.html">keyboard shortcuts documentation</a>.',
+                    callout: {type: 'tip', text: 'Type <strong>/shortcuts</strong> in any message box for the full list, or see the <a href="https://docs.mattermost.com/end-user-guide/collaborate/keyboard-shortcuts.html">keyboard shortcuts documentation</a>.'},
                 },
             ],
         },

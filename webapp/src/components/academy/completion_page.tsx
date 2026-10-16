@@ -1,12 +1,13 @@
 // Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
 
-import {badgeSealURL, routes} from 'content';
+import {routes} from 'content';
 import React from 'react';
 import {Link, Redirect} from 'react-router-dom';
 
 import {useGuideContext} from 'components/academy/guide_context';
 import RichText from 'components/academy/rich_text';
+import AcademyBadgeSeal from 'components/academy_badge_seal';
 import {AcademyIcon} from 'components/icons';
 
 export default function CompletionPage() {
@@ -27,12 +28,7 @@ export default function CompletionPage() {
                 role='img'
                 aria-label={guide.title}
             >
-                <img
-                    className='academy-done__seal'
-                    src={badgeSealURL()}
-                    alt=''
-                    draggable={false}
-                />
+                <AcademyBadgeSeal className='academy-done__seal'/>
                 <span className='academy-done__badge-icon'>
                     <AcademyIcon
                         name={guide.icon}

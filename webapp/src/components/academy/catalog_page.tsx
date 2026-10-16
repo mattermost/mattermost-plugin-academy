@@ -3,23 +3,16 @@
 
 import {fetchAllProgress} from 'client/progress';
 import type {ProgressRecord} from 'client/progress';
-import type {Audience} from 'content/types';
 import {useAvailableGuides} from 'hooks/use_available_guides';
 import {navigateToChannels} from 'navigation';
 import React, {useEffect, useMemo, useRef, useState} from 'react';
 
+import AudienceFilter, {filterByAudience} from 'components/academy/audience_filter';
+import type {AudienceFilterValue} from 'components/academy/audience_filter';
 import GuideCard, {guideCardCta} from 'components/academy/guide_card';
 import HeaderProgress from 'components/academy/header_progress';
 import {useHeaderCondensed} from 'components/academy/use_header_condensed';
 import {AcademyIcon, AcademyProductIcon} from 'components/icons';
-
-type Filter = 'all' | Audience;
-
-const ALL_FILTERS: Array<[Filter, string]> = [
-    ['all', 'All'],
-    ['end-user', 'End-users'],
-    ['admin', 'Admins'],
-];
 
 function completedCount(rec: ProgressRecord | undefined, moduleCount: number) {
     if (!rec) {
@@ -30,7 +23,7 @@ function completedCount(rec: ProgressRecord | undefined, moduleCount: number) {
 
 export default function CatalogPage() {
     const {guides: availableGuides, canSeeAdminGuides} = useAvailableGuides();
-    const [filter, setFilter] = useState<Filter>('all');
+    const [filter, setFilter] = useState<AudienceFilterValue>('all');
     const [progress, setProgress] = useState<Record<string, ProgressRecord>>({});
     const scrollRef = useRef<HTMLDivElement>(null);
     const headerRef = useRef<HTMLElement>(null);
@@ -54,12 +47,7 @@ export default function CatalogPage() {
         };
     }, []);
 
-    const guides = useMemo(() => {
-        if (filter === 'all') {
-            return availableGuides;
-        }
-        return availableGuides.filter((g) => g.audiences.includes(filter));
-    }, [filter, availableGuides]);
+    const guides = useMemo(() => filterByAudience(availableGuides, filter), [filter, availableGuides]);
 
     const completedGuides = availableGuides.filter((g) => progress[g.id]?.everCompleted).length;
     const progressPct = availableGuides.length ? Math.round((completedGuides / availableGuides.length) * 100) : 0;
@@ -146,22 +134,10 @@ export default function CatalogPage() {
                     {canSeeAdminGuides && (
                         <div className='academy-catalog__toolbar'>
                             <div className='academy-catalog__label'>{'Available guides'}</div>
-                            <div
-                                className='academy-catalog__filters'
-                                role='group'
-                                aria-label='Filter guides by audience'
-                            >
-                                {ALL_FILTERS.map(([id, label]) => (
-                                    <button
-                                        key={id}
-                                        type='button'
-                                        className={`academy-catalog__chip${filter === id ? ' academy-catalog__chip--active' : ''}`}
-                                        onClick={() => setFilter(id)}
-                                    >
-                                        {label}
-                                    </button>
-                                ))}
-                            </div>
+                            <AudienceFilter
+                                value={filter}
+                                onChange={setFilter}
+                            />
                         </div>
                     )}
 
