@@ -19,3 +19,8 @@ e2e-tests/cypress/results
 
 # Cursor
 .cursor/
+
+# Guide screenshot harness
+capture/node_modules/
+capture/failures/
+capture/png/
