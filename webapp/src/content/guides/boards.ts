@@ -53,7 +53,7 @@ const boards: Guide = {
                         file: 'boards-sidebar.webp',
                         alt: 'The Boards sidebar, with five boards filed into Planning and Platform categories',
                     },
-                    tip: 'Categories are per-user. Rearranging or hiding a board in your sidebar doesn\'t change what anyone else sees.',
+                    callout: {type: 'info', text: 'Categories are per-user. Rearranging or hiding a board in your sidebar doesn\'t change what anyone else sees.'},
                 },
                 {
                     title: 'Jump straight to a board',
@@ -103,7 +103,7 @@ const boards: Guide = {
                         file: 'boards-template-from-board.webp',
                         alt: 'A board\'s options menu in the sidebar, with the pointer on New template from board',
                     },
-                    tip: 'Custom templates are private to you by default. Open the template editor and select <strong>Share</strong> to set a team role of Viewer so everyone on the team can use it.',
+                    callout: {type: 'tip', text: 'Custom templates are private to you by default. Open the template editor and select <strong>Share</strong> to set a team role of Viewer so everyone on the team can use it.'},
                 },
             ],
         },
@@ -141,7 +141,7 @@ const boards: Guide = {
                         file: 'boards-card-properties.webp',
                         alt: 'A card\'s properties: select, person, date, number, multi-select, URL and checkbox values',
                     },
-                    tip: 'Properties belong to the board, not the card. Adding, renaming, retyping, or deleting a property applies to every card on that board, and changing a type can lose existing values.',
+                    callout: {type: 'warning', text: 'Properties belong to the board, not the card. Adding, renaming, retyping, or deleting a property applies to every card on that board, and changing a type can lose existing values.'},
                 },
                 {
                     title: 'Set up Select options',
@@ -236,12 +236,12 @@ const boards: Guide = {
                 {
                     title: 'Set team access and individual roles',
                     description: 'Next to the <strong>Everyone at</strong> team option, choose the minimum role for everyone on the team, then search for individual members to give them more. The roles are <strong>Admin</strong> (edit the board, its contents, and its permissions), <strong>Editor</strong> (edit the board and its contents), <strong>Commenter</strong> (comment on cards), and <strong>Viewer</strong> (read only).',
-                    tip: 'New boards start with team access set to <strong>None</strong>, so nobody else can see a board until you share it.',
+                    callout: {type: 'info', text: 'New boards start with team access set to <strong>None</strong>, so nobody else can see a board until you share it.'},
                 },
                 {
                     title: 'Link the board to a channel',
                     description: 'In the Share dialog, search for a channel name and add it. Everyone in that channel gets <strong>Editor</strong> access, and the board appears in the channel\'s Boards pane. To undo it, open the role dropdown next to the channel name and select <strong>Unlink</strong>.',
-                    tip: 'A board can be linked to one channel at a time. Linking it to another channel removes the previous link.',
+                    callout: {type: 'warning', text: 'A board can be linked to one channel at a time. Linking it to another channel removes the previous link.'},
                 },
                 {
                     title: 'Share a link to a board or a card',

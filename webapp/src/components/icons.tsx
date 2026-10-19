@@ -34,7 +34,9 @@ import FlagOutlineIcon from '@mattermost/compass-icons/components/flag-outline';
 import FolderOutlineIcon from '@mattermost/compass-icons/components/folder-outline';
 import FormatListBulletedIcon from '@mattermost/compass-icons/components/format-list-bulleted';
 import GlobeIcon from '@mattermost/compass-icons/components/globe';
+import InformationOutlineIcon from '@mattermost/compass-icons/components/information-outline';
 import KeyVariantIcon from '@mattermost/compass-icons/components/key-variant';
+import LightbulbOutlineIcon from '@mattermost/compass-icons/components/lightbulb-outline';
 import LightningBoltOutlineIcon from '@mattermost/compass-icons/components/lightning-bolt-outline';
 import LinkVariantIcon from '@mattermost/compass-icons/components/link-variant';
 import LockOutlineIcon from '@mattermost/compass-icons/components/lock-outline';
@@ -101,6 +103,8 @@ const ICONS: Record<string, IconComponent> = {
     'account-multiple-outline': AccountMultipleOutlineIcon,
     'account-outline': AccountOutlineIcon,
     'alert-outline': AlertOutlineIcon,
+    'information-outline': InformationOutlineIcon,
+    'lightbulb-outline': LightbulbOutlineIcon,
     at: AtIcon,
     'bell-outline': BellOutlineIcon,
     'bookmark-outline': BookmarkOutlineIcon,

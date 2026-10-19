@@ -2,11 +2,47 @@
 // See LICENSE.txt for license information.
 
 import {guideAssetURL, mediaOf} from 'content';
-import type {ChecklistItem, CommandGroup, CommandHeaders, Step, Tier, Variant} from 'content/types';
+import type {Callout, CalloutType, ChecklistItem, CommandGroup, CommandHeaders, Step, Tier, Variant} from 'content/types';
 import React, {useState} from 'react';
 
 import RichText from 'components/academy/rich_text';
 import {AcademyIcon} from 'components/icons';
+
+const CALLOUT_ICONS: Record<CalloutType, string> = {
+    info: 'information-outline',
+    tip: 'lightbulb-outline',
+    warning: 'alert-outline',
+};
+
+/** What a screen reader announces before the callout's text, since the icon carries the type. */
+const CALLOUT_LABELS: Record<CalloutType, string> = {
+    info: 'Info',
+    tip: 'Tip',
+    warning: 'Warning',
+};
+
+function StepCallout({callout}: {callout: Callout}) {
+    return (
+        <div
+            className={`academy-callout academy-callout--${callout.type}`}
+            role='note'
+            aria-label={CALLOUT_LABELS[callout.type]}
+        >
+            <span
+                className='academy-callout__icon'
+                aria-hidden={true}
+            >
+                <AcademyIcon
+                    name={CALLOUT_ICONS[callout.type]}
+                    size={16}
+                />
+            </span>
+            <span className='academy-callout__text'>
+                <RichText text={callout.text}/>
+            </span>
+        </div>
+    );
+}
 
 /**
  * Screenshot step art is captured at 2x (capture/capture.js, `deviceScaleFactor: 2`). Without a
@@ -54,11 +90,7 @@ export function StepList({guideId, keyPrefix, steps}: {guideId: string; keyPrefi
                                 </div>
                             </figure>
                         ))}
-                        {step.tip ? (
-                            <div className='academy-step__tip'>
-                                <RichText text={step.tip}/>
-                            </div>
-                        ) : null}
+                        {step.callout ? <StepCallout callout={step.callout}/> : null}
                     </div>
                 </div>
             ))}

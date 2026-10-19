@@ -69,7 +69,7 @@ const updateGuide: Guide = {
                 {
                     title: 'Database backwards compatibility reaches one ESR back',
                     description: 'Mattermost aims for non-locking, backwards-compatible migrations, but that <strong>backwards compatibility guarantee extends only to the last ESR version</strong>. Stepping ESR1 to ESR2 and then ESR2 to ESR3 preserves compatibility; going straight from ESR1 to ESR3 does not. This matters most in a cluster, where older nodes still talk to the migrated database during a rolling upgrade.',
-                    tip: 'For a delayed upgrade, upgrade to the closest ESR first and work forward from there. Don\'t jump straight to the newest release.',
+                    callout: {type: 'warning', text: 'For a delayed upgrade, upgrade to the closest ESR first and work forward from there. Don\'t jump straight to the newest release.'},
                 },
                 {
                     title: 'Look for blocked version combinations',

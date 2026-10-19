@@ -19,6 +19,10 @@
     --academy-nav-width: 304px;
     --academy-content-padding: 40px;
 
+    // The hero's progress bar and the collapsed header's, kept equal so the bar does not change
+    // length as the header condenses.
+    --academy-progress-width: 240px;
+
     display: flex;
     flex-direction: column;
     height: 100%;
@@ -191,22 +195,6 @@
         }
     }
 
-    // Absolute progress sits bottom-right — keep the subtitle clear of it.
-    // The title stays left-aligned with the content column and can grow right.
-    &:not(.academy-header--compact) {
-        .academy-header__content {
-            padding-right: 200px;
-        }
-
-        .academy-header__subtitle {
-            max-width: 100%;
-        }
-
-        .academy-header__title-row {
-            margin-right: -200px;
-        }
-    }
-
     &__back {
         appearance: none;
         display: inline-flex;
@@ -268,16 +256,16 @@
         color: rgba(var(--sidebar-text-rgb), 0.75);
     }
 
+    // In flow under the subtitle, left-aligned with it. It used to float bottom-right, apart from
+    // the text it summarises, which read as unanchored. The collapsed header's bar
+    // (.academy-header-compact__progress-track) uses the same width.
     &__progress {
         display: flex;
         flex-direction: column;
         gap: 8px;
-        width: fit-content;
-        min-width: 147px;
-        position: absolute;
-        bottom: 0;
-        right: 0;
-        margin: 0;
+        width: var(--academy-progress-width);
+        max-width: 100%;
+        margin: 16px 0 0;
     }
 
     &__progress-label {
@@ -298,28 +286,6 @@
         border-radius: inherit;
         background: var(--away-indicator);
         transition: width 0.2s ease;
-    }
-
-    // Below 1000px: stack progress under the titles instead of absolute right.
-    @container (max-width: 1000px) {
-        &:not(.academy-header--compact) {
-            .academy-header__content {
-                padding-right: 0;
-                padding-bottom: 0;
-            }
-
-            .academy-header__title-row {
-                margin-right: 0;
-            }
-
-            .academy-header__progress {
-                position: static;
-                margin-top: 16px;
-                min-width: 0;
-                width: 100%;
-                max-width: 240px;
-            }
-        }
     }
 
     // Guide route: header scrolls inside the main column.
@@ -349,10 +315,9 @@
             line-height: 1.4;
         }
 
+        // The RHS is narrow enough that the bar spans it.
         .academy-header__progress {
-            position: static;
             margin-top: 12px;
-            min-width: 0;
             width: 100%;
         }
     }
@@ -991,7 +956,7 @@
     }
 
     &__progress-track {
-        width: 72px;
+        width: var(--academy-progress-width);
         height: 4px;
         border-radius: 999px;
         background: rgba(var(--sidebar-text-rgb), 0.16);
@@ -1012,7 +977,10 @@
 }
 
 .academy-module {
-    font-size: 16px;
+    // Body text for every module. 16px read as oversized next to Mattermost's own message text;
+    // 15px keeps it a step larger than a post without dominating the page. Headings and step
+    // titles set their own sizes and are unchanged.
+    font-size: 15px;
     line-height: 1.5;
     padding: var(--academy-content-padding);
 
@@ -1085,7 +1053,7 @@
     &__summary {
         margin: 8px 0 0;
         color: rgba(var(--center-channel-color-rgb), 0.72);
-        font-size: 16px;
+        font-size: 15px;
         line-height: 1.5;
     }
 
@@ -1196,13 +1164,45 @@
         }
     }
 
-    &__tip {
-        margin-top: 10px;
-        padding: 10px 12px;
-        border-radius: var(--radius-s, 4px);
-        background: rgba(var(--button-bg-rgb), 0.08);
-        color: rgba(var(--center-channel-color-rgb), 0.8);
-        font-size: 13px;
+}
+
+// A step's boxed note. Each type takes its colour from the theme, so it holds up on dark themes
+// as well as light: info the button colour, tip the online green, warning the away amber.
+.academy-callout {
+    --academy-callout-rgb: var(--button-bg-rgb);
+
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    margin-top: 12px;
+    padding: 10px 12px;
+    border: 1px solid rgba(var(--academy-callout-rgb), 0.24);
+    border-radius: var(--radius-s, 4px);
+    background: rgba(var(--academy-callout-rgb), 0.08);
+    color: rgba(var(--center-channel-color-rgb), 0.88);
+    font-size: 14px;
+    line-height: 20px;
+
+    &--tip {
+        --academy-callout-rgb: var(--online-indicator-rgb);
+    }
+
+    &--warning {
+        --academy-callout-rgb: var(--away-indicator-rgb);
+    }
+
+    &__icon {
+        display: inline-flex;
+        flex-shrink: 0;
+
+        // Optically centred on the first line of text.
+        margin-top: 2px;
+        color: rgb(var(--academy-callout-rgb));
+    }
+
+    &__text {
+        flex: 1;
+        min-width: 0;
     }
 }
 
@@ -1475,7 +1475,10 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        color: var(--sidebar-bg);
+
+        // Sits on the badge's face, the theme's button colour; see AcademyBadgeSeal. Its old
+        // colour, the sidebar's, was all but invisible on the old navy face.
+        color: var(--button-color);
     }
 
     &__eyebrow {

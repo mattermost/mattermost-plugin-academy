@@ -6,8 +6,10 @@ import type {ProgressRecord} from 'client/progress';
 import {useAcademyAccess} from 'hooks/use_academy_access';
 import {useAvailableGuides} from 'hooks/use_available_guides';
 import {navigateToAcademy, navigateToGuide} from 'navigation';
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useMemo, useState} from 'react';
 
+import AudienceFilter, {filterByAudience} from 'components/academy/audience_filter';
+import type {AudienceFilterValue} from 'components/academy/audience_filter';
 import GuideCard, {guideCardCta} from 'components/academy/guide_card';
 import HeaderProgress from 'components/academy/header_progress';
 import AcademyAccessDenied from 'components/academy_access_denied';
@@ -25,8 +27,10 @@ function completedCount(rec: ProgressRecord | undefined, moduleCount: number) {
 
 export default function AcademyRHS() {
     const access = useAcademyAccess();
-    const {guides: availableGuides} = useAvailableGuides();
+    const {guides: availableGuides, canSeeAdminGuides} = useAvailableGuides();
     const [progress, setProgress] = useState<Record<string, ProgressRecord>>({});
+    const [filter, setFilter] = useState<AudienceFilterValue>('all');
+    const guides = useMemo(() => filterByAudience(availableGuides, filter), [filter, availableGuides]);
 
     useEffect(() => {
         if (access !== 'allowed') {
@@ -84,8 +88,18 @@ export default function AcademyRHS() {
             </header>
 
             <div className='academy-rhs__body'>
+                {/* The same audience filter as the catalog, for the same people. */}
+                {canSeeAdminGuides && (
+                    <div className='academy-rhs__filters'>
+                        <AudienceFilter
+                            value={filter}
+                            onChange={setFilter}
+                        />
+                    </div>
+                )}
+                {guides.length === 0 ? <p className='academy-catalog__empty'>{'No guides match this filter.'}</p> : null}
                 <div className='academy-rhs__list'>
-                    {availableGuides.map((guide) => {
+                    {guides.map((guide) => {
                         const done = completedCount(progress[guide.id], guide.modules.length);
                         return (
                             <GuideCard
